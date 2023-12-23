@@ -1,0 +1,19 @@
+[package]
+name = "querry"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-channel = "2.1.1"
+gtk = { version = "0.7.3", package = "gtk4", features = ["v4_8"] }
+once_cell = "1.19.0"
+env_logger = "0.8.4"
+serde = { version = "1.0.193", features = ["derive"] }
+serde_json = "1.0.108"
+adw = { version = "0.5.3", package = "libadwaita", features = ["v1_4"] }
+rusqlite = { version = "0.30.0", features = ["bundled"] }
+
+[build-dependencies]
+glib-build-tools = "0.18.0"
