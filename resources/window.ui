@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+    <template class="QuerryWindow" parent="AdwApplicationWindow">
+        <property name="content">
+            <object class="AdwToolbarView">
+                <child type="top">
+                    <object class="AdwHeaderBar"/>
+                </child>
+            </object>
+        </property>
+
+    </template>
+
+</interface>
