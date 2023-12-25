@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-    <template class="QuerryWindow" parent="AdwApplicationWindow">
-        <property name="content">
-            <object class="AdwToolbarView">
-                <child type="top">
-                    <object class="AdwHeaderBar"/>
+    <template class="QuerryWindow" parent="GtkApplicationWindow">
+        <child>
+            <object class="GtkBox">
+                <property name="orientation">vertical</property>
+
+                <child>
+                    <object class="GtkBox">
+                        <property name="visible">True</property> <property name="can_focus">False</property>
+                        <property name="orientation">horizontal</property>
+
+                        <child>
+                            <object class="GtkStackSidebar" id="stack_sidebar">
+                                <property name="stack">stack</property>
+
+                                <child>
+                                    <object class="GtkBox">
+                                        <property name="visible">True</property> <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+
+                                        <child>
+                                            <object class="GtkToggleButton" id="rest">
+                                                <property name="icon-name">list-add-symbolic</property>
+                                                <property name="tooltip-text" translatable="yes">New Collection</property>
+                                            </object>
+                                        </child>
+
+                                        <child>
+                                            <object class="GtkToggleButton" id="rest2">
+                                                <property name="icon-name">list-add-symbolic</property>
+                                                <property name="tooltip-text" translatable="yes">New Collection</property>
+                                            </object>
+                                        </child>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+
+
+                        <child>
+                            <object class="GtkStack" id="stack">
+                                <child>
+                                    <object class="GtkStackPage">
+                                        <property name="name">page1</property>
+                                        <property name="title">In the beginning…</property>
+                                        <property name="child">
+                                            <object class="GtkLabel">
+                                                <property name="label">It was dark</property>
+                                            </object>
+                                        </property>
+                                    </object>
+                                </child>
+
+                                <child>
+                                    <object class="GtkStackPage">
+                                        <property name="name">page2</property>
+                                        <property name="title">And the spirit of god hovered </property>
+                                        <property name="child">
+                                            <object class="GtkLabel">
+                                                <property name="label">And there was light.</property>
+                                            </object>
+                                        </property>
+                                    </object>
+                                </child>
+                            </object>
+                        </child>
+                    </object>
+
+                    
                 </child>
+
             </object>
-        </property>
-
+        </child>
     </template>
-
 </interface>

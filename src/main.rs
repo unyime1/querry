@@ -1,7 +1,6 @@
 mod window;
 
-use adw::Application;
-use gtk::{gdk::Display, gio, glib, prelude::*, CssProvider};
+use gtk::{gdk::Display, gio, glib, prelude::*, CssProvider, Application};
 use window::Window;
 
 const APP_ID: &str = "org.etim.querry";
@@ -12,7 +11,7 @@ fn main() -> glib::ExitCode {
     // Create a new application
     let app = Application::builder().application_id(APP_ID).build();
 
-    // // Connect to signals
+    // Connect to signals
     app.connect_startup(|_| load_css());
     app.connect_activate(build_ui);
 
@@ -23,6 +22,7 @@ fn main() -> glib::ExitCode {
 fn build_ui(app: &Application) {
     // Create a new custom window and present it
     let window = Window::new(app);
+    window.maximize();
     window.present();
 }
 

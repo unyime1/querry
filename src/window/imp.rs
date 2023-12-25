@@ -1,13 +1,13 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, CompositeTemplate};
+use gtk::{glib, CompositeTemplate, ApplicationWindow, StackSidebar, ToggleButton};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/window.ui")]
 pub struct Window {
     // #[template_child]
-    // pub button: TemplateChild<Button>,
+    // pub stack_sidebar: TemplateChild<StackSidebar>,
 }
 
 // The central trait for subclassing a GObject
@@ -15,7 +15,7 @@ pub struct Window {
 impl ObjectSubclass for Window {
     const NAME: &'static str = "QuerryWindow";
     type Type = super::Window;
-    type ParentType = adw::ApplicationWindow;
+    type ParentType = ApplicationWindow;
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
