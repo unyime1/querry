@@ -1,0 +1,8 @@
+.sidebar-btn-box {
+    background: grey;
+    border-radius: 5px;
+}
+
+.sidebar-btn-box:hover {
+    background: rgb(90, 89, 89);
+}

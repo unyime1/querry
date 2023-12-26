@@ -7,9 +7,9 @@
 
                 <child>
                     <object class="GtkBox">
-                        <property name="visible">True</property> <property name="can_focus">False</property>
                         <property name="orientation">horizontal</property>
-
+                        
+                        
                         <child>
                             <object class="GtkStackSidebar" id="stack_sidebar">
                                 <property name="stack">stack</property>
@@ -19,25 +19,68 @@
                                         <property name="visible">True</property> <property name="can_focus">False</property>
                                         <property name="orientation">vertical</property>
 
+                                
                                         <child>
-                                            <object class="GtkToggleButton" id="rest">
-                                                <property name="icon-name">list-add-symbolic</property>
-                                                <property name="tooltip-text" translatable="yes">New Collection</property>
+                                            <object class="GtkBox">
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="width-request">60</property>
+                                                        <property name="height-request">60</property>
+                                                        <property name="orientation">vertical</property>
+
+                                                        <style>
+                                                            <class name="sidebar-btn-box"/>
+                                                        </style>
+                                                        <child>
+                                                            <object class="GtkImage">
+                                                                <property name="file">resources/icons/rest.svg</property>
+                                                                <property name="icon-size">2</property>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel">
+                                                                <property name="label">REST</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
 
                                         <child>
-                                            <object class="GtkToggleButton" id="rest2">
-                                                <property name="icon-name">list-add-symbolic</property>
-                                                <property name="tooltip-text" translatable="yes">New Collection</property>
+                                            <object class="GtkBox">
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="width-request">60</property>
+                                                        <property name="height-request">60</property>
+                                                        <property name="orientation">vertical</property>
+
+                                                        <style>
+                                                            <class name="sidebar-btn-box"/>
+                                                        </style>
+
+                                                        <child>
+                                                            <object class="GtkImage">
+                                                                <property name="file">resources/icons/socket.svg</property>
+                                                                <property name="icon-size">2</property>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel">
+                                                                <property name="label">REST</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
                                             </object>
                                         </child>
+
                                     </object>
                                 </child>
                             </object>
                         </child>
 
-
+                        <!-- Main right screen. -->
                         <child>
                             <object class="GtkStack" id="stack">
                                 <child>
