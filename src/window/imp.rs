@@ -1,13 +1,13 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, CompositeTemplate, ApplicationWindow, StackSidebar, ToggleButton};
+use gtk::{glib, ApplicationWindow, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/window.ui")]
 pub struct Window {
-    // #[template_child]
-    // pub stack_sidebar: TemplateChild<StackSidebar>,
+    #[template_child]
+    pub stack_sidebar: TemplateChild<StackSidebar>,
 }
 
 // The central trait for subclassing a GObject

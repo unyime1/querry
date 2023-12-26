@@ -16,7 +16,8 @@
 
                                 <child>
                                     <object class="GtkBox">
-                                        <property name="visible">True</property> <property name="can_focus">False</property>
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
                                         <property name="orientation">vertical</property>
 
                                 
@@ -24,8 +25,8 @@
                                             <object class="GtkBox">
                                                 <child>
                                                     <object class="GtkBox">
-                                                        <property name="width-request">60</property>
-                                                        <property name="height-request">60</property>
+                                                        <property name="width-request">80</property>
+                                                        <property name="height-request">80</property>
                                                         <property name="orientation">vertical</property>
 
                                                         <style>
@@ -33,7 +34,8 @@
                                                         </style>
                                                         <child>
                                                             <object class="GtkImage">
-                                                                <property name="file">resources/icons/rest.svg</property>
+                                                                <!-- <property name="file">resources/icons/rest.png</property> -->
+                                                                <property name="icon-name">open-menu-symbolic</property>
                                                                 <property name="icon-size">2</property>
                                                             </object>
                                                         </child>
@@ -51,8 +53,8 @@
                                             <object class="GtkBox">
                                                 <child>
                                                     <object class="GtkBox">
-                                                        <property name="width-request">60</property>
-                                                        <property name="height-request">60</property>
+                                                        <property name="width-request">80</property>
+                                                        <property name="height-request">80</property>
                                                         <property name="orientation">vertical</property>
 
                                                         <style>
@@ -61,7 +63,7 @@
 
                                                         <child>
                                                             <object class="GtkImage">
-                                                                <property name="file">resources/icons/socket.svg</property>
+                                                                <property name="icon-name">list-add-symbolic</property>
                                                                 <property name="icon-size">2</property>
                                                             </object>
                                                         </child>
@@ -86,7 +88,6 @@
                                 <child>
                                     <object class="GtkStackPage">
                                         <property name="name">page1</property>
-                                        <property name="title">In the beginning…</property>
                                         <property name="child">
                                             <object class="GtkLabel">
                                                 <property name="label">It was dark</property>
@@ -98,7 +99,6 @@
                                 <child>
                                     <object class="GtkStackPage">
                                         <property name="name">page2</property>
-                                        <property name="title">And the spirit of god hovered </property>
                                         <property name="child">
                                             <object class="GtkLabel">
                                                 <property name="label">And there was light.</property>

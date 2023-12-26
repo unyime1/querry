@@ -1,6 +1,6 @@
 mod window;
 
-use gtk::{gdk::Display, gio, glib, prelude::*, CssProvider, Application};
+use gtk::{gdk::Display, gio, glib, prelude::*, Application, CssProvider};
 use window::Window;
 
 const APP_ID: &str = "org.etim.querry";
