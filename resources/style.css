@@ -1,0 +1,10 @@
+.sidebar-btn-box {
+    border-radius: 0px;
+    border-style: none;
+    padding-top: 15px;
+}
+
+
+.sidebar-btn-box:hover {
+    background: rgb(90, 89, 89);
+}

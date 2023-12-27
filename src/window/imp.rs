@@ -1,13 +1,13 @@
-use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, CompositeTemplate};
+use gtk::subclass::prelude::*;
+use gtk::{glib, ApplicationWindow, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/window.ui")]
 pub struct Window {
-    // #[template_child]
-    // pub button: TemplateChild<Button>,
+    #[template_child]
+    pub stack_sidebar: TemplateChild<StackSidebar>,
 }
 
 // The central trait for subclassing a GObject
@@ -15,7 +15,7 @@ pub struct Window {
 impl ObjectSubclass for Window {
     const NAME: &'static str = "QuerryWindow";
     type Type = super::Window;
-    type ParentType = adw::ApplicationWindow;
+    type ParentType = ApplicationWindow;
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
@@ -27,13 +27,16 @@ impl ObjectSubclass for Window {
 }
 
 // Trait shared by all adwaita application windows
-impl AdwApplicationWindowImpl for Window {}
+impl ApplicationWindowImpl for Window {}
 
 // Trait shared by all GObjects
 impl ObjectImpl for Window {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
+
+        let obj = self.obj();
+        obj.set_sizes();
     }
 }
 
@@ -47,6 +50,3 @@ impl WindowImpl for Window {
         self.parent_close_request()
     }
 }
-
-// Trait shared by all application windows
-impl ApplicationWindowImpl for Window {}

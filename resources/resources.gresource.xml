@@ -3,5 +3,7 @@
   <gresource prefix="/org/etim/querry/">
     <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
     <file compressed="true">style.css</file>
+    <file compressed="true">icons/rest.png</file>
+    <file compressed="true">icons/socket.png</file>
   </gresource>
 </gresources>
