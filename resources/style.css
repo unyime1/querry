@@ -8,3 +8,10 @@
 .sidebar-btn-box:hover {
     background: rgb(90, 89, 89);
 }
+
+.active-sidebar {
+    border-left: 4px;
+    border-style:solid;
+    background: rgb(68, 67, 67);
+    border-color: rgb(17, 17, 122);
+}
