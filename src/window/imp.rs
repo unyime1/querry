@@ -1,6 +1,6 @@
 use glib::subclass::InitializingObject;
 use gtk::subclass::prelude::*;
-use gtk::{glib, ApplicationWindow, CompositeTemplate, StackSidebar};
+use gtk::{glib, ApplicationWindow, Box, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -8,6 +8,12 @@ use gtk::{glib, ApplicationWindow, CompositeTemplate, StackSidebar};
 pub struct Window {
     #[template_child]
     pub stack_sidebar: TemplateChild<StackSidebar>,
+    #[template_child]
+    pub rest_box: TemplateChild<Box>,
+    #[template_child]
+    pub realtime_box: TemplateChild<Box>,
+    #[template_child]
+    pub settings_box: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject
@@ -36,7 +42,9 @@ impl ObjectImpl for Window {
         self.parent_constructed();
 
         let obj = self.obj();
-        obj.set_sizes();
+        obj.connect_rest_clicked();
+        obj.connect_realtime_clicked();
+        obj.connect_settings_clicked();
     }
 }
 
