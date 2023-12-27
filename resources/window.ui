@@ -15,7 +15,7 @@
                                 <property name="orientation">vertical</property>
 
                                 <child>
-                                    <object class="GtkBox">
+                                    <object class="GtkBox" id="rest_box">
                                         <property name="width-request">80</property>
                                         <property name="height-request">80</property>
                                         <property name="orientation">vertical</property>
@@ -40,7 +40,7 @@
                                 </child>
 
                                 <child>
-                                    <object class="GtkBox">
+                                    <object class="GtkBox" id="realtime_box">
                                         <property name="width-request">80</property>
                                         <property name="height-request">80</property>
                                         <property name="orientation">vertical</property>
@@ -65,7 +65,7 @@
 
 
                                 <child>
-                                    <object class="GtkBox">
+                                    <object class="GtkBox" id="settings_box">
                                         <property name="width-request">80</property>
                                         <property name="height-request">80</property>
                                         <property name="orientation">vertical</property>
@@ -98,7 +98,7 @@
                     <object class="GtkStack" id="stack">
                         <child>
                             <object class="GtkStackPage">
-                                <property name="name">page1</property>
+                                <property name="name">rest_page</property>
                                 <property name="child">
 
                                     <object class="GtkLabel">
@@ -110,10 +110,21 @@
 
                         <child>
                             <object class="GtkStackPage">
-                                <property name="name">page2</property>
+                                <property name="name">realtime_page</property>
                                 <property name="child">
                                     <object class="GtkLabel">
                                         <property name="label">And there was light.</property>
+                                    </object>
+                                </property>
+                            </object>
+                        </child>
+
+                        <child>
+                            <object class="GtkStackPage">
+                                <property name="name">settings_page</property>
+                                <property name="child">
+                                    <object class="GtkLabel">
+                                        <property name="label">And there was no light.</property>
                                     </object>
                                 </property>
                             </object>
