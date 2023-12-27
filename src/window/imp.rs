@@ -34,9 +34,6 @@ impl ObjectImpl for Window {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
-
-        let obj = self.obj();
-        obj.set_sizes();
     }
 }
 
