@@ -29,8 +29,7 @@
                                                     <object class="GtkImage">
                                                         <!-- <property
                                                         name="file">resources/icons/rest.png</property> -->
-                                                        <property name="icon-name">
-                                                            network-receive-symbolic</property>
+                                                        <property name="icon-name">network-receive-symbolic</property>
                                                         <property name="icon-size">2</property>
                                                     </object>
                                                 </child>
@@ -58,8 +57,7 @@
 
                                                 <child>
                                                     <object class="GtkImage">
-                                                        <property name="icon-name">
-                                                            emblem-synchronizing-symbolic</property>
+                                                        <property name="icon-name">emblem-synchronizing-symbolic</property>
                                                         <property name="icon-size">2</property>
                                                     </object>
                                                 </child>
@@ -88,8 +86,7 @@
 
                                                 <child>
                                                     <object class="GtkImage">
-                                                        <property name="icon-name">
-                                                            emblem-system-symbolic</property>
+                                                        <property name="icon-name">emblem-system-symbolic</property>
                                                         <property name="icon-size">2</property>
                                                     </object>
                                                 </child>
