@@ -1,5 +1,5 @@
-use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
+use gtk::subclass::prelude::*;
 use gtk::{glib, ApplicationWindow, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
@@ -27,13 +27,16 @@ impl ObjectSubclass for Window {
 }
 
 // Trait shared by all adwaita application windows
-impl AdwApplicationWindowImpl for Window {}
+impl ApplicationWindowImpl for Window {}
 
 // Trait shared by all GObjects
 impl ObjectImpl for Window {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
+
+        let obj = self.obj();
+        obj.set_sizes();
     }
 }
 
@@ -47,6 +50,3 @@ impl WindowImpl for Window {
         self.parent_close_request()
     }
 }
-
-// Trait shared by all application windows
-impl ApplicationWindowImpl for Window {}

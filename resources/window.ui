@@ -19,7 +19,6 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <property name="orientation">vertical</property>
-
                                 
                                         <child>
                                             <object class="GtkBox">
@@ -35,7 +34,7 @@
                                                         <child>
                                                             <object class="GtkImage">
                                                                 <!-- <property name="file">resources/icons/rest.png</property> -->
-                                                                <property name="icon-name">open-menu-symbolic</property>
+                                                                <property name="icon-name">network-receive-symbolic</property>
                                                                 <property name="icon-size">2</property>
                                                             </object>
                                                         </child>
@@ -63,13 +62,42 @@
 
                                                         <child>
                                                             <object class="GtkImage">
-                                                                <property name="icon-name">list-add-symbolic</property>
+                                                                <property name="icon-name">emblem-synchronizing-symbolic</property>
                                                                 <property name="icon-size">2</property>
                                                             </object>
                                                         </child>
                                                         <child>
                                                             <object class="GtkLabel">
-                                                                <property name="label">REST</property>
+                                                                <property name="label">REALTIME</property>
+                                                            </object>
+                                                        </child>
+                                                    </object>
+                                                </child>
+                                            </object>
+                                        </child>
+
+
+                                        <child>
+                                            <object class="GtkBox">
+                                                <child>
+                                                    <object class="GtkBox">
+                                                        <property name="width-request">80</property>
+                                                        <property name="height-request">80</property>
+                                                        <property name="orientation">vertical</property>
+
+                                                        <style>
+                                                            <class name="sidebar-btn-box"/>
+                                                        </style>
+
+                                                        <child>
+                                                            <object class="GtkImage">
+                                                                <property name="icon-name">emblem-system-symbolic</property>
+                                                                <property name="icon-size">2</property>
+                                                            </object>
+                                                        </child>
+                                                        <child>
+                                                            <object class="GtkLabel">
+                                                                <property name="label">SETTINGS</property>
                                                             </object>
                                                         </child>
                                                     </object>
@@ -89,6 +117,7 @@
                                     <object class="GtkStackPage">
                                         <property name="name">page1</property>
                                         <property name="child">
+                                            
                                             <object class="GtkLabel">
                                                 <property name="label">It was dark</property>
                                             </object>
