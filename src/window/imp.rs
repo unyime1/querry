@@ -1,4 +1,4 @@
-use adw::{subclass::prelude::*, ApplicationWindow};
+use adw::{subclass::prelude::*, ApplicationWindow, Bin};
 use glib::subclass::InitializingObject;
 use gtk::{glib, Box, CompositeTemplate, StackSidebar};
 
@@ -15,7 +15,7 @@ pub struct Window {
     #[template_child]
     pub settings_box: TemplateChild<Box>,
     #[template_child]
-    pub rest_page: TemplateChild<Box>,
+    pub rest_page: TemplateChild<Bin>,
 }
 
 // The central trait for subclassing a GObject

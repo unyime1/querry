@@ -106,6 +106,6 @@ impl Window {
     pub fn replace_item(&self) {
         let rest_box = self.imp().rest_page.clone();
         let rest_window = RestWindow::new();
-        rest_box.append(&rest_window);
+        rest_box.set_child(Some(&rest_window));
     }
 }
