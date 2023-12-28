@@ -8,6 +8,8 @@ use gtk::{
     Application,
 };
 
+use crate::rest::RestWindow;
+
 glib::wrapper! {
     pub struct Window(ObjectSubclass<imp::Window>)
         @extends adw::ApplicationWindow, gtk::ApplicationWindow, gtk::Window, gtk::Widget,
@@ -100,5 +102,11 @@ impl Window {
             realtime_box.remove_css_class("active-sidebar");
         });
         settings_box.add_controller(gesture_settings);
+    }
+
+    pub fn replace_item(&self) {
+        let rest_box = self.imp().rest_page.clone();
+        let rest_window = RestWindow::new();
+        rest_box.append(&rest_window);
     }
 }

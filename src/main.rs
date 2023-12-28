@@ -1,3 +1,4 @@
+mod rest;
 mod window;
 
 use gtk::{gdk::Display, gio, glib, prelude::*, Application, CssProvider};

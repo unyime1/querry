@@ -14,6 +14,8 @@ pub struct Window {
     pub realtime_box: TemplateChild<Box>,
     #[template_child]
     pub settings_box: TemplateChild<Box>,
+    #[template_child]
+    pub rest_page: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject
@@ -45,6 +47,7 @@ impl ObjectImpl for Window {
         obj.connect_rest_clicked();
         obj.connect_realtime_clicked();
         obj.connect_settings_clicked();
+        obj.replace_item();
     }
 }
 
