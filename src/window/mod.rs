@@ -1,11 +1,10 @@
 mod imp;
 
+use adw::{prelude::*, Application};
 use glib::Object;
 use gtk::{
     gio,
     glib::{self, clone, subclass::types::ObjectSubclassIsExt, ObjectExt},
-    prelude::*,
-    Application,
 };
 
 use crate::rest::RestWindow;

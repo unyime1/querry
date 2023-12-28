@@ -1,7 +1,9 @@
 mod rest;
 mod window;
 
-use gtk::{gdk::Display, gio, glib, prelude::*, Application, CssProvider};
+use adw::{prelude::*, Application};
+use gtk::{gdk::Display, gio, glib, CssProvider};
+
 use window::Window;
 
 const APP_ID: &str = "org.etim.querry";

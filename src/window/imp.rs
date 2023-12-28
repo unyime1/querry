@@ -1,6 +1,6 @@
+use adw::{subclass::prelude::*, ApplicationWindow};
 use glib::subclass::InitializingObject;
-use gtk::subclass::prelude::*;
-use gtk::{glib, ApplicationWindow, Box, CompositeTemplate, StackSidebar};
+use gtk::{glib, Box, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -35,6 +35,9 @@ impl ObjectSubclass for Window {
 }
 
 // Trait shared by all adwaita application windows
+impl AdwApplicationWindowImpl for Window {}
+
+// Trait shared by all application windows
 impl ApplicationWindowImpl for Window {}
 
 // Trait shared by all GObjects

@@ -1,5 +1,5 @@
+use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::subclass::prelude::*;
 use gtk::{glib, Box, Button, CompositeTemplate};
 
 // Initialize composite template for Window.

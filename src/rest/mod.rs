@@ -1,10 +1,8 @@
 mod imp;
 
+use adw::prelude::ButtonExt;
 use glib::Object;
-use gtk::{
-    glib::{self, subclass::types::ObjectSubclassIsExt},
-    prelude::ButtonExt,
-};
+use gtk::glib::{self, subclass::types::ObjectSubclassIsExt};
 
 glib::wrapper! {
     pub struct RestWindow(ObjectSubclass<imp::RestWindow>)
