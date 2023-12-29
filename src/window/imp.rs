@@ -50,7 +50,8 @@ impl ObjectImpl for Window {
         obj.connect_rest_clicked();
         obj.connect_realtime_clicked();
         obj.connect_settings_clicked();
-        obj.replace_item();
+        obj.fix_rest_ui();
+        obj.set_active_sidebar_page();
     }
 }
 

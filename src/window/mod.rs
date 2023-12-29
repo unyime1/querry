@@ -103,9 +103,14 @@ impl Window {
         settings_box.add_controller(gesture_settings);
     }
 
-    pub fn replace_item(&self) {
+    pub fn fix_rest_ui(&self) {
         let rest_box = self.imp().rest_page.clone();
         let rest_window = RestWindow::new();
         rest_box.set_child(Some(&rest_window));
+    }
+
+    pub fn set_active_sidebar_page(&self) {
+        let rest_box = self.imp().rest_box.clone();
+        rest_box.add_css_class("active-sidebar");
     }
 }
