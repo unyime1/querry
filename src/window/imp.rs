@@ -1,6 +1,6 @@
+use adw::{subclass::prelude::*, ApplicationWindow, Bin};
 use glib::subclass::InitializingObject;
-use gtk::subclass::prelude::*;
-use gtk::{glib, ApplicationWindow, Box, CompositeTemplate, StackSidebar};
+use gtk::{glib, Box, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -14,6 +14,8 @@ pub struct Window {
     pub realtime_box: TemplateChild<Box>,
     #[template_child]
     pub settings_box: TemplateChild<Box>,
+    #[template_child]
+    pub rest_page: TemplateChild<Bin>,
 }
 
 // The central trait for subclassing a GObject
@@ -33,6 +35,9 @@ impl ObjectSubclass for Window {
 }
 
 // Trait shared by all adwaita application windows
+impl AdwApplicationWindowImpl for Window {}
+
+// Trait shared by all application windows
 impl ApplicationWindowImpl for Window {}
 
 // Trait shared by all GObjects
@@ -45,6 +50,7 @@ impl ObjectImpl for Window {
         obj.connect_rest_clicked();
         obj.connect_realtime_clicked();
         obj.connect_settings_clicked();
+        obj.replace_item();
     }
 }
 

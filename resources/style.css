@@ -14,3 +14,7 @@
     border-style:solid;
     border-color: rgb(17, 17, 122);
 }
+
+.window-bg {
+    background: red;
+}
