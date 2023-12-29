@@ -1,4 +1,5 @@
 mod database;
+mod entities;
 mod rest;
 mod utils;
 mod window;
