@@ -1,14 +1,11 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, Button, CompositeTemplate};
+use gtk::{glib, Box, CompositeTemplate};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/rest.ui")]
-pub struct RestWindow {
-    #[template_child]
-    pub button: TemplateChild<Button>,
-}
+pub struct RestWindow {}
 
 // The central trait for subclassing a GObject
 #[glib::object_subclass]
@@ -31,9 +28,6 @@ impl ObjectImpl for RestWindow {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
-
-        let obj = self.obj();
-        obj.activate_btn();
     }
 }
 

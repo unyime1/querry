@@ -1,14 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="QuerryRestWindow" parent="GtkBox">
+  
     <child>
-      <object class="GtkButton" id="button">
-        <property name="label">Press me!</property>
-        <property name="margin-top">12</property>
-        <property name="margin-bottom">12</property>
-        <property name="margin-start">12</property>
-        <property name="margin-end">12</property>  
+      <object class="GtkPaned" id="paned">
+        <property name="wide-handle">True</property>
+        <property name="position">300</property>
+        <property name="orientation">horizontal</property>
+        <property name="start-child">left_box</property>
+        <property name="end-child">right_box</property>
+
+        <child>
+          <object class="GtkBox" id="left_box">
+            <property name="hexpand">true</property>
+            <property name="vexpand">true</property>
+            <property name="visible">True</property>
+            <property name="width-request">300</property>
+            <property name="orientation">vertical</property>
+
+
+            <child>
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label">Left Panel 1</property>
+              </object>
+            </child>
+
+            <child>
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label">Left Panel 2</property>
+              </object>
+            </child>
+
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkBox" id="right_box">
+            <property name="width-request">500</property>
+            <property name="hexpand">true</property>
+            <property name="vexpand">true</property>
+            <property name="visible">True</property>
+            <property name="orientation">vertical</property>
+
+            <child>
+              <object class="GtkPaned" id="paned_2">
+                <property name="wide-handle">True</property>
+                <property name="orientation">vertical</property>
+
+                <child>
+                  <object class="GtkBox" id="top_box">
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
+        
+                    <child>
+                      <object class="GtkLabel" id="label-top-1">
+                        <property name="visible">True</property>
+                        <property name="label">top Panel 1</property>
+                      </object>
+                    </child>
+        
+                    <child>
+                      <object class="GtkLabel" id="label-top-2">
+                        <property name="visible">True</property>
+                        <property name="label">top Panel 2</property>
+                      </object>
+                    </child>
+        
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkBox" id="down_box">
+                    <property name="hexpand">true</property>
+                    <property name="vexpand">true</property>
+                    <property name="visible">True</property>
+                    <property name="orientation">vertical</property>
+        
+                    <child>
+                      <object class="GtkLabel" id="label-down-1">
+                        <property name="visible">True</property>
+                        <property name="label">down Panel 1</property>
+                      </object>
+                    </child>
+        
+                    <child>
+                      <object class="GtkLabel" id="label-down-2">
+                        <property name="visible">True</property>
+                        <property name="label">down Panel 2</property>
+                      </object>
+                    </child>
+        
+                  </object>
+                </child>
+              </object>
+            </child>
+
+          </object>
+        </child>
       </object>
+
     </child>
+
   </template>
 </interface>
