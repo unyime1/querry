@@ -4,7 +4,7 @@ use adw::{prelude::*, Application};
 use glib::Object;
 use gtk::{
     gio,
-    glib::{self, clone, subclass::types::ObjectSubclassIsExt, ObjectExt},
+    glib::{self, clone, subclass::types::ObjectSubclassIsExt},
 };
 
 use crate::rest::RestWindow;
@@ -22,15 +22,13 @@ impl Window {
         Object::builder().property("application", app).build()
     }
 
-    /// Calculate height on resize.
-    pub fn set_sizes(&self) {
-        let sidebar = self.imp().stack_sidebar.clone();
-
+    /// Check window sizes.
+    pub fn check_sizes(&self) {
         self.connect_default_height_notify(clone!(@weak self as window => move |_| {
             let height = window.allocated_height();
-            let new_stack_sidebar_height = (height as f32 * 0.9) as i32;
+            let width = window.allocated_width();
 
-            sidebar.set_property("height-request", new_stack_sidebar_height);
+            println!("{}, {}", width, height);
         }));
     }
 
@@ -103,9 +101,14 @@ impl Window {
         settings_box.add_controller(gesture_settings);
     }
 
-    pub fn replace_item(&self) {
+    pub fn fix_rest_ui(&self) {
         let rest_box = self.imp().rest_page.clone();
         let rest_window = RestWindow::new();
         rest_box.set_child(Some(&rest_window));
+    }
+
+    pub fn set_active_sidebar_page(&self) {
+        let rest_box = self.imp().rest_box.clone();
+        rest_box.add_css_class("active-sidebar");
     }
 }
