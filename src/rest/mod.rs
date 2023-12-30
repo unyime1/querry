@@ -22,4 +22,26 @@ impl RestWindow {
         let collection_window = CollectionWindow::new();
         collections_box.set_child(Some(&collection_window));
     }
+
+    pub fn validate_paned_primary_position(&self) {
+        let paned_primary = self.imp().paned_primary.clone();
+        paned_primary.connect_position_notify(move |paned| {
+            let paned_position = paned.position();
+            if paned_position < 350 {
+                paned.set_position(350);
+            } else if paned_position > 700 {
+                paned.set_position(700);
+            };
+        });
+    }
+
+    pub fn validate_paned_secondary_position(&self) {
+        let paned_secondary = self.imp().paned_secondary.clone();
+        paned_secondary.connect_position_notify(move |paned| {
+            let paned_position = paned.position();
+            if paned_position < 250 {
+                paned.set_position(250);
+            }
+        });
+    }
 }

@@ -12,9 +12,12 @@
 .active-sidebar {
     border-left: 4px;
     border-style:solid;
-    border-color: rgb(17, 17, 122);
+    border-color: rgb(189, 63, 14);
 }
 
-.window-bg {
-    background: red;
+
+.empty-collections-box {
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
 }

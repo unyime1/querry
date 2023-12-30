@@ -9,6 +9,8 @@
 
                 <child>
                     <object class="GtkBox">
+                        <property name="width-request">1010</property>
+                        <property name="height-request">719</property>
                         <property name="orientation">horizontal</property>
                         <child>
                             <object class="GtkStackSidebar" id="stack_sidebar">

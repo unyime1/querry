@@ -1,6 +1,6 @@
 use adw::{subclass::prelude::*, Bin};
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate};
+use gtk::{glib, Box, CompositeTemplate, Paned};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -8,6 +8,10 @@ use gtk::{glib, Box, CompositeTemplate};
 pub struct RestWindow {
     #[template_child]
     pub collections_box: TemplateChild<Bin>,
+    #[template_child]
+    pub paned_primary: TemplateChild<Paned>,
+    #[template_child]
+    pub paned_secondary: TemplateChild<Paned>,
 }
 
 // The central trait for subclassing a GObject
@@ -34,6 +38,8 @@ impl ObjectImpl for RestWindow {
 
         let obj = self.obj();
         obj.fix_collections_ui();
+        obj.validate_paned_primary_position();
+        obj.validate_paned_secondary_position();
     }
 }
 

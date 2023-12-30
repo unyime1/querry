@@ -3,12 +3,14 @@
   <template class="QuerryRestWindow" parent="GtkBox">
   
     <child>
-      <object class="GtkPaned" id="paned">
+      <object class="GtkPaned" id="paned_primary">
         <property name="wide-handle">True</property>
-        <property name="position">300</property>
+        <property name="position">400</property>
         <property name="orientation">horizontal</property>
         <property name="start-child">collections_box</property>
         <property name="end-child">right_box</property>
+        <property name="shrink-start-child">False</property>
+        <property name="resize-start-child">False</property>
 
         <child>
           <object class="AdwBin" id="collections_box">
@@ -24,9 +26,10 @@
             <property name="orientation">vertical</property>
 
             <child>
-              <object class="GtkPaned" id="paned_2">
+              <object class="GtkPaned" id="paned_secondary">
                 <property name="wide-handle">True</property>
                 <property name="orientation">vertical</property>
+                <property name="position">400</property>
 
                 <child>
                   <object class="GtkBox" id="top_box">
