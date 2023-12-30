@@ -7,32 +7,11 @@
         <property name="wide-handle">True</property>
         <property name="position">300</property>
         <property name="orientation">horizontal</property>
-        <property name="start-child">left_box</property>
+        <property name="start-child">collections_box</property>
         <property name="end-child">right_box</property>
 
         <child>
-          <object class="GtkBox" id="left_box">
-            <property name="hexpand">true</property>
-            <property name="vexpand">true</property>
-            <property name="visible">True</property>
-            <property name="width-request">300</property>
-            <property name="orientation">vertical</property>
-
-
-            <child>
-              <object class="GtkLabel" id="label1">
-                <property name="visible">True</property>
-                <property name="label">Left Panel 1</property>
-              </object>
-            </child>
-
-            <child>
-              <object class="GtkLabel" id="label2">
-                <property name="visible">True</property>
-                <property name="label">Left Panel 2</property>
-              </object>
-            </child>
-
+          <object class="AdwBin" id="collections_box">
           </object>
         </child>
 
