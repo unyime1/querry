@@ -1,6 +1,8 @@
+use once_cell::sync::OnceCell;
+
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, ListBox};
+use gtk::{glib, Box, CompositeTemplate, ListBox, gio};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -8,6 +10,7 @@ use gtk::{glib, Box, CompositeTemplate, ListBox};
 pub struct CollectionsWindow {
     #[template_child]
     pub collections_list: TemplateChild<ListBox>,
+    pub collections: OnceCell<gio::ListStore>,
 }
 
 // The central trait for subclassing a GObject

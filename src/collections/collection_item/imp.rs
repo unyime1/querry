@@ -16,8 +16,6 @@ pub struct CollectionItem {
     pub name: RefCell<String>,
     #[property(get, set)]
     pub id: RefCell<String>,
-    #[property(get, set)]
-    pub icon_name: RefCell<String>,
 
     #[template_child]
     pub collection_icon: TemplateChild<Image>,

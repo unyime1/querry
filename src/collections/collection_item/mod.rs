@@ -10,11 +10,10 @@ glib::wrapper! {
 }
 
 impl CollectionItem {
-    pub fn new(name: &str, id: &str, icon_name: &str) -> Self {
+    pub fn new(name: &str, id: &str) -> Self {
         Object::builder()
             .property("name", name)
             .property("id", id)
-            .property("icon_name", icon_name)
             .build()
     }
 
