@@ -1,4 +1,4 @@
-mod collection;
+mod collections;
 mod database;
 mod entities;
 mod rest;

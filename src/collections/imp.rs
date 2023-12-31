@@ -5,13 +5,13 @@ use gtk::{glib, Box, CompositeTemplate};
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/collection.ui")]
-pub struct CollectionWindow {}
+pub struct CollectionsWindow {}
 
 // The central trait for subclassing a GObject
 #[glib::object_subclass]
-impl ObjectSubclass for CollectionWindow {
-    const NAME: &'static str = "QuerryCollectionWindow";
-    type Type = super::CollectionWindow;
+impl ObjectSubclass for CollectionsWindow {
+    const NAME: &'static str = "QuerryCollectionsWindow";
+    type Type = super::CollectionsWindow;
     type ParentType = Box;
 
     fn class_init(klass: &mut Self::Class) {
@@ -24,7 +24,7 @@ impl ObjectSubclass for CollectionWindow {
 }
 
 // Trait shared by all GObjects
-impl ObjectImpl for CollectionWindow {
+impl ObjectImpl for CollectionsWindow {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
@@ -32,6 +32,6 @@ impl ObjectImpl for CollectionWindow {
 }
 
 // Trait shared by all widgets
-impl WidgetImpl for CollectionWindow {}
+impl WidgetImpl for CollectionsWindow {}
 
-impl BoxImpl for CollectionWindow {}
+impl BoxImpl for CollectionsWindow {}
