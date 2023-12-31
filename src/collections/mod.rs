@@ -1,3 +1,4 @@
+mod collection_item;
 mod imp;
 
 use glib::Object;

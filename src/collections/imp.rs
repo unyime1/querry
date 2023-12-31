@@ -1,11 +1,14 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate};
+use gtk::{glib, Box, CompositeTemplate, ListBox};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/collection.ui")]
-pub struct CollectionsWindow {}
+pub struct CollectionsWindow {
+    #[template_child]
+    pub collections_list: TemplateChild<ListBox>,
+}
 
 // The central trait for subclassing a GObject
 #[glib::object_subclass]
