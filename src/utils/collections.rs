@@ -13,6 +13,8 @@ pub async fn get_all_collections() -> Result<Vec<CollectionData>, DbErr> {
     let db = get_database().await?;
     let collections: Vec<collection::Model> = Collection::find().all(&db).await?;
 
+    println!("{:?}", collections);
+
     // Map collections to CollectionData
     let collection_data: Vec<CollectionData> = collections
         .iter()
