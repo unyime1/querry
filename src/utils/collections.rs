@@ -4,7 +4,7 @@ use crate::entities::{prelude::*, *};
 use crate::database::get_database;
 
 
-#[derive(Debug)]
+#[derive(Clone)]
 pub struct CollectionData {
     pub id: String,
     pub name: String,

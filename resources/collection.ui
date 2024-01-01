@@ -6,7 +6,7 @@
     <property name="visible">True</property>
     <property name="orientation">vertical</property>
 
-    <child>
+    <!-- <child>
       <object class="GtkBox" id="empty-collections-box">
         <property name="hexpand">true</property>
         <property name="vexpand">true</property>
@@ -36,8 +36,18 @@
         </child>
 
       </object>
-    </child>
+    </child> -->
 
+
+    <child>
+      <object class="GtkListBox" id="collections_list">
+        <property name="visible">False</property>
+        <property name="selection-mode">none</property>
+        <style>
+          <class name="boxed-list" />
+        </style>
+      </object>
+    </child>
     
   </template>
 </interface>

@@ -1,5 +1,7 @@
 mod collection_item;
 mod imp;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use glib::Object;
 use gtk::{gio, SingleSelection};
@@ -23,17 +25,31 @@ impl CollectionsWindow {
     }
 
     pub fn setup_collections(&self) {
+        let collections = gio::ListStore::new::<CollectionItem>();
+        self.imp()
+            .collections
+            .set(collections.clone())
+            .expect("Could not set collections");
+
         let (sender, receiver) = async_channel::bounded(1);
-        RUNTIME.spawn(clone!(@strong sender => async move {
+    
+        // Use Rc<RefCell<Vec<CollectionData>>> for shared ownership and interior mutability
+        let collections_vec: Rc<RefCell<Vec<CollectionData>>> = Rc::new(RefCell::new(Vec::new()));
+    
+        // Clone Rc for the closure
+        let collections_vec_clone = Rc::clone(&collections_vec);
+    
+        RUNTIME.spawn(async move {
             let collections = get_all_collections().await;
             sender.send(collections).await.expect("The channel needs to be open.");
-        }));
-
+        });
+    
         glib::spawn_future_local(async move {
             while let Ok(result) = receiver.recv().await {
                 match result {
                     Ok(data) => {
-                        self.bind_collections_list(&data);
+                        // Use the cloned Rc to access the shared data
+                        collections_vec_clone.borrow_mut().extend(data);
                     }
                     Err(error) => {
                         println!("{:?}", error)
@@ -41,8 +57,11 @@ impl CollectionsWindow {
                 }
             }
         });
+    
+        // Extract the Vec<CollectionData> from the Rc<RefCell<Vec<CollectionData>>>
+        let extracted_collections = collections_vec.borrow();
+        self.bind_collections_list(extracted_collections.to_vec())
     }
-
 
     fn collections(&self) -> gio::ListStore {
         self.imp()
