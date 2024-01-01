@@ -1,8 +1,6 @@
-use once_cell::sync::OnceCell;
-
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, ListBox, gio};
+use gtk::{glib, Box, CompositeTemplate, ListBox};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -10,7 +8,6 @@ use gtk::{glib, Box, CompositeTemplate, ListBox, gio};
 pub struct CollectionsWindow {
     #[template_child]
     pub collections_list: TemplateChild<ListBox>,
-    pub collections: OnceCell<gio::ListStore>,
 }
 
 // The central trait for subclassing a GObject
@@ -34,7 +31,7 @@ impl ObjectImpl for CollectionsWindow {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
-        
+
         let obj = self.obj();
         obj.setup_collections();
     }

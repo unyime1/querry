@@ -41,8 +41,6 @@
 
     <child>
       <object class="GtkListBox" id="collections_list">
-        <property name="visible">False</property>
-        <property name="selection-mode">none</property>
         <style>
           <class name="boxed-list" />
         </style>

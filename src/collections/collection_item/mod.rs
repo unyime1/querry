@@ -1,12 +1,10 @@
 mod imp;
 
 use glib::Object;
-use gtk::glib::{self, subclass::types::ObjectSubclassIsExt};
+use gtk::glib;
 
 glib::wrapper! {
-    pub struct CollectionItem(ObjectSubclass<imp::CollectionItem>)
-        @extends gtk::Box, gtk::Widget,
-        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Orientable;
+    pub struct CollectionItem(ObjectSubclass<imp::CollectionItem>);
 }
 
 impl CollectionItem {
@@ -15,12 +13,5 @@ impl CollectionItem {
             .property("name", name)
             .property("id", id)
             .build()
-    }
-
-    pub fn set_collection_name(&self) {
-        let name = &*self.imp().name.borrow();
-        let label = self.imp().collection_label.clone();
-
-        label.set_label(name);
     }
 }

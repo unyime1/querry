@@ -1,8 +1,7 @@
 use sea_orm::*;
 
-use crate::entities::{prelude::*, *};
 use crate::database::get_database;
-
+use crate::entities::{prelude::*, *};
 
 #[derive(Clone)]
 pub struct CollectionData {
@@ -10,10 +9,10 @@ pub struct CollectionData {
     pub name: String,
 }
 
-pub async fn get_all_collections() ->  Result<Vec<CollectionData>, DbErr> {
+pub async fn get_all_collections() -> Result<Vec<CollectionData>, DbErr> {
     let db = get_database().await?;
     let collections: Vec<collection::Model> = Collection::find().all(&db).await?;
-    
+
     // Map collections to CollectionData
     let collection_data: Vec<CollectionData> = collections
         .iter()
