@@ -28,11 +28,9 @@ impl CollectionsWindow {
     pub fn setup_collections(&self) {
         let (sender, receiver) = async_channel::bounded(1);
 
-        // Use Rc<RefCell<Vec<CollectionData>>> for shared ownership and interior mutability
         let collections_vec: Rc<RefCell<Vec<CollectionData>>> = Rc::new(RefCell::new(Vec::new()));
-
-        // Clone Rc for the closure
-        let collections_vec_clone = Rc::clone(&collections_vec);
+        let collections_vec_clone = collections_vec.clone();
+        let collections_vec_clone_2 = collections_vec.clone();
 
         RUNTIME.spawn(async move {
             let collections = get_all_collections().await;
@@ -49,6 +47,7 @@ impl CollectionsWindow {
                         // Use the cloned Rc to access the shared data
                         println!("received items {}", data.len());
                         collections_vec_clone.borrow_mut().extend(data);
+                        println!("Vec 2 - {:?}", collections_vec_clone_2.borrow());
                     }
                     Err(error) => {
                         println!("{:?}", error)
@@ -57,7 +56,7 @@ impl CollectionsWindow {
             }
         });
 
-        // Extract the Vec<CollectionData> from the Rc<RefCell<Vec<CollectionData>>>
+        println!("Vec - {:?}", collections_vec.borrow());
         let extracted_collections = collections_vec.borrow();
         self.bind_collections_list(extracted_collections.to_vec())
     }

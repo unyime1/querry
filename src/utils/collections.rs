@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::database::get_database;
 use crate::entities::{prelude::*, *};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CollectionData {
     pub id: String,
     pub name: String,
