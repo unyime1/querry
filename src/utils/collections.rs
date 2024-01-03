@@ -1,4 +1,5 @@
 use sea_orm::*;
+use uuid::Uuid;
 
 use crate::database::get_database;
 use crate::entities::{prelude::*, *};
@@ -11,9 +12,20 @@ pub struct CollectionData {
 
 pub async fn get_all_collections() -> Result<Vec<CollectionData>, DbErr> {
     let db = get_database().await?;
-    let collections: Vec<collection::Model> = Collection::find().all(&db).await?;
+    let mut collections: Vec<collection::Model> = Collection::find().all(&db).await?;
 
-    println!("{:?}", collections);
+    if collections.len() == 0 {
+        for item in 0..5 {
+            let collection_item = collection::ActiveModel {
+                name: ActiveValue::Set(format!("Test collection_{}", item).to_owned()),
+                id: ActiveValue::Set(Uuid::new_v4().to_string()),
+                ..Default::default()
+            };
+            Collection::insert(collection_item).exec(&db).await?;
+        }
+        let new_collections: Vec<collection::Model> = Collection::find().all(&db).await?;
+        collections.extend(new_collections);
+    }
 
     // Map collections to CollectionData
     let collection_data: Vec<CollectionData> = collections
@@ -24,5 +36,6 @@ pub async fn get_all_collections() -> Result<Vec<CollectionData>, DbErr> {
         })
         .collect();
 
+    println!("Total collections - {}", collection_data.len());
     Ok(collection_data)
 }

@@ -47,6 +47,7 @@ impl CollectionsWindow {
                 match result {
                     Ok(data) => {
                         // Use the cloned Rc to access the shared data
+                        println!("received items {}", data.len());
                         collections_vec_clone.borrow_mut().extend(data);
                     }
                     Err(error) => {
