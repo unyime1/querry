@@ -1,8 +1,6 @@
-use sea_orm::*;
-use uuid::Uuid;
-
 use crate::database::get_database;
-use crate::entities::{prelude::*, *};
+use rusqlite::{params, Result};
+use uuid::Uuid;
 
 #[derive(Clone, Debug)]
 pub struct CollectionData {
@@ -10,32 +8,34 @@ pub struct CollectionData {
     pub name: String,
 }
 
-pub async fn get_all_collections() -> Result<Vec<CollectionData>, DbErr> {
-    let db = get_database().await?;
-    let mut collections: Vec<collection::Model> = Collection::find().all(&db).await?;
+pub fn get_all_collections() -> Result<Vec<CollectionData>> {
+    let db_connection = get_database().expect("Could not get database");
 
-    if collections.len() == 0 {
-        for item in 0..5 {
-            let collection_item = collection::ActiveModel {
-                name: ActiveValue::Set(format!("Test collection_{}", item).to_owned()),
-                id: ActiveValue::Set(Uuid::new_v4().to_string()),
-                ..Default::default()
-            };
-            Collection::insert(collection_item).exec(&db).await?;
+    let mut stmt = db_connection.prepare("SELECT id, name FROM collection")?;
+    let rows = stmt.query_map(params![], |row| {
+        Ok(CollectionData {
+            id: row.get(0)?,
+            name: row.get(1)?,
+        })
+    })?;
+
+    let collections: Result<Vec<CollectionData>> = rows.into_iter().collect();
+    collections
+}
+
+pub fn prep_collections() -> Result<Vec<CollectionData>> {
+    let collections = get_all_collections()?;
+    let db_connection = get_database().expect("Could not get database");
+
+    if collections.len() < 1 {
+        let mut stmt =
+            db_connection.prepare("INSERT INTO collection (id, name) VALUES (?1, ?2)")?;
+        for index in 0..6 {
+            let id = Uuid::new_v4().to_string();
+            let name = format!("Collection {}", index);
+            stmt.execute([id, name])?;
         }
-        let new_collections: Vec<collection::Model> = Collection::find().all(&db).await?;
-        collections.extend(new_collections);
     }
 
-    // Map collections to CollectionData
-    let collection_data: Vec<CollectionData> = collections
-        .iter()
-        .map(|c| CollectionData {
-            id: c.id.to_string(),
-            name: c.name.to_string(),
-        })
-        .collect();
-
-    println!("Total collections - {}", collection_data.len());
-    Ok(collection_data)
+    get_all_collections()
 }

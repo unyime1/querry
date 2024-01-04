@@ -1,17 +1,13 @@
 mod collection_item;
 mod imp;
 
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use glib::Object;
 use gtk::glib;
 use gtk::glib::subclass::types::ObjectSubclassIsExt;
 use gtk::prelude::BoxExt;
 use gtk::{Box, Image, Label};
 
-use crate::utils::collections::{get_all_collections, CollectionData};
-use crate::RUNTIME;
+use crate::utils::collections::{prep_collections, CollectionData};
 use collection_item::CollectionItem;
 
 glib::wrapper! {
@@ -26,39 +22,9 @@ impl CollectionsWindow {
     }
 
     pub fn setup_collections(&self) {
-        let (sender, receiver) = async_channel::bounded(1);
-
-        let collections_vec: Rc<RefCell<Vec<CollectionData>>> = Rc::new(RefCell::new(Vec::new()));
-        let collections_vec_clone = collections_vec.clone();
-        let collections_vec_clone_2 = collections_vec.clone();
-
-        RUNTIME.spawn(async move {
-            let collections = get_all_collections().await;
-            sender
-                .send(collections)
-                .await
-                .expect("The channel needs to be open.");
-        });
-
-        glib::spawn_future_local(async move {
-            while let Ok(result) = receiver.recv().await {
-                match result {
-                    Ok(data) => {
-                        // Use the cloned Rc to access the shared data
-                        println!("received items {}", data.len());
-                        collections_vec_clone.borrow_mut().extend(data);
-                        println!("Vec 2 - {:?}", collections_vec_clone_2.borrow());
-                    }
-                    Err(error) => {
-                        println!("{:?}", error)
-                    }
-                }
-            }
-        });
-
-        println!("Vec - {:?}", collections_vec.borrow());
-        let extracted_collections = collections_vec.borrow();
-        self.bind_collections_list(extracted_collections.to_vec())
+        let collections_vec =
+            prep_collections().expect("An error occured while getting collections");
+        self.bind_collections_list(collections_vec);
     }
 
     pub fn bind_collections_list(&self, mut collections_vec: Vec<CollectionData>) {
