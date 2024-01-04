@@ -4,7 +4,7 @@ use adw::prelude::BinExt;
 use glib::Object;
 use gtk::glib::{self, subclass::types::ObjectSubclassIsExt};
 
-use crate::collection::CollectionWindow;
+use crate::collections::CollectionsWindow;
 
 glib::wrapper! {
     pub struct RestWindow(ObjectSubclass<imp::RestWindow>)
@@ -19,7 +19,7 @@ impl RestWindow {
 
     pub fn fix_collections_ui(&self) {
         let collections_box = self.imp().collections_box.clone();
-        let collection_window = CollectionWindow::new();
+        let collection_window = CollectionsWindow::new();
         collections_box.set_child(Some(&collection_window));
     }
 

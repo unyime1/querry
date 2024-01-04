@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <template class="QuerryCollectionWindow" parent="GtkBox">
+  <template class="QuerryCollectionsWindow" parent="GtkBox">
     <property name="hexpand">true</property>
     <property name="vexpand">true</property>
     <property name="visible">True</property>
     <property name="orientation">vertical</property>
 
-    <child>
+    <!-- <child>
       <object class="GtkBox" id="empty-collections-box">
         <property name="hexpand">true</property>
         <property name="vexpand">true</property>
@@ -36,6 +36,16 @@
         </child>
 
       </object>
+    </child> -->
+
+
+    <child>
+      <object class="GtkListBox" id="collections_list">
+        <style>
+          <class name="boxed-list" />
+        </style>
+      </object>
     </child>
+    
   </template>
 </interface>
