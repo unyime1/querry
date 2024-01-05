@@ -25,5 +25,10 @@
 
 .collection_box {
     padding-left: 5px;
-    padding-right: 5px;
+    padding-right: 3px;
+}
+
+
+.collections_list {
+    background: None;
 }

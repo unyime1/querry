@@ -10,6 +10,8 @@ pub struct CollectionsWindow {
     #[template_child]
     pub collections_list: TemplateChild<ListView>,
     pub collections_store: OnceCell<gio::ListStore>,
+    #[template_child]
+    pub empty_collections_box: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject
@@ -38,6 +40,7 @@ impl ObjectImpl for CollectionsWindow {
         obj.setup_collections();
         obj.add_new_collection();
         obj.setup_collection_click();
+        obj.calc_visible_child();
     }
 }
 

@@ -13,6 +13,7 @@ impl CollectionItem {
             .property("name", name)
             .property("id", id)
             .property("icon", icon)
+            .property("openicon", false)
             .build()
     }
 

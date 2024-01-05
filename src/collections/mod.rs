@@ -69,15 +69,15 @@ impl CollectionsWindow {
                 .orientation(gtk::Orientation::Horizontal)
                 .hexpand(true)
                 .visible(true)
-                .homogeneous(true)
                 .css_classes(vec!["collection_box"])
                 .build();
 
             let image_widget = Image::new();
-            let label_widget = Label::new(None);
-            let view_more_widget = Image::builder()
-                .icon_name("view-more-symbolic").build();
 
+            let label_widget = Label::new(None);
+            label_widget.set_hexpand(true);
+
+            let view_more_widget = Image::builder().icon_name("view-more-symbolic").build();
 
             box_widget.append(&image_widget);
             box_widget.append(&label_widget);
@@ -103,20 +103,40 @@ impl CollectionsWindow {
         self.get_collections_list()
             .set_model(Some(&selection_model));
         self.get_collections_list().set_factory(Some(&factory));
+        self.get_collections_list()
+            .set_css_classes(&vec!["collections_list"]);
+        self.get_collections_list().set_show_separators(true);
+        self.get_collections_list().set_single_click_activate(true);
     }
 
     pub fn setup_collection_click(&self) {
         self.get_collections_list()
             .connect_activate(move |list_view, position| {
-                // Get `IntegerObject` from model
                 let model = list_view.model().expect("The model has to exist.");
                 let collection_item = model
                     .item(position)
                     .and_downcast::<CollectionItem>()
                     .expect("The item has to be a `CollectionItem`.");
 
-                collection_item.update_icon("folder-drag-accept-symbolic");
-                println!("{}", collection_item.name());
+                let openicon = collection_item.openicon();
+                if openicon {
+                    collection_item.update_icon("folder-visiting-symbolic");
+                } else {
+                    collection_item.update_icon("folder-drag-accept-symbolic");
+                }
+                collection_item.set_openicon(!openicon);
             });
+    }
+
+    pub fn calc_visible_child(&self) {
+        let empty_collections_box = self.imp().empty_collections_box.clone();
+        let collections_list = self.get_collections_list();
+        let collections_store = self.get_collections_store();
+
+        if collections_store.n_items() > 0 {
+            self.remove(&empty_collections_box);
+        } else {
+            self.remove(&collections_list);
+        }
     }
 }

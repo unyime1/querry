@@ -6,8 +6,8 @@
     <property name="visible">True</property>
     <property name="orientation">vertical</property>
 
-    <!-- <child>
-      <object class="GtkBox" id="empty-collections-box">
+    <child>
+      <object class="GtkBox" id="empty_collections_box">
         <property name="hexpand">true</property>
         <property name="vexpand">true</property>
         <property name="orientation">vertical</property>
@@ -36,8 +36,7 @@
         </child>
 
       </object>
-    </child> -->
-
+    </child>
 
     <child>
       <object class="GtkListView" id="collections_list">
