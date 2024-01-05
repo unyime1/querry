@@ -13,6 +13,8 @@ pub struct CollectionItem {
     pub name: RefCell<String>,
     #[property(get, set)]
     pub id: RefCell<String>,
+    #[property(get, set)]
+    pub icon: RefCell<String>,
 }
 
 // The central trait for subclassing a GObject

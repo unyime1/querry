@@ -1,11 +1,13 @@
 mod collection_item;
 mod imp;
 
+use std::process::id;
+
 use glib::Object;
 use gtk::glib::{Cast, CastNone};
 use gtk::{glib, SignalListItemFactory, ListItem, Widget, SingleSelection, ListView};
 use gtk::glib::subclass::types::ObjectSubclassIsExt;
-use gtk::prelude::{BoxExt, ListItemExt, GObjectPropertyExpressionExt, ListModelExt};
+use gtk::prelude::{BoxExt, ListItemExt, GObjectPropertyExpressionExt, ListModelExt, WidgetExt};
 use gtk::gio::ListStore;
 use gtk::{Box, Image, Label};
 
@@ -59,24 +61,43 @@ impl CollectionsWindow {
 
         let collections: Vec<CollectionItem> = collections_vec
         .into_iter()
-        .map(|c| CollectionItem::new(&c.name, &c.id))
+        .map(|c| CollectionItem::new(&c.name, &c.id, "folder-drag-accept-symbolic"))
         .collect();
 
         self.get_collections_store().extend_from_slice(&collections);
         let factory = SignalListItemFactory::new();
         factory.connect_setup(move |_, list_item| {
             // Create label
-            let label = Label::new(None);
+            let box_widget = Box::builder()
+                .orientation(gtk::Orientation::Horizontal)
+                .hexpand(true)
+                .visible(true)
+                .build();
+
+            let image_widget = Image::new();
+            image_widget.set_widget_name("left_icon");
+
+            let label_widget = Label::new(None);
+            label_widget.set_widget_name("collection_name");
+
+            box_widget.append(&image_widget);
+            box_widget.append(&label_widget);
+
             let list_item = list_item
                 .downcast_ref::<ListItem>()
                 .expect("Needs to be ListItem");
-            list_item.set_child(Some(&label));
+            list_item.set_child(Some(&box_widget));
     
             // Bind `list_item->item->number` to `label->label`
             list_item
                 .property_expression("item")
                 .chain_property::<CollectionItem>("name")
-                .bind(&label, "label", Widget::NONE);
+                .bind(&label_widget, "label", Widget::NONE);
+
+            list_item
+                .property_expression("item")
+                .chain_property::<CollectionItem>("icon")
+                .bind(&image_widget, "icon_name", Widget::NONE);
         });
 
         let selection_model = SingleSelection::new(Some(self.get_collections_store()));
@@ -95,36 +116,4 @@ impl CollectionsWindow {
         });
     }
 
-    pub fn bind_collections_list(&self, mut collections_vec: Vec<CollectionData>) {
-        collections_vec.push(CollectionData {
-            id: "hi".to_string(),
-            name: "Test".to_string(),
-        });
-
-        // Convert `Vec<CollectionData>` to `Vec<CollectionItem>`
-        let collections: Vec<CollectionItem> = collections_vec
-            .into_iter()
-            .map(|c| CollectionItem::new(&c.name, &c.id))
-            .collect();
-
-        let collection_list = self.imp().collections_list.clone();
-        for collection_item in collections {
-            let box_widget = Box::builder()
-                .orientation(gtk::Orientation::Horizontal)
-                .hexpand(true)
-                .visible(true)
-                .build();
-
-            let image_widget = Image::builder()
-                .icon_name("folder-drag-accept-symbolic")
-                .build();
-
-            box_widget.append(&image_widget);
-
-            let label_widget = Label::builder().label(collection_item.name()).build();
-            box_widget.append(&label_widget);
-
-            // collection_list.append(&box_widget);
-        }
-    }
 }
