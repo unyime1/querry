@@ -1,13 +1,15 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, ListBox};
+use gtk::{glib, Box, CompositeTemplate, gio, ListView};
+use once_cell::sync::OnceCell;
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/collection.ui")]
 pub struct CollectionsWindow {
     #[template_child]
-    pub collections_list: TemplateChild<ListBox>,
+    pub collections_list: TemplateChild<ListView>,
+    pub collections_store: OnceCell<gio::ListStore>,
 }
 
 // The central trait for subclassing a GObject
@@ -34,6 +36,7 @@ impl ObjectImpl for CollectionsWindow {
 
         let obj = self.obj();
         obj.setup_collections();
+        obj.add_new_collection();
     }
 }
 

@@ -40,7 +40,7 @@
 
 
     <child>
-      <object class="GtkListBox" id="collections_list">
+      <object class="GtkListView" id="collections_list">
         <style>
           <class name="boxed-list" />
         </style>
