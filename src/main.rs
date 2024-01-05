@@ -12,6 +12,9 @@ use window::Window;
 
 const APP_ID: &str = "org.etim.querry";
 fn main() -> glib::ExitCode {
+    let subscriber = tracing_subscriber::FmtSubscriber::new();
+    tracing::subscriber::set_global_default(subscriber).expect("Can't subscribe");
+
     gio::resources_register_include!("querry.gresource").expect("Failed to register resources.");
 
     // Create a new application

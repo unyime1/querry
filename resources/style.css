@@ -21,3 +21,14 @@
     padding-left: 10px;
     padding-right: 10px;
 }
+
+
+.collection_box {
+    padding-left: 5px;
+    padding-right: 3px;
+}
+
+
+.collections_list {
+    background: None;
+}

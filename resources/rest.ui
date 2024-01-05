@@ -4,7 +4,6 @@
   
     <child>
       <object class="GtkPaned" id="paned_primary">
-        <property name="wide-handle">True</property>
         <property name="position">400</property>
         <property name="orientation">horizontal</property>
         <property name="start-child">collections_box</property>
@@ -27,7 +26,6 @@
 
             <child>
               <object class="GtkPaned" id="paned_secondary">
-                <property name="wide-handle">True</property>
                 <property name="orientation">vertical</property>
                 <property name="position">400</property>
 

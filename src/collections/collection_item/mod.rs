@@ -8,10 +8,16 @@ glib::wrapper! {
 }
 
 impl CollectionItem {
-    pub fn new(name: &str, id: &str) -> Self {
+    pub fn new(name: &str, id: &str, icon: &str) -> Self {
         Object::builder()
             .property("name", name)
             .property("id", id)
+            .property("icon", icon)
+            .property("openicon", false)
             .build()
+    }
+
+    pub fn update_icon(&self, new_icon: &str) {
+        self.set_icon(new_icon);
     }
 }
