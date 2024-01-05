@@ -1,15 +1,14 @@
 mod collection_item;
 mod imp;
 
-use std::process::id;
-
 use glib::Object;
-use gtk::glib::{Cast, CastNone};
-use gtk::{glib, SignalListItemFactory, ListItem, Widget, SingleSelection, ListView};
-use gtk::glib::subclass::types::ObjectSubclassIsExt;
-use gtk::prelude::{BoxExt, ListItemExt, GObjectPropertyExpressionExt, ListModelExt, WidgetExt};
-use gtk::gio::ListStore;
-use gtk::{Box, Image, Label};
+use gtk::{
+    gio::ListStore,
+    glib,
+    glib::{subclass::types::ObjectSubclassIsExt, Cast, CastNone},
+    prelude::{BoxExt, GObjectPropertyExpressionExt, ListItemExt, ListModelExt, WidgetExt},
+    Box, Image, Label, ListItem, ListView, SignalListItemFactory, SingleSelection, Widget,
+};
 
 use crate::utils::collections::{get_all_collections, CollectionData};
 use collection_item::CollectionItem;
@@ -49,8 +48,7 @@ impl CollectionsWindow {
         self.imp().collections_list.clone()
     }
 
-    pub fn add_new_collection(&self) {
-    }
+    pub fn add_new_collection(&self) {}
 
     pub fn bind_collections_model(&self, collections_vec: Vec<CollectionData>) {
         let collection_model = ListStore::new::<CollectionItem>();
@@ -60,35 +58,36 @@ impl CollectionsWindow {
             .expect("Could not set collections");
 
         let collections: Vec<CollectionItem> = collections_vec
-        .into_iter()
-        .map(|c| CollectionItem::new(&c.name, &c.id, "folder-drag-accept-symbolic"))
-        .collect();
-
+            .into_iter()
+            .map(|c| CollectionItem::new(&c.name, &c.id, "folder-visiting-symbolic"))
+            .collect();
         self.get_collections_store().extend_from_slice(&collections);
+
         let factory = SignalListItemFactory::new();
         factory.connect_setup(move |_, list_item| {
-            // Create label
             let box_widget = Box::builder()
                 .orientation(gtk::Orientation::Horizontal)
                 .hexpand(true)
                 .visible(true)
+                .homogeneous(true)
+                .css_classes(vec!["collection_box"])
                 .build();
 
             let image_widget = Image::new();
-            image_widget.set_widget_name("left_icon");
-
             let label_widget = Label::new(None);
-            label_widget.set_widget_name("collection_name");
+            let view_more_widget = Image::builder()
+                .icon_name("view-more-symbolic").build();
+
 
             box_widget.append(&image_widget);
             box_widget.append(&label_widget);
+            box_widget.append(&view_more_widget);
 
             let list_item = list_item
                 .downcast_ref::<ListItem>()
                 .expect("Needs to be ListItem");
             list_item.set_child(Some(&box_widget));
-    
-            // Bind `list_item->item->number` to `label->label`
+
             list_item
                 .property_expression("item")
                 .chain_property::<CollectionItem>("name")
@@ -101,19 +100,23 @@ impl CollectionsWindow {
         });
 
         let selection_model = SingleSelection::new(Some(self.get_collections_store()));
-        self.get_collections_list().set_model(Some(&selection_model));
+        self.get_collections_list()
+            .set_model(Some(&selection_model));
         self.get_collections_list().set_factory(Some(&factory));
-
-        self.get_collections_list().connect_activate(move |list_view, position| {
-            // Get `IntegerObject` from model
-            let model = list_view.model().expect("The model has to exist.");
-            let collection_item = model
-                .item(position)
-                .and_downcast::<CollectionItem>()
-                .expect("The item has to be an `IntegerObject`.");
-    
-            println!("{}", collection_item.name());
-        });
     }
 
+    pub fn setup_collection_click(&self) {
+        self.get_collections_list()
+            .connect_activate(move |list_view, position| {
+                // Get `IntegerObject` from model
+                let model = list_view.model().expect("The model has to exist.");
+                let collection_item = model
+                    .item(position)
+                    .and_downcast::<CollectionItem>()
+                    .expect("The item has to be a `CollectionItem`.");
+
+                collection_item.update_icon("folder-drag-accept-symbolic");
+                println!("{}", collection_item.name());
+            });
+    }
 }

@@ -1,6 +1,6 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, gio, ListView};
+use gtk::{gio, glib, Box, CompositeTemplate, ListView};
 use once_cell::sync::OnceCell;
 
 // Initialize composite template for Window.
@@ -37,6 +37,7 @@ impl ObjectImpl for CollectionsWindow {
         let obj = self.obj();
         obj.setup_collections();
         obj.add_new_collection();
+        obj.setup_collection_click();
     }
 }
 
