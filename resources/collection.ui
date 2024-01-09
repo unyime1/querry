@@ -27,6 +27,8 @@
                 <property name="label" translatable="yes">_New Collection</property>
                 <property name="use-underline">True</property>
                 <property name="halign">center</property>
+                <property name="tooltip-text" translatable="yes">New Collection</property>
+                <property name="action-name">win.new-collection</property>
                 <style>
                   <class name="suggested-action" />
                 </style>
@@ -35,6 +37,45 @@
           </object>
         </child>
 
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox" id="collection_actions_box">
+        <property name="hexpand">true</property>
+        <style>
+          <class name="collection_actions_box" />
+        </style>
+
+        <child>
+          <object class="GtkBox">
+            <property name="hexpand">true</property>
+          </object>
+
+        </child>
+  
+        <child>
+          <object class="GtkToggleButton">
+            <style>
+              <class name="collection_actions_box-icon" />
+            </style>
+            <property name="icon-name">edit-find-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Search Collection</property>
+            <property name="halign">start</property>
+          </object>
+        </child>
+      
+        <child type="end">
+          <object class="GtkToggleButton">
+            <style>
+              <class name="collection_actions_box-icon" />
+            </style>
+            <property name="icon-name">list-add-symbolic</property>
+            <property name="tooltip-text" translatable="yes">New Collection</property>
+            <property name="action-name">win.new-collection</property>
+            <property name="halign">end</property>
+          </object>
+        </child>
       </object>
     </child>
 
