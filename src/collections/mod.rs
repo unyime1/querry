@@ -1,7 +1,7 @@
 mod collection_item;
 mod imp;
 
-use adw::{prelude::*, Application, MessageDialog, ResponseAppearance};
+use adw::{prelude::*, MessageDialog, ResponseAppearance};
 use glib::Object;
 use gtk::{
     gio::ListStore,
@@ -10,9 +10,8 @@ use gtk::{
     Box, Entry, Image, Label, ListItem, ListView, SignalListItemFactory, SingleSelection, Widget,
 };
 
-use crate::utils::collections::{get_all_collections, CollectionData};
+use crate::utils::collections::{create_collection, get_all_collections, CollectionData};
 use crate::window::Window;
-use crate::APP_ID;
 use collection_item::CollectionItem;
 
 glib::wrapper! {
@@ -132,11 +131,16 @@ impl CollectionsWindow {
         let empty_collections_box = self.imp().empty_collections_box.clone();
         let collections_list = self.get_collections_list();
         let collections_store = self.get_collections_store();
+        let collection_actions_box = self.imp().collection_actions_box.clone();
 
         if collections_store.n_items() > 0 {
-            self.remove(&empty_collections_box);
+            empty_collections_box.set_visible(false);
+            collections_list.set_visible(true);
+            collection_actions_box.set_visible(true);
         } else {
-            self.remove(&collections_list);
+            collections_list.set_visible(false);
+            collection_actions_box.set_visible(false);
+            empty_collections_box.set_visible(true);
         }
     }
 
@@ -187,5 +191,23 @@ impl CollectionsWindow {
         if response == cancel_response {
             return;
         }
+
+        let name = entry.text().to_string();
+        let collection_data = match create_collection(name) {
+            Ok(data) => data,
+            Err(error) => {
+                tracing::error!("Could not create collection");
+                println!("{}", error);
+                return;
+            }
+        };
+
+        let collection_item = CollectionItem::new(
+            &collection_data.name,
+            &collection_data.id,
+            "folder-visiting-symbolic",
+        );
+        self.get_collections_store().append(&collection_item);
+        self.calc_visible_child();
     }
 }

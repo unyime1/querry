@@ -1,8 +1,9 @@
 extern crate rusqlite;
 
-use crate::utils::sys_dir::get_db_path;
-use rusqlite::{Connection, Result};
 use std::error::Error;
+
+use crate::utils::sys_dir::get_db_path;
+use rusqlite::Connection;
 
 pub fn get_database() -> Result<Connection, Box<dyn Error>> {
     let db_path = get_db_path()?;

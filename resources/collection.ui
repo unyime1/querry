@@ -7,41 +7,8 @@
     <property name="orientation">vertical</property>
 
     <child>
-      <object class="GtkBox" id="empty_collections_box">
-        <property name="hexpand">true</property>
-        <property name="vexpand">true</property>
-        <property name="orientation">vertical</property>
-
-        <style>
-          <class name="empty-collections-box" />
-        </style>
-
-        <child>
-          <object class="AdwStatusPage">
-            <property name="width-request">350</property>
-            <property name="icon-name">checkbox-checked-symbolic</property>
-            <property name="title" translatable="yes">No collections</property>
-            <property name="description" translatable="yes">Create a collection for your requests</property>
-            <property name="child">
-              <object class="GtkButton">
-                <property name="label" translatable="yes">_New Collection</property>
-                <property name="use-underline">True</property>
-                <property name="halign">center</property>
-                <property name="tooltip-text" translatable="yes">New Collection</property>
-                <property name="action-name">win.new-collection</property>
-                <style>
-                  <class name="suggested-action" />
-                </style>
-              </object>
-            </property>
-          </object>
-        </child>
-
-      </object>
-    </child>
-
-    <child>
       <object class="GtkBox" id="collection_actions_box">
+        <property name="visible">False</property>
         <property name="hexpand">true</property>
         <style>
           <class name="collection_actions_box" />
@@ -80,7 +47,43 @@
     </child>
 
     <child>
+      <object class="GtkBox" id="empty_collections_box">
+        <property name="visible">False</property>
+        <property name="hexpand">true</property>
+        <property name="vexpand">true</property>
+        <property name="orientation">vertical</property>
+
+        <style>
+          <class name="empty-collections-box" />
+        </style>
+
+        <child>
+          <object class="AdwStatusPage">
+            <property name="width-request">350</property>
+            <property name="icon-name">checkbox-checked-symbolic</property>
+            <property name="title" translatable="yes">No collections</property>
+            <property name="description" translatable="yes">Create a collection for your requests</property>
+            <property name="child">
+              <object class="GtkButton">
+                <property name="label" translatable="yes">_New Collection</property>
+                <property name="use-underline">True</property>
+                <property name="halign">center</property>
+                <property name="tooltip-text" translatable="yes">New Collection</property>
+                <property name="action-name">win.new-collection</property>
+                <style>
+                  <class name="suggested-action" />
+                </style>
+              </object>
+            </property>
+          </object>
+        </child>
+
+      </object>
+    </child>
+
+    <child>
       <object class="GtkListView" id="collections_list">
+        <property name="visible">False</property>
         <style>
           <class name="boxed-list" />
         </style>

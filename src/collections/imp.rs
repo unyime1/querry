@@ -12,6 +12,8 @@ pub struct CollectionsWindow {
     pub collections_store: OnceCell<gio::ListStore>,
     #[template_child]
     pub empty_collections_box: TemplateChild<Box>,
+    #[template_child]
+    pub collection_actions_box: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject
