@@ -11,6 +11,7 @@ use database::{get_database, migrate_database};
 use window::Window;
 
 const APP_ID: &str = "org.etim.querry";
+
 fn main() -> glib::ExitCode {
     let subscriber = tracing_subscriber::FmtSubscriber::new();
     tracing::subscriber::set_global_default(subscriber).expect("Can't subscribe");

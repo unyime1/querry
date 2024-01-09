@@ -32,3 +32,13 @@
 .collections_list {
     background: None;
 }
+
+.collection_actions_box {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-bottom: 10px;
+}
+
+.collection_actions_box-icon {
+    margin-left: 5px;
+}

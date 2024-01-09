@@ -12,6 +12,8 @@ pub struct CollectionsWindow {
     pub collections_store: OnceCell<gio::ListStore>,
     #[template_child]
     pub empty_collections_box: TemplateChild<Box>,
+    #[template_child]
+    pub collection_actions_box: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject
@@ -23,6 +25,11 @@ impl ObjectSubclass for CollectionsWindow {
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
+
+        // Create async action to create new collection and add to action group "win"
+        klass.install_action_async("win.new-collection", None, |window, _, _| async move {
+            window.new_collection().await;
+        });
     }
 
     fn instance_init(obj: &InitializingObject<Self>) {
@@ -38,7 +45,6 @@ impl ObjectImpl for CollectionsWindow {
 
         let obj = self.obj();
         obj.setup_collections();
-        obj.add_new_collection();
         obj.setup_collection_click();
         obj.calc_visible_child();
     }

@@ -1,16 +1,17 @@
 mod collection_item;
 mod imp;
 
+use adw::{prelude::*, MessageDialog, ResponseAppearance};
 use glib::Object;
 use gtk::{
     gio::ListStore,
     glib,
-    glib::{subclass::types::ObjectSubclassIsExt, Cast, CastNone},
-    prelude::{BoxExt, GObjectPropertyExpressionExt, ListItemExt, ListModelExt, WidgetExt},
-    Box, Image, Label, ListItem, ListView, SignalListItemFactory, SingleSelection, Widget,
+    glib::{clone, subclass::types::ObjectSubclassIsExt, Cast, CastNone},
+    Box, Entry, Image, Label, ListItem, ListView, SignalListItemFactory, SingleSelection, Widget,
 };
 
-use crate::utils::collections::{get_all_collections, CollectionData};
+use crate::utils::collections::{create_collection, get_all_collections, CollectionData};
+use crate::window::Window;
 use collection_item::CollectionItem;
 
 glib::wrapper! {
@@ -47,8 +48,6 @@ impl CollectionsWindow {
     pub fn get_collections_list(&self) -> ListView {
         self.imp().collections_list.clone()
     }
-
-    pub fn add_new_collection(&self) {}
 
     pub fn bind_collections_model(&self, collections_vec: Vec<CollectionData>) {
         let collection_model = ListStore::new::<CollectionItem>();
@@ -132,11 +131,83 @@ impl CollectionsWindow {
         let empty_collections_box = self.imp().empty_collections_box.clone();
         let collections_list = self.get_collections_list();
         let collections_store = self.get_collections_store();
+        let collection_actions_box = self.imp().collection_actions_box.clone();
 
         if collections_store.n_items() > 0 {
-            self.remove(&empty_collections_box);
+            empty_collections_box.set_visible(false);
+            collections_list.set_visible(true);
+            collection_actions_box.set_visible(true);
         } else {
-            self.remove(&collections_list);
+            collections_list.set_visible(false);
+            collection_actions_box.set_visible(false);
+            empty_collections_box.set_visible(true);
         }
+    }
+
+    async fn new_collection(&self) {
+        let window: Window = self.root().unwrap().downcast::<Window>().unwrap();
+
+        // Create entry
+        let entry = Entry::builder()
+            .placeholder_text("Name")
+            .activates_default(true)
+            .build();
+
+        let cancel_response = "cancel";
+        let create_response = "create";
+
+        // Create new dialog
+        let dialog = MessageDialog::builder()
+            .heading("New Collection")
+            .modal(true)
+            .transient_for(&window)
+            .destroy_with_parent(true)
+            .close_response(cancel_response)
+            .default_response(create_response)
+            .extra_child(&entry)
+            .build();
+        dialog.add_responses(&[(cancel_response, "Cancel"), (create_response, "Create")]);
+        // Make the dialog button insensitive initially
+        dialog.set_response_enabled(create_response, false);
+        dialog.set_response_appearance(create_response, ResponseAppearance::Suggested);
+
+        // Set entry's css class to "error", when there is no text in it
+        entry.connect_changed(clone!(@weak dialog => move |entry| {
+            let text = entry.text();
+            let empty = text.is_empty();
+
+            dialog.set_response_enabled(create_response, !empty);
+
+            if empty {
+                entry.add_css_class("error");
+            } else {
+                entry.remove_css_class("error");
+            }
+        }));
+
+        let response = dialog.choose_future().await;
+
+        // Return if the user chose `cancel_response`
+        if response == cancel_response {
+            return;
+        }
+
+        let name = entry.text().to_string();
+        let collection_data = match create_collection(name) {
+            Ok(data) => data,
+            Err(error) => {
+                tracing::error!("Could not create collection");
+                println!("{}", error);
+                return;
+            }
+        };
+
+        let collection_item = CollectionItem::new(
+            &collection_data.name,
+            &collection_data.id,
+            "folder-visiting-symbolic",
+        );
+        self.get_collections_store().append(&collection_item);
+        self.calc_visible_child();
     }
 }
