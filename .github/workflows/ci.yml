@@ -16,10 +16,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install packages
+      run: |
+        sudo apt update
+        sudo apt upgrade -y
+        sudo apt install libgtk-4-dev build-essential -y
+        sudo apt install libadwaita-1-dev -y
+    
     - name: Build
       run: |
-        sudo apt install libgtk-4-dev build-essential
-        sudo apt install libadwaita-1-dev
         cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
