@@ -81,6 +81,8 @@ impl CollectionsWindow {
             box_widget.append(&image_widget);
             box_widget.append(&label_widget);
             box_widget.append(&view_more_widget);
+            box_widget.set_margin_bottom(7);
+            box_widget.set_margin_top(7);
 
             let list_item = list_item
                 .downcast_ref::<ListItem>()
@@ -104,7 +106,6 @@ impl CollectionsWindow {
         self.get_collections_list().set_factory(Some(&factory));
         self.get_collections_list()
             .set_css_classes(&vec!["collections_list"]);
-        self.get_collections_list().set_show_separators(true);
         self.get_collections_list().set_single_click_activate(true);
     }
 
@@ -129,17 +130,14 @@ impl CollectionsWindow {
 
     pub fn calc_visible_child(&self) {
         let empty_collections_box = self.imp().empty_collections_box.clone();
-        let collections_list = self.get_collections_list();
         let collections_store = self.get_collections_store();
-        let collection_actions_box = self.imp().collection_actions_box.clone();
+        let filled_collections_box = self.imp().filled_collections_box.clone();
 
         if collections_store.n_items() > 0 {
             empty_collections_box.set_visible(false);
-            collections_list.set_visible(true);
-            collection_actions_box.set_visible(true);
+            filled_collections_box.set_visible(true);
         } else {
-            collections_list.set_visible(false);
-            collection_actions_box.set_visible(false);
+            filled_collections_box.set_visible(false);
             empty_collections_box.set_visible(true);
         }
     }

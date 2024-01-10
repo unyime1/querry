@@ -7,46 +7,6 @@
     <property name="orientation">vertical</property>
 
     <child>
-      <object class="GtkBox" id="collection_actions_box">
-        <property name="visible">False</property>
-        <property name="hexpand">true</property>
-        <style>
-          <class name="collection_actions_box" />
-        </style>
-
-        <child>
-          <object class="GtkBox">
-            <property name="hexpand">true</property>
-          </object>
-
-        </child>
-  
-        <child>
-          <object class="GtkToggleButton">
-            <style>
-              <class name="collection_actions_box-icon" />
-            </style>
-            <property name="icon-name">edit-find-symbolic</property>
-            <property name="tooltip-text" translatable="yes">Search Collection</property>
-            <property name="halign">start</property>
-          </object>
-        </child>
-      
-        <child type="end">
-          <object class="GtkToggleButton">
-            <style>
-              <class name="collection_actions_box-icon" />
-            </style>
-            <property name="icon-name">list-add-symbolic</property>
-            <property name="tooltip-text" translatable="yes">New Collection</property>
-            <property name="action-name">win.new-collection</property>
-            <property name="halign">end</property>
-          </object>
-        </child>
-      </object>
-    </child>
-
-    <child>
       <object class="GtkBox" id="empty_collections_box">
         <property name="visible">False</property>
         <property name="hexpand">true</property>
@@ -82,11 +42,60 @@
     </child>
 
     <child>
-      <object class="GtkListView" id="collections_list">
+      <object class="GtkBox" id="filled_collections_box">
         <property name="visible">False</property>
-        <style>
-          <class name="boxed-list" />
-        </style>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+            <property name="hexpand">true</property>
+            <style>
+              <class name="collection_actions_box" />
+            </style>
+    
+            <child>
+              <object class="GtkBox">
+                <property name="hexpand">true</property>
+              </object>
+    
+            </child>
+      
+            <child>
+              <object class="GtkToggleButton">
+                <style>
+                  <class name="collection_actions_box-icon" />
+                </style>
+                <property name="icon-name">edit-find-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Search Collection</property>
+                <property name="halign">start</property>
+              </object>
+            </child>
+          
+            <child type="end">
+              <object class="GtkToggleButton">
+                <style>
+                  <class name="collection_actions_box-icon" />
+                </style>
+                <property name="icon-name">list-add-symbolic</property>
+                <property name="tooltip-text" translatable="yes">New Collection</property>
+                <property name="action-name">win.new-collection</property>
+                <property name="halign">end</property>
+              </object>
+            </child>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="vexpand">true</property>
+            <property name="child">
+              <object class="GtkListView" id="collections_list">
+                <style>
+                  <class name="boxed-list" />
+                </style>
+              </object>
+            </property>
+          </object>
+        </child>
       </object>
     </child>
     
