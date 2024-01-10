@@ -17,6 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cargo build --verbose
+      run: |
+        sudo apt-get install libgtk-4-dev build-essential
+        sudo apt-get install libadwaita-1-dev
+        cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
