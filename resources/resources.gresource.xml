@@ -4,6 +4,7 @@
     <file compressed="true" preprocess="xml-stripblanks">window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">rest.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">collection.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">collection_row.ui</file>
     <file compressed="true">style.css</file>
     <file compressed="true">icons/rest.png</file>
     <file compressed="true">icons/socket.png</file>

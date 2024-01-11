@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="QuerryCollectionRow" parent="GtkBox">
+    <property name="orientation">horizontal</property>
+    <property name="hexpand">True</property>
+    <property name="visible">True</property>
+    <property name="margin-bottom">7</property>
+    <property name="margin-top">7</property>
+
+    <style>
+      <class name="collection_box" />
+    </style>
+
+    <child>
+      <object class="GtkImage" id="collection_icon">
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkLabel" id="collection_label">
+        <property name="hexpand">True</property>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkImage" id="collection_menu">
+        <property name="icon-name">view-more-symbolic</property>
+      </object>
+    </child>
+
+  </template>
+</interface>

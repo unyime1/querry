@@ -1,4 +1,5 @@
 mod collection_item;
+mod collection_row;
 mod imp;
 
 use adw::{prelude::*, MessageDialog, ResponseAppearance};
@@ -7,12 +8,13 @@ use gtk::{
     gio::ListStore,
     glib,
     glib::{clone, subclass::types::ObjectSubclassIsExt, Cast, CastNone},
-    Box, Entry, Image, Label, ListItem, ListView, SignalListItemFactory, SingleSelection, Widget,
+    Entry, ListItem, ListView, SignalListItemFactory, SingleSelection,
 };
 
 use crate::utils::collections::{create_collection, get_all_collections, CollectionData};
 use crate::window::Window;
 use collection_item::CollectionItem;
+use collection_row::CollectionRow;
 
 glib::wrapper! {
     pub struct CollectionsWindow(ObjectSubclass<imp::CollectionsWindow>)
@@ -63,41 +65,49 @@ impl CollectionsWindow {
         self.get_collections_store().extend_from_slice(&collections);
 
         let factory = SignalListItemFactory::new();
+
+        // Create an empty `CollectionRow` during setup
         factory.connect_setup(move |_, list_item| {
-            let box_widget = Box::builder()
-                .orientation(gtk::Orientation::Horizontal)
-                .hexpand(true)
-                .visible(true)
-                .css_classes(vec!["collection_box"])
-                .build();
-
-            let image_widget = Image::new();
-
-            let label_widget = Label::new(None);
-            label_widget.set_hexpand(true);
-
-            let view_more_widget = Image::builder().icon_name("view-more-symbolic").build();
-
-            box_widget.append(&image_widget);
-            box_widget.append(&label_widget);
-            box_widget.append(&view_more_widget);
-            box_widget.set_margin_bottom(7);
-            box_widget.set_margin_top(7);
-
-            let list_item = list_item
+            // Create `CollectionRow`
+            let collection_row = CollectionRow::new();
+            list_item
                 .downcast_ref::<ListItem>()
-                .expect("Needs to be ListItem");
-            list_item.set_child(Some(&box_widget));
+                .expect("Needs to be ListItem")
+                .set_child(Some(&collection_row));
+        });
 
-            list_item
-                .property_expression("item")
-                .chain_property::<CollectionItem>("name")
-                .bind(&label_widget, "label", Widget::NONE);
+        // Tell factory how to bind `CollectionRow` to a `CollectionItem`
+        factory.connect_bind(move |_, list_item| {
+            // Get `CollectionItem` from `ListItem`
+            let collection_item = list_item
+                .downcast_ref::<ListItem>()
+                .expect("Needs to be ListItem")
+                .item()
+                .and_downcast::<CollectionItem>()
+                .expect("The item has to be an `CollectionItem`.");
 
-            list_item
-                .property_expression("item")
-                .chain_property::<CollectionItem>("icon")
-                .bind(&image_widget, "icon_name", Widget::NONE);
+            // Get `CollectionRow` from `ListItem`
+            let collection_row = list_item
+                .downcast_ref::<ListItem>()
+                .expect("Needs to be ListItem")
+                .child()
+                .and_downcast::<CollectionRow>()
+                .expect("The child has to be a `CollectionRow`.");
+
+            collection_row.bind(&collection_item);
+        });
+
+        // Tell factory how to unbind `CollectionRow` from `CollectionItem`
+        factory.connect_unbind(move |_, list_item| {
+            // Get `CollectionRow` from `ListItem`
+            let collection_row = list_item
+                .downcast_ref::<ListItem>()
+                .expect("Needs to be ListItem")
+                .child()
+                .and_downcast::<CollectionRow>()
+                .expect("The child has to be a `CollectionRow`.");
+
+            collection_row.unbind();
         });
 
         let selection_model = SingleSelection::new(Some(self.get_collections_store()));
