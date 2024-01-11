@@ -1,6 +1,6 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{gio, glib, Box, CompositeTemplate, ListView};
+use gtk::{gio, glib, Box, CompositeTemplate, ListView, ScrolledWindow};
 use once_cell::sync::OnceCell;
 
 // Initialize composite template for Window.
@@ -13,7 +13,7 @@ pub struct CollectionsWindow {
     #[template_child]
     pub empty_collections_box: TemplateChild<Box>,
     #[template_child]
-    pub collection_actions_box: TemplateChild<Box>,
+    pub filled_collections_box: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject

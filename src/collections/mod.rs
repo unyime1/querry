@@ -1,4 +1,5 @@
 mod collection_item;
+mod collection_row;
 mod imp;
 
 use adw::{prelude::*, MessageDialog, ResponseAppearance};
@@ -7,12 +8,13 @@ use gtk::{
     gio::ListStore,
     glib,
     glib::{clone, subclass::types::ObjectSubclassIsExt, Cast, CastNone},
-    Box, Entry, Image, Label, ListItem, ListView, SignalListItemFactory, SingleSelection, Widget,
+    Entry, ListItem, ListView, SignalListItemFactory, SingleSelection,
 };
 
 use crate::utils::collections::{create_collection, get_all_collections, CollectionData};
 use crate::window::Window;
 use collection_item::CollectionItem;
+use collection_row::CollectionRow;
 
 glib::wrapper! {
     pub struct CollectionsWindow(ObjectSubclass<imp::CollectionsWindow>)
@@ -63,39 +65,49 @@ impl CollectionsWindow {
         self.get_collections_store().extend_from_slice(&collections);
 
         let factory = SignalListItemFactory::new();
+
+        // Create an empty `CollectionRow` during setup
         factory.connect_setup(move |_, list_item| {
-            let box_widget = Box::builder()
-                .orientation(gtk::Orientation::Horizontal)
-                .hexpand(true)
-                .visible(true)
-                .css_classes(vec!["collection_box"])
-                .build();
-
-            let image_widget = Image::new();
-
-            let label_widget = Label::new(None);
-            label_widget.set_hexpand(true);
-
-            let view_more_widget = Image::builder().icon_name("view-more-symbolic").build();
-
-            box_widget.append(&image_widget);
-            box_widget.append(&label_widget);
-            box_widget.append(&view_more_widget);
-
-            let list_item = list_item
+            // Create `CollectionRow`
+            let collection_row = CollectionRow::new();
+            list_item
                 .downcast_ref::<ListItem>()
-                .expect("Needs to be ListItem");
-            list_item.set_child(Some(&box_widget));
+                .expect("Needs to be ListItem")
+                .set_child(Some(&collection_row));
+        });
 
-            list_item
-                .property_expression("item")
-                .chain_property::<CollectionItem>("name")
-                .bind(&label_widget, "label", Widget::NONE);
+        // Tell factory how to bind `CollectionRow` to a `CollectionItem`
+        factory.connect_bind(move |_, list_item| {
+            // Get `CollectionItem` from `ListItem`
+            let collection_item = list_item
+                .downcast_ref::<ListItem>()
+                .expect("Needs to be ListItem")
+                .item()
+                .and_downcast::<CollectionItem>()
+                .expect("The item has to be an `CollectionItem`.");
 
-            list_item
-                .property_expression("item")
-                .chain_property::<CollectionItem>("icon")
-                .bind(&image_widget, "icon_name", Widget::NONE);
+            // Get `CollectionRow` from `ListItem`
+            let collection_row = list_item
+                .downcast_ref::<ListItem>()
+                .expect("Needs to be ListItem")
+                .child()
+                .and_downcast::<CollectionRow>()
+                .expect("The child has to be a `CollectionRow`.");
+
+            collection_row.bind(&collection_item);
+        });
+
+        // Tell factory how to unbind `CollectionRow` from `CollectionItem`
+        factory.connect_unbind(move |_, list_item| {
+            // Get `CollectionRow` from `ListItem`
+            let collection_row = list_item
+                .downcast_ref::<ListItem>()
+                .expect("Needs to be ListItem")
+                .child()
+                .and_downcast::<CollectionRow>()
+                .expect("The child has to be a `CollectionRow`.");
+
+            collection_row.unbind();
         });
 
         let selection_model = SingleSelection::new(Some(self.get_collections_store()));
@@ -104,7 +116,6 @@ impl CollectionsWindow {
         self.get_collections_list().set_factory(Some(&factory));
         self.get_collections_list()
             .set_css_classes(&vec!["collections_list"]);
-        self.get_collections_list().set_show_separators(true);
         self.get_collections_list().set_single_click_activate(true);
     }
 
@@ -129,17 +140,14 @@ impl CollectionsWindow {
 
     pub fn calc_visible_child(&self) {
         let empty_collections_box = self.imp().empty_collections_box.clone();
-        let collections_list = self.get_collections_list();
         let collections_store = self.get_collections_store();
-        let collection_actions_box = self.imp().collection_actions_box.clone();
+        let filled_collections_box = self.imp().filled_collections_box.clone();
 
         if collections_store.n_items() > 0 {
             empty_collections_box.set_visible(false);
-            collections_list.set_visible(true);
-            collection_actions_box.set_visible(true);
+            filled_collections_box.set_visible(true);
         } else {
-            collections_list.set_visible(false);
-            collection_actions_box.set_visible(false);
+            filled_collections_box.set_visible(false);
             empty_collections_box.set_visible(true);
         }
     }
