@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{glib, CompositeTemplate, Image, Label};
+use gtk::{glib, CompositeTemplate, Image, Label, MenuButton};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
@@ -13,7 +13,7 @@ pub struct CollectionRow {
     #[template_child]
     pub collection_label: TemplateChild<Label>,
     #[template_child]
-    pub collection_menu: TemplateChild<Image>,
+    pub collection_menu: TemplateChild<MenuButton>,
     // Vector holding the bindings to properties of `TaskObject`
     pub bindings: RefCell<Vec<Binding>>,
 }
