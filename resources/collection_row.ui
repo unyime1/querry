@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <menu id="view-more-menu">
+  <menu id="main-menu">
     <item>
       <attribute name="label" translatable="yes">_Duplicate</attribute>
-      <attribute name="action">win.remove-done-tasks</attribute>
     </item>
     <item>
       <attribute name="label" translatable="yes">_Rename</attribute>
-      <attribute name="action">win.show-help-overlay</attribute>
     </item>
 
     <item>
-      <attribute name="label" translatable="yes">Delete</attribute>
-      <attribute name="action">win.show-help-overlay</attribute>
+      <attribute name="label" translatable="yes">_Delete</attribute>
     </item>
 
     <item>
-      <attribute name="label" translatable="yes">Settings</attribute>
-      <attribute name="action">win.show-help-overlay</attribute>
+      <attribute name="label" translatable="yes">_Settings</attribute>
     </item>
   </menu>
 
@@ -46,7 +42,7 @@
     <child>
       <object class="GtkMenuButton" id="collection_menu">
         <property name="icon-name">view-more-symbolic</property>
-        <property name="menu-model">view-more-menu</property>
+        <property name="menu-model">main-menu</property>
         <property name="tooltip-text" translatable="yes">More actions</property>
       </object>
     </child>
