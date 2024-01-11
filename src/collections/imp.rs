@@ -1,6 +1,6 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{gio, glib, Box, CompositeTemplate, ListView, ScrolledWindow};
+use gtk::{gio, glib, Box, CompositeTemplate, ListView};
 use once_cell::sync::OnceCell;
 
 // Initialize composite template for Window.
