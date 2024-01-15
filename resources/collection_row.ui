@@ -10,6 +10,7 @@
 
     <item>
       <attribute name="label" translatable="yes">_Delete</attribute>
+      <attribute name="action">col.remove-collection</attribute>
     </item>
 
     <item>
