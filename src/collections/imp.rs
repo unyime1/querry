@@ -47,6 +47,7 @@ impl ObjectImpl for CollectionsWindow {
         obj.setup_collections();
         obj.setup_collection_click();
         obj.calc_visible_child();
+        obj.listen_collection_delete()
     }
 }
 

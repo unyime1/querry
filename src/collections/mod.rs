@@ -11,7 +11,10 @@ use gtk::{
     Entry, ListItem, ListView, SignalListItemFactory, SingleSelection,
 };
 
-use crate::utils::collections::{create_collection, get_all_collections, CollectionData};
+use crate::utils::{
+    collections::{create_collection, get_all_collections, CollectionData},
+    messaging::{AppEvent, EVENT_CHANNEL},
+};
 use crate::window::Window;
 use collection_item::CollectionItem;
 use collection_row::CollectionRow;
@@ -217,5 +220,19 @@ impl CollectionsWindow {
         );
         self.get_collections_store().append(&collection_item);
         self.calc_visible_child();
+    }
+
+    pub fn listen_collection_delete(&self) {
+        // The main loop executes the asynchronous block
+        glib::spawn_future_local(async move {
+            while let Ok(response) = EVENT_CHANNEL.1.recv().await {
+                match response {
+                    AppEvent::CollectionDeleted(data) => {
+                        println!("Collection deleted: {}", data)
+                    }
+                    AppEvent::RequestDeleted(_) => todo!(),
+                }
+            }
+        });
     }
 }

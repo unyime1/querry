@@ -4,11 +4,9 @@ use adw::subclass::prelude::*;
 use glib::{Binding, Sender};
 use gtk::{glib, CompositeTemplate, Image, Label, MenuButton};
 
-
 pub enum CollectionRowMessage {
     Delete(String),
 }
-
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
@@ -46,10 +44,13 @@ impl ObjectSubclass for CollectionRow {
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
 
-        klass.install_action("col.remove-collection", None, |collection_row, _, _| {
-            collection_row.delete_collection();
-        });
-
+        klass.install_action_async(
+            "col.remove-collection",
+            None,
+            |collection_row, _, _| async move {
+                collection_row.delete_collection().await;
+            },
+        );
     }
 
     fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {

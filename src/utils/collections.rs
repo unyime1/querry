@@ -44,11 +44,9 @@ pub fn create_collection(name: String) -> Result<CollectionData, Box<dyn Error>>
     Ok(collection_item.clone())
 }
 
-
 pub fn delete_collection(collection_id: String) -> Result<(), Box<dyn Error>> {
     let db_connection = get_database()?;
-    let mut stmt = db_connection
-        .prepare("DELETE FROM collection WHERE id=?1")?;
+    let mut stmt = db_connection.prepare("DELETE FROM collection WHERE id=?1")?;
 
     stmt.execute([collection_id])?;
 

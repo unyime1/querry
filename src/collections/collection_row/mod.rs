@@ -6,7 +6,10 @@ use glib::Object;
 use gtk::glib;
 
 use super::collection_item::CollectionItem;
-use crate::utils::collections::delete_collection;
+use crate::utils::{
+    collections::delete_collection,
+    messaging::{AppEvent, EVENT_CHANNEL},
+};
 
 glib::wrapper! {
     pub struct CollectionRow(ObjectSubclass<imp::CollectionRow>)
@@ -25,17 +28,19 @@ impl CollectionRow {
         Object::builder().build()
     }
 
-    pub fn delete_collection(&self) {
-        let collection_label = self.imp().collection_label.clone();
-        let collection_id = self.imp().collection_id.clone();
-        println!("Deleted {}", collection_label.label());
+    pub async fn delete_collection(&self) {
+        EVENT_CHANNEL
+            .0
+            .send(AppEvent::CollectionDeleted(String::from("Hello")))
+            .await
+            .expect("Channel shpuld be open");
     }
 
     pub fn bind(&self, collection_item: &CollectionItem) {
         // Get state
         let collection_icon = self.imp().collection_icon.get();
         let collection_label = self.imp().collection_label.get();
-     
+
         let mut bindings = self.imp().bindings.borrow_mut();
 
         // Bind `collection_item.name` to `collection_row.collection_label.label`
@@ -54,7 +59,6 @@ impl CollectionRow {
             .build();
         // Save binding
         bindings.push(collection_icon_binding);
-
     }
 
     pub fn unbind(&self) {
