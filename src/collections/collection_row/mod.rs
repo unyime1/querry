@@ -6,10 +6,7 @@ use glib::Object;
 use gtk::glib;
 
 use super::collection_item::CollectionItem;
-use crate::utils::{
-    collections::delete_collection,
-    messaging::{AppEvent, EVENT_CHANNEL},
-};
+use crate::utils::messaging::{AppEvent, EVENT_CHANNEL};
 
 glib::wrapper! {
     pub struct CollectionRow(ObjectSubclass<imp::CollectionRow>)
@@ -29,9 +26,11 @@ impl CollectionRow {
     }
 
     pub async fn delete_collection(&self) {
+        let id = self.imp().collection_id.borrow().to_owned();
+
         EVENT_CHANNEL
             .0
-            .send(AppEvent::CollectionDeleted(String::from("Hello")))
+            .send(AppEvent::CollectionDeleted(id))
             .await
             .expect("Channel shpuld be open");
     }
@@ -59,6 +58,10 @@ impl CollectionRow {
             .build();
         // Save binding
         bindings.push(collection_icon_binding);
+    }
+
+    pub fn set_collection_id(&self, new_id: String) {
+        *self.imp().collection_id.borrow_mut() = new_id;
     }
 
     pub fn unbind(&self) {

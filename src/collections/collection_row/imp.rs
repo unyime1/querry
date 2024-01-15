@@ -1,12 +1,8 @@
 use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
-use glib::{Binding, Sender};
+use glib::Binding;
 use gtk::{glib, CompositeTemplate, Image, Label, MenuButton};
-
-pub enum CollectionRowMessage {
-    Delete(String),
-}
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
@@ -19,7 +15,7 @@ pub struct CollectionRow {
     #[template_child]
     pub collection_menu: TemplateChild<MenuButton>,
 
-    pub collection_id: String,
+    pub collection_id: RefCell<String>,
     // Vector holding the bindings to properties of `TaskObject`
     pub bindings: RefCell<Vec<Binding>>,
 }

@@ -98,6 +98,7 @@ impl CollectionsWindow {
                 .expect("The child has to be a `CollectionRow`.");
 
             collection_row.bind(&collection_item);
+            collection_row.set_collection_id(collection_item.id().to_string())
         });
 
         // Tell factory how to unbind `CollectionRow` from `CollectionItem`
@@ -224,7 +225,10 @@ impl CollectionsWindow {
 
     pub fn listen_collection_delete(&self) {
         // The main loop executes the asynchronous block
-        glib::spawn_future_local(async move {
+        glib::spawn_future_local(clone!(@weak self as this => async move {
+            let collections_store = this.get_collections_store();
+
+
             while let Ok(response) = EVENT_CHANNEL.1.recv().await {
                 match response {
                     AppEvent::CollectionDeleted(data) => {
@@ -233,6 +237,6 @@ impl CollectionsWindow {
                     AppEvent::RequestDeleted(_) => todo!(),
                 }
             }
-        });
+        }));
     }
 }
