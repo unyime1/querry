@@ -13,7 +13,7 @@ use gtk::{
 
 use crate::database::get_database;
 use crate::utils::{
-    collections::{create_collection, get_all_collections, CollectionData},
+    collections::{create_collection, delete_collection, get_all_collections, CollectionData},
     messaging::{AppEvent, EVENT_CHANNEL},
 };
 use crate::window::Window;
@@ -226,16 +226,26 @@ impl CollectionsWindow {
         self.calc_visible_child();
     }
 
+    /// Listen to delete connection signals and remove deleted collection.
     pub fn listen_collection_delete(&self) {
-        // The main loop executes the asynchronous block
         glib::spawn_future_local(clone!(@weak self as this => async move {
             let collections_store = this.get_collections_store();
-
+            let db = get_database().expect("Can't get a database connection.");
 
             while let Ok(response) = EVENT_CHANNEL.1.recv().await {
                 match response {
-                    AppEvent::CollectionDeleted(data) => {
-                        println!("Collection deleted: {}", data)
+                    AppEvent::CollectionDeleted(collection_id) => {
+                        // Identify collection item from ListStore and remove.
+                        let collection_item_index = collections_store
+                            .iter::<CollectionItem>()
+                            .position(|item| item.unwrap().id() == collection_id)
+                            .map(|index| index as u32);
+
+                        if let Some(index) = collection_item_index {
+                            collections_store.remove(index);
+                            delete_collection(collection_id, &db).expect("Can't delete item");
+                            this.calc_visible_child();
+                        }
                     }
                     AppEvent::RequestDeleted(_) => todo!(),
                 }
