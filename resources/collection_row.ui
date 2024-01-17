@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <menu id="main-menu">
+    <item>
+      <attribute name="label" translatable="yes">_Duplicate</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">_Rename</attribute>
+    </item>
+
+    <item>
+      <attribute name="label" translatable="yes">_Delete</attribute>
+      <attribute name="action">col.remove-collection</attribute>
+    </item>
+
+    <item>
+      <attribute name="label" translatable="yes">_Settings</attribute>
+    </item>
+  </menu>
+
   <template class="QuerryCollectionRow" parent="GtkBox">
     <property name="orientation">horizontal</property>
     <property name="hexpand">True</property>
@@ -23,8 +41,10 @@
     </child>
 
     <child>
-      <object class="GtkImage" id="collection_menu">
+      <object class="GtkMenuButton" id="collection_menu">
         <property name="icon-name">view-more-symbolic</property>
+        <property name="menu-model">main-menu</property>
+        <property name="tooltip-text" translatable="yes">More actions</property>
       </object>
     </child>
 

@@ -22,7 +22,7 @@ fn main() -> glib::ExitCode {
     let app = Application::builder().application_id(APP_ID).build();
     let database_connection = get_database().expect("could not get db");
 
-    migrate_database(database_connection).expect("Migrations failed.");
+    migrate_database(&database_connection).expect("Migrations failed.");
 
     // Connect to signals
     app.connect_startup(|_| load_css());

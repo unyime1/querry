@@ -1,6 +1,6 @@
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{gio, glib, Box, CompositeTemplate, ListView, ScrolledWindow};
+use gtk::{gio, glib, Box, CompositeTemplate, ListView};
 use once_cell::sync::OnceCell;
 
 // Initialize composite template for Window.
@@ -47,6 +47,7 @@ impl ObjectImpl for CollectionsWindow {
         obj.setup_collections();
         obj.setup_collection_click();
         obj.calc_visible_child();
+        obj.listen_collection_delete()
     }
 }
 

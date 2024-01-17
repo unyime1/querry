@@ -11,7 +11,11 @@ use gtk::{
     Entry, ListItem, ListView, SignalListItemFactory, SingleSelection,
 };
 
-use crate::utils::collections::{create_collection, get_all_collections, CollectionData};
+use crate::database::get_database;
+use crate::utils::{
+    collections::{create_collection, delete_collection, get_all_collections, CollectionData},
+    messaging::{AppEvent, EVENT_CHANNEL},
+};
 use crate::window::Window;
 use collection_item::CollectionItem;
 use collection_row::CollectionRow;
@@ -28,7 +32,8 @@ impl CollectionsWindow {
     }
 
     pub fn setup_collections(&self) {
-        let collections_vec = match get_all_collections() {
+        let db = get_database().expect("Can't get a database connection.");
+        let collections_vec = match get_all_collections(&db) {
             Ok(data) => data,
             Err(_) => {
                 tracing::error!("Error occured while getting collections.");
@@ -95,6 +100,7 @@ impl CollectionsWindow {
                 .expect("The child has to be a `CollectionRow`.");
 
             collection_row.bind(&collection_item);
+            collection_row.set_collection_id(collection_item.id().to_string())
         });
 
         // Tell factory how to unbind `CollectionRow` from `CollectionItem`
@@ -201,7 +207,8 @@ impl CollectionsWindow {
         }
 
         let name = entry.text().to_string();
-        let collection_data = match create_collection(name) {
+        let db = get_database().expect("Can't get a database connection.");
+        let collection_data = match create_collection(name, &db) {
             Ok(data) => data,
             Err(error) => {
                 tracing::error!("Could not create collection");
@@ -217,5 +224,32 @@ impl CollectionsWindow {
         );
         self.get_collections_store().append(&collection_item);
         self.calc_visible_child();
+    }
+
+    /// Listen to delete connection signals and remove deleted collection.
+    pub fn listen_collection_delete(&self) {
+        glib::spawn_future_local(clone!(@weak self as this => async move {
+            let collections_store = this.get_collections_store();
+            let db = get_database().expect("Can't get a database connection.");
+
+            while let Ok(response) = EVENT_CHANNEL.1.recv().await {
+                match response {
+                    AppEvent::CollectionDeleted(collection_id) => {
+                        // Identify collection item from ListStore and remove.
+                        let collection_item_index = collections_store
+                            .iter::<CollectionItem>()
+                            .position(|item| item.unwrap().id() == collection_id)
+                            .map(|index| index as u32);
+
+                        if let Some(index) = collection_item_index {
+                            collections_store.remove(index);
+                            delete_collection(collection_id, &db).expect("Can't delete item");
+                            this.calc_visible_child();
+                        }
+                    }
+                    AppEvent::RequestDeleted(_) => todo!(),
+                }
+            }
+        }));
     }
 }

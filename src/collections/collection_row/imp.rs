@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{glib, CompositeTemplate, Image, Label};
+use gtk::{glib, CompositeTemplate, Image, Label, MenuButton};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
@@ -13,7 +13,9 @@ pub struct CollectionRow {
     #[template_child]
     pub collection_label: TemplateChild<Label>,
     #[template_child]
-    pub collection_menu: TemplateChild<Image>,
+    pub collection_menu: TemplateChild<MenuButton>,
+
+    pub collection_id: RefCell<String>,
     // Vector holding the bindings to properties of `TaskObject`
     pub bindings: RefCell<Vec<Binding>>,
 }
@@ -37,6 +39,14 @@ impl ObjectSubclass for CollectionRow {
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
+
+        klass.install_action_async(
+            "col.remove-collection",
+            None,
+            |collection_row, _, _| async move {
+                collection_row.delete_collection().await;
+            },
+        );
     }
 
     fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
