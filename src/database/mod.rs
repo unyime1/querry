@@ -2,7 +2,7 @@ extern crate rusqlite;
 
 use std::error::Error;
 
-use crate::utils::sys_dir::get_db_path;
+use crate::utils::sys_dir::{get_db_path, get_test_db_path};
 use rusqlite::Connection;
 
 pub fn get_database() -> Result<Connection, Box<dyn Error>> {
@@ -11,7 +11,7 @@ pub fn get_database() -> Result<Connection, Box<dyn Error>> {
     Ok(db)
 }
 
-pub fn migrate_database(db_connection: Connection) -> Result<(), Box<dyn Error>> {
+pub fn migrate_database(db_connection: &Connection) -> Result<(), Box<dyn Error>> {
     db_connection.execute(
         "CREATE TABLE IF NOT EXISTS collection(
                 id UUID NOT NULL  PRIMARY KEY,
@@ -33,4 +33,30 @@ pub fn migrate_database(db_connection: Connection) -> Result<(), Box<dyn Error>>
     )?;
 
     Ok(())
+}
+
+/// Setup a clean database for tests.
+pub fn setup_test_db() -> Result<Connection, Box<dyn Error>> {
+    let db_path = get_test_db_path()?;
+    let db = Connection::open(db_path)?;
+
+    match db.execute("DROP TABLE collection", ()) {
+        Ok(_) => {}
+        Err(error) => {
+            let error_str = error.to_string();
+            println!("{}", error_str)
+        }
+    };
+
+    match db.execute("DROP TABLE collectionheader", ()) {
+        Ok(_) => {}
+        Err(error) => {
+            let error_str = error.to_string();
+            println!("{}", error_str)
+        }
+    };
+
+    let _data = migrate_database(&db)?;
+
+    Ok(db)
 }

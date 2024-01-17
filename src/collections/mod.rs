@@ -11,6 +11,7 @@ use gtk::{
     Entry, ListItem, ListView, SignalListItemFactory, SingleSelection,
 };
 
+use crate::database::get_database;
 use crate::utils::{
     collections::{create_collection, get_all_collections, CollectionData},
     messaging::{AppEvent, EVENT_CHANNEL},
@@ -31,7 +32,8 @@ impl CollectionsWindow {
     }
 
     pub fn setup_collections(&self) {
-        let collections_vec = match get_all_collections() {
+        let db = get_database().expect("Can't get a database connection.");
+        let collections_vec = match get_all_collections(&db) {
             Ok(data) => data,
             Err(_) => {
                 tracing::error!("Error occured while getting collections.");
@@ -205,7 +207,8 @@ impl CollectionsWindow {
         }
 
         let name = entry.text().to_string();
-        let collection_data = match create_collection(name) {
+        let db = get_database().expect("Can't get a database connection.");
+        let collection_data = match create_collection(name, &db) {
             Ok(data) => data,
             Err(error) => {
                 tracing::error!("Could not create collection");

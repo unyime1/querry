@@ -25,6 +25,7 @@ impl CollectionRow {
         Object::builder().build()
     }
 
+    /// Send a notification to delete specified collection.
     pub async fn delete_collection(&self) {
         let id = self.imp().collection_id.borrow().to_owned();
 
