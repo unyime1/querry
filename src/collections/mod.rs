@@ -13,7 +13,9 @@ use gtk::{
 
 use crate::database::get_database;
 use crate::utils::{
-    collections::{create_collection, delete_collection, get_all_collections, CollectionData},
+    crud::collections::{
+        create_collection, delete_collection, get_all_collections, CollectionData,
+    },
     messaging::{AppEvent, EVENT_CHANNEL},
 };
 use crate::window::Window;

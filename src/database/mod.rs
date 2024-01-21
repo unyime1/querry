@@ -14,7 +14,7 @@ pub fn get_database() -> Result<Connection, Box<dyn Error>> {
 pub fn migrate_database(db_connection: &Connection) -> Result<(), Box<dyn Error>> {
     db_connection.execute(
         "CREATE TABLE IF NOT EXISTS collection(
-                id UUID NOT NULL  PRIMARY KEY,
+                id UUID NOT NULL PRIMARY KEY,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 name TEXT NOT NULL
             )",
@@ -23,10 +23,23 @@ pub fn migrate_database(db_connection: &Connection) -> Result<(), Box<dyn Error>
 
     db_connection.execute(
         "CREATE TABLE IF NOT EXISTS collectionheader(
-                id UUID NOT NULL  PRIMARY KEY,
+                id UUID NOT NULL PRIMARY KEY,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 name TEXT,
                 value TEXT,
+                collection_id UUID NOT NULL REFERENCES collection(id) ON DELETE CASCADE
+            )",
+        (), // empty list of parameters.
+    )?;
+
+    db_connection.execute(
+        "CREATE TABLE IF NOT EXISTS requestitem(
+                id UUID NOT NULL PRIMARY KEY,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                name TEXT,
+                url TEXT,
+                protocol TEXT,
+                http_method TEXT,
                 collection_id UUID NOT NULL REFERENCES collection(id) ON DELETE CASCADE
             )",
         (), // empty list of parameters.
@@ -49,6 +62,14 @@ pub fn setup_test_db() -> Result<Connection, Box<dyn Error>> {
     };
 
     match db.execute("DROP TABLE collectionheader", ()) {
+        Ok(_) => {}
+        Err(error) => {
+            let error_str = error.to_string();
+            println!("{}", error_str)
+        }
+    };
+
+    match db.execute("DROP TABLE requestitem", ()) {
         Ok(_) => {}
         Err(error) => {
             let error_str = error.to_string();
