@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="QuerryRequestRow" parent="GtkBox">
+    <property name="orientation">horizontal</property>
+    <property name="hexpand">True</property>
+    <property name="visible">True</property>
+
+    <style>
+      <class name="requests_box" />
+    </style>
+
+    <child>
+      <object class="GtkBox" id="request_icon_box">
+        <style>
+          <class name="requests_method_box" />
+        </style>
+        <child>
+          <object class="GtkLabel" id="http_method">
+            <property name="visible">False</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkLabel" id="protocol">
+            <property name="visible">False</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkLabel" id="name">
+        <property name="hexpand">True</property>
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkMenuButton" id="collection_menu">
+        <property name="icon-name">view-more-symbolic</property>
+        <property name="menu-model">main-menu</property>
+        <property name="tooltip-text" translatable="yes">More actions</property>
+      </object>
+    </child>
+
+  </template>
+</interface>

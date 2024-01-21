@@ -38,7 +38,7 @@ pub fn migrate_database(db_connection: &Connection) -> Result<(), Box<dyn Error>
                 created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 name TEXT,
                 url TEXT,
-                request_type TEXT,
+                protocol TEXT,
                 http_method TEXT,
                 collection_id UUID NOT NULL REFERENCES collection(id) ON DELETE CASCADE
             )",
