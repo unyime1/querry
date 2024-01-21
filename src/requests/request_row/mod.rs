@@ -6,6 +6,7 @@ use glib::Object;
 use gtk::glib;
 
 use super::request_item::RequestItem;
+use crate::utils::crud::requests::{HTTPMethods, ProcolTypes};
 
 glib::wrapper! {
     pub struct RequestRow(ObjectSubclass<imp::RequestRow>)
@@ -73,7 +74,7 @@ impl RequestRow {
         let http_method = self.imp().http_method.clone();
 
         // Define which icon box is displayed.
-        if &protocol.label() == "http" {
+        if &protocol.label() == &ProcolTypes::Http.to_string() {
             http_method.set_visible(true);
             protocol.set_visible(false);
             self.define_http_method_box_background(&http_method.label());
@@ -87,13 +88,13 @@ impl RequestRow {
     pub fn define_http_method_box_background(&self, http_method: &str) {
         let request_icon_box = self.imp().request_icon_box.clone();
 
-        if http_method == "post" {
+        if http_method == HTTPMethods::Post.to_string() {
             request_icon_box.set_css_classes(&vec!["color-green"])
-        } else if http_method == "get" {
+        } else if http_method == HTTPMethods::Get.to_string() {
             request_icon_box.set_css_classes(&vec!["color-blue"])
-        } else if http_method == "put" {
+        } else if http_method == HTTPMethods::Put.to_string() {
             request_icon_box.set_css_classes(&vec!["color-orange"])
-        } else if http_method == "delete" {
+        } else if http_method == HTTPMethods::Delete.to_string() {
             request_icon_box.set_css_classes(&vec!["color-red"])
         }
     }
