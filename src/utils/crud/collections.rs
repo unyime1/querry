@@ -58,7 +58,7 @@ pub fn get_single_collection(
     id: String,
     db_connection: &Connection,
 ) -> Result<CollectionData, Box<dyn Error>> {
-    let mut stmt = db_connection.prepare("SELECT * FROM collection WHERE id=?1")?;
+    let mut stmt = db_connection.prepare("SELECT id, name FROM collection WHERE id=?1")?;
 
     let mut result_rows = stmt.query([id])?;
 
@@ -108,6 +108,7 @@ mod tests {
 
         let single_collection =
             get_single_collection(collection.id.clone(), &db).expect("cant get collections");
-        assert!(single_collection.id == collection.id)
+        assert!(single_collection.id == collection.id);
+        assert!(single_collection.name == collection.name);
     }
 }

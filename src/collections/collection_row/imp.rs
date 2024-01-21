@@ -2,12 +2,17 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{glib, CompositeTemplate, Image, Label, MenuButton};
+use gtk::{gio, glib, CompositeTemplate, Image, Label, ListView, MenuButton};
+use once_cell::sync::OnceCell;
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/org/etim/querry/collection_row.ui")]
 pub struct CollectionRow {
+    #[template_child]
+    pub requests_list: TemplateChild<ListView>,
+    pub requests_store: OnceCell<gio::ListStore>,
+
     #[template_child]
     pub collection_icon: TemplateChild<Image>,
     #[template_child]
