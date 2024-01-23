@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <menu id="main-menu">
+    <item>
+      <attribute name="label" translatable="yes">_Duplicate</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">_Rename</attribute>
+    </item>
+
+    <item>
+      <attribute name="label" translatable="yes">_Delete</attribute>
+    </item>
+
+    <item>
+      <attribute name="label" translatable="yes">_Settings</attribute>
+    </item>
+  </menu>
+
   <template class="QuerryRequestRow" parent="GtkBox">
     <property name="orientation">horizontal</property>
     <property name="hexpand">True</property>

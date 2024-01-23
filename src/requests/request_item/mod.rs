@@ -8,12 +8,19 @@ glib::wrapper! {
 }
 
 impl RequestItem {
-    pub fn new(name: &str, id: &str, url: &str, protocol: &str, http_method: &str) -> Self {
+    pub fn new(
+        name: String,
+        id: String,
+        url: Option<String>,
+        protocol: String,
+        http_method: Option<String>,
+    ) -> Self {
         Object::builder()
             .property("id", id)
             .property("name", name)
             .property("protocol", protocol)
             .property("http_method", http_method)
+            .property("url", url)
             .build()
     }
 }

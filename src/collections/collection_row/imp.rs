@@ -26,7 +26,15 @@ pub struct CollectionRow {
 }
 
 // Trait shared by all GObjects
-impl ObjectImpl for CollectionRow {}
+impl ObjectImpl for CollectionRow {
+    fn constructed(&self) {
+        // Calls at the time window is constructed.
+        self.parent_constructed();
+
+        let obj = self.obj();
+        obj.setup_requests();
+    }
+}
 
 // Trait shared by all widgets
 impl WidgetImpl for CollectionRow {}
@@ -52,6 +60,10 @@ impl ObjectSubclass for CollectionRow {
                 collection_row.delete_collection().await;
             },
         );
+
+        klass.install_action("col.add-http-request", None, |collection_row, _, _| {
+            collection_row.create_http_request_item();
+        });
     }
 
     fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
