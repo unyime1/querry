@@ -20,6 +20,9 @@ jobs:
       run: sudo apt install libgtk-4-dev build-essential
     - name: Install libadwaita
       run: sudo apt install libadwaita-1-dev
+    
+    - name: Check installation
+      run:  dpkg -l | grep libgtk
 
     - name: Build
       run: cargo build --verbose
