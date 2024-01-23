@@ -29,7 +29,7 @@ impl RequestRow {
         // Get state
         let name = self.imp().name.get();
         let protocol = self.imp().protocol.get();
-        let http_method = self.imp().http_method.get();
+        let http_method = self.imp().httpmethod.get();
 
         let mut bindings = self.imp().bindings.borrow_mut();
 
@@ -50,7 +50,7 @@ impl RequestRow {
 
         // Bind http_method
         let http_method_binding = request_item
-            .bind_property("http_method", &http_method, "label")
+            .bind_property("httpmethod", &http_method, "label")
             .sync_create()
             .build();
         bindings.push(http_method_binding);
@@ -71,7 +71,7 @@ impl RequestRow {
     pub fn setup_display(&self) {
         let protocol = self.imp().protocol.clone();
         let request_icon_box = self.imp().request_icon_box.clone();
-        let http_method = self.imp().http_method.clone();
+        let http_method = self.imp().httpmethod.clone();
 
         // Define which icon box is displayed.
         if &protocol.label() == &ProcolTypes::Http.to_string() {

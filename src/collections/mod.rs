@@ -34,7 +34,14 @@ impl CollectionsWindow {
     }
 
     pub fn setup_collections(&self) {
-        let db = get_database().expect("Can't get a database connection.");
+        let db = match get_database() {
+            Ok(data) => data,
+            Err(_) => {
+                tracing::error!("Could not get database connection.");
+                return;
+            }
+        };
+
         let collections_vec = match get_all_collections(&db) {
             Ok(data) => data,
             Err(_) => {
@@ -102,7 +109,8 @@ impl CollectionsWindow {
                 .expect("The child has to be a `CollectionRow`.");
 
             collection_row.bind(&collection_item);
-            collection_row.set_collection_id(collection_item.id().to_string())
+            collection_row.set_collection_id(collection_item.id().to_string());
+            collection_row.setup_requests();
         });
 
         // Tell factory how to unbind `CollectionRow` from `CollectionItem`
@@ -209,7 +217,13 @@ impl CollectionsWindow {
         }
 
         let name = entry.text().to_string();
-        let db = get_database().expect("Can't get a database connection.");
+        let db = match get_database() {
+            Ok(data) => data,
+            Err(_) => {
+                tracing::error!("Could not get database connection.");
+                return;
+            }
+        };
         let collection_data = match create_collection(name, &db) {
             Ok(data) => data,
             Err(error) => {
@@ -224,7 +238,7 @@ impl CollectionsWindow {
             &collection_data.id,
             "folder-visiting-symbolic",
         );
-        self.get_collections_store().append(&collection_item);
+        self.get_collections_store().insert(0, &collection_item);
         self.calc_visible_child();
     }
 
@@ -232,7 +246,13 @@ impl CollectionsWindow {
     pub fn listen_collection_delete(&self) {
         glib::spawn_future_local(clone!(@weak self as this => async move {
             let collections_store = this.get_collections_store();
-            let db = get_database().expect("Can't get a database connection.");
+            let db = match get_database() {
+                Ok(data) => data,
+                Err(_) => {
+                    tracing::error!("Could not get database connection.");
+                    return
+                }
+            };
 
             while let Ok(response) = EVENT_CHANNEL.1.recv().await {
                 match response {
