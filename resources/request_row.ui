@@ -32,7 +32,7 @@
           <class name="requests_method_box" />
         </style>
         <child>
-          <object class="GtkLabel" id="http_method">
+          <object class="GtkLabel" id="httpmethod">
             <property name="visible">False</property>
           </object>
         </child>

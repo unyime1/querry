@@ -16,7 +16,7 @@ pub struct RequestRow {
     #[template_child]
     pub request_icon_box: TemplateChild<Box>,
     #[template_child]
-    pub http_method: TemplateChild<Label>,
+    pub httpmethod: TemplateChild<Label>,
     pub bindings: RefCell<Vec<Binding>>,
 }
 
