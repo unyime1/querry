@@ -24,48 +24,44 @@
   </menu>
 
   <template class="QuerryCollectionRow" parent="GtkBox">
-    <object class="GtkBox">
-      <property name="orientation">vertical</property>  
+    <property name="orientation">vertical</property>  
 
-      <child>
-        <object class="GtkBox">
-          <property name="orientation">horizontal</property>
-          <property name="hexpand">True</property>
-          <property name="visible">True</property>
-          <property name="margin-bottom">7</property>
-          <property name="margin-top">7</property>
-          <property name="height-request">70</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">horizontal</property>
+        <property name="hexpand">True</property>
+        <property name="visible">True</property>
+        <property name="margin-bottom">7</property>
+        <property name="margin-top">7</property>
 
-          <style>
-            <class name="collection_box" />
-          </style>
+        <style>
+          <class name="collection_box" />
+        </style>
 
-          <child>
-            <object class="GtkImage" id="collection_icon">
-            </object>
-          </child>
+        <child>
+          <object class="GtkImage" id="collection_icon">
+          </object>
+        </child>
 
-          <child>
-            <object class="GtkLabel" id="collection_label">
-              <property name="hexpand">True</property>
-            </object>
-          </child>
+        <child>
+          <object class="GtkLabel" id="collection_label">
+            <property name="hexpand">True</property>
+          </object>
+        </child>
 
-          <child>
-            <object class="GtkMenuButton" id="collection_menu">
-              <property name="icon-name">view-more-symbolic</property>
-              <property name="menu-model">main-menu</property>
-              <property name="tooltip-text" translatable="yes">More actions</property>
-            </object>
-          </child>
-        </object>
-      </child>
+        <child>
+          <object class="GtkMenuButton" id="collection_menu">
+            <property name="icon-name">view-more-symbolic</property>
+            <property name="menu-model">main-menu</property>
+            <property name="tooltip-text" translatable="yes">More actions</property>
+          </object>
+        </child>
+      </object>
+    </child>
 
-      <child>
-        <object class="GtkListView" id="requests_list">
-        </object>
-      </child>
-
-    </object>
+    <child>
+      <object class="GtkListView" id="requests_list">
+      </object>
+    </child>
   </template>
 </interface>
