@@ -1,4 +1,4 @@
-name: Rust
+name: Querry CI
 
 on:
   push:
@@ -10,7 +10,6 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-
   build:
     name: examples
     runs-on: ubuntu-22.04
@@ -24,7 +23,15 @@ jobs:
           toolchain: stable
           override: true
           components: clippy
-      - name: "examples: build"
+
+      - name: Build Dev
         run: cargo build
-      - name: clippy"
+
+      - name: Build Release
+        run: cargo build --release
+
+      - name: Clippy
         run: cargo clippy
+
+      - name: Test
+        run: cargo test
