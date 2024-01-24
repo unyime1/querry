@@ -9,7 +9,7 @@ use super::collection_item::CollectionItem;
 use crate::database::get_database;
 use crate::requests::{request_item::RequestItem, request_row::RequestRow};
 use crate::utils::{
-    crud::requests::{create_request, get_collection_requests, ProcolTypes, RequestData},
+    crud::requests::{create_request, get_collection_requests, ProcolTypes},
     messaging::{AppEvent, EVENT_CHANNEL},
 };
 
@@ -93,6 +93,9 @@ impl CollectionRow {
             .build();
         // Save binding
         bindings.push(collection_icon_binding);
+
+        self.set_collection_id(collection_item.id());
+        self.setup_requests();
     }
 
     pub fn set_collection_id(&self, new_id: String) {
@@ -119,6 +122,10 @@ impl CollectionRow {
     }
 
     pub fn setup_requests(&self) {
+        if self.imp().requests_store.get().is_some() {
+            return;
+        }
+
         let db = match get_database() {
             Ok(data) => data,
             Err(_) => {
@@ -128,15 +135,14 @@ impl CollectionRow {
         };
 
         let collection_id = self.imp().collection_id.borrow();
+        let requests_vec = match get_collection_requests(&db, &collection_id) {
+            Ok(data) => data,
+            Err(_) => {
+                tracing::error!("Could not get collections requests.");
+                Vec::new()
+            }
+        };
 
-        if let Ok(requests_vec) = get_collection_requests(&db, &collection_id) {
-            self.bind_requests_model(requests_vec);
-        } else {
-            tracing::error!("Could not get collection requests.");
-        }
-    }
-
-    pub fn bind_requests_model(&self, requests_vec: Vec<RequestData>) {
         let requests_model = ListStore::new::<RequestItem>();
         self.imp()
             .requests_store

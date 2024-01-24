@@ -30,6 +30,8 @@ impl ObjectImpl for CollectionRow {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
+
+        let obj = self.obj();
     }
 }
 
