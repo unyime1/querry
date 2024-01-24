@@ -109,8 +109,6 @@ impl CollectionsWindow {
                 .expect("The child has to be a `CollectionRow`.");
 
             collection_row.bind(&collection_item);
-            collection_row.set_collection_id(collection_item.id().to_string());
-            collection_row.setup_requests();
         });
 
         // Tell factory how to unbind `CollectionRow` from `CollectionItem`
