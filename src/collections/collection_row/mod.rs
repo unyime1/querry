@@ -213,5 +213,6 @@ impl CollectionRow {
         self.get_requests_list().set_model(Some(&selection_model));
         self.get_requests_list().set_factory(Some(&factory));
         self.get_requests_list().set_single_click_activate(true);
+        self.get_requests_list().set_css_classes(&vec!["collections_list"]);
     }
 }

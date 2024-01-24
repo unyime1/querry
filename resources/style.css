@@ -76,3 +76,7 @@
 .color-green {
     background: rgb(11, 146, 78);
 }
+
+listview row {
+    background-color:transparent;
+}
