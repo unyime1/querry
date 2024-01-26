@@ -33,6 +33,7 @@ impl ObjectImpl for CollectionRow {
 
         let obj = self.obj();
         obj.process_hover();
+        obj.process_requests_visibility();
     }
 }
 

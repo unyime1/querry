@@ -61,6 +61,7 @@
 
     <child>
       <object class="GtkListView" id="requests_list">
+        <property name="visible">False</property>
       </object>
     </child>
   </template>

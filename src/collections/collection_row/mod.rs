@@ -3,11 +3,8 @@ mod imp;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::Object;
-use gtk::gdk::MotionEvent;
 use gtk::EventControllerMotion;
-use gtk::{
-    gio::ListStore, glib, DirectionType, ListItem, ListView, SignalListItemFactory, SingleSelection,
-};
+use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
 
 use super::collection_item::CollectionItem;
 use crate::database::get_database;
@@ -32,6 +29,24 @@ impl Default for CollectionRow {
 impl CollectionRow {
     pub fn new() -> Self {
         Object::builder().build()
+    }
+
+    pub fn process_requests_visibility(&self) {
+        let requests_list = self.imp().requests_list.clone();
+        let collection_icon = self.imp().collection_icon.clone();
+
+        collection_icon.connect_icon_name_notify(move |image_item| {
+            let icon_name = image_item.icon_name();
+            if icon_name.is_none() {
+                requests_list.set_visible(false);
+            } else {
+                if icon_name == Some("folder-visiting-symbolic".into()) {
+                    requests_list.set_visible(false);
+                } else {
+                    requests_list.set_visible(true);
+                }
+            }
+        });
     }
 
     /// Compute visibility of collection menu on hover.
@@ -94,7 +109,7 @@ impl CollectionRow {
             request_data.protocol,
             request_data.http_method,
         );
-        self.get_requests_store().insert(0, &request_item)
+        self.get_requests_store().insert(0, &request_item);
     }
 
     pub fn bind(&self, collection_item: &CollectionItem) {
