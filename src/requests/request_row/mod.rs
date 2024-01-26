@@ -3,7 +3,7 @@ mod imp;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::Object;
-use gtk::glib;
+use gtk::{glib, EventControllerMotion};
 
 use super::request_item::RequestItem;
 
@@ -22,6 +22,27 @@ impl Default for RequestRow {
 impl RequestRow {
     pub fn new() -> Self {
         Object::builder().build()
+    }
+
+    /// Compute visibility of collection menu on hover.
+    pub fn process_hover(&self) {
+        // Get widgets.
+        let request_menu = self.imp().request_menu.clone();
+        let request_menu_clone = request_menu.clone();
+
+        // Make menu button invisible by default.
+        request_menu.set_opacity(0.0);
+
+        // Make visible on hover enter and invisible on hover leave.
+        let enter_handler = EventControllerMotion::new();
+        enter_handler.connect_enter(move |_, _, _| {
+            request_menu_clone.set_opacity(1.0);
+        });
+        enter_handler.connect_leave(move |_| {
+            request_menu.set_opacity(0.0);
+        });
+
+        self.add_controller(enter_handler);
     }
 
     pub fn bind(&self, request_item: &RequestItem) {

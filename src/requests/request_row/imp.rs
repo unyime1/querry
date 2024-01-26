@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{glib, CompositeTemplate, Image, Label};
+use gtk::{glib, Box, CompositeTemplate, Image, Label, MenuButton};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
@@ -14,6 +14,8 @@ pub struct RequestRow {
     #[template_child]
     pub request_icon: TemplateChild<Image>,
     pub bindings: RefCell<Vec<Binding>>,
+    #[template_child]
+    pub request_menu: TemplateChild<MenuButton>,
 }
 
 // Trait shared by all GObjects
@@ -21,6 +23,8 @@ impl ObjectImpl for RequestRow {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
+        let obj = self.obj();
+        obj.process_hover()
     }
 }
 
@@ -33,7 +37,6 @@ impl BoxImpl for RequestRow {}
 // The central trait for subclassing a GObject
 #[glib::object_subclass]
 impl ObjectSubclass for RequestRow {
-    // `NAME` needs to match `class` attribute of template
     const NAME: &'static str = "QuerryRequestRow";
     type Type = super::RequestRow;
     type ParentType = gtk::Box;

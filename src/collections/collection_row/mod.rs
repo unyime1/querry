@@ -51,7 +51,7 @@ impl CollectionRow {
             collection_menu_clone.set_opacity(1.0);
         });
         enter_handler.connect_leave(move |_| {
-            collection_menu.set_opacity(0.4);
+            collection_menu.set_opacity(0.0);
         });
 
         collection_row_box.add_controller(enter_handler);

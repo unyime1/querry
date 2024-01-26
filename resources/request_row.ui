@@ -39,7 +39,7 @@
     </child>
 
     <child>
-      <object class="GtkMenuButton" id="collection_menu">
+      <object class="GtkMenuButton" id="request_menu">
         <property name="icon-name">view-more-symbolic</property>
         <property name="menu-model">main-menu</property>
         <property name="tooltip-text" translatable="yes">More actions</property>
