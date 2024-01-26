@@ -24,19 +24,19 @@
   </menu>
 
   <template class="QuerryCollectionRow" parent="GtkBox">
-    <property name="orientation">vertical</property>  
+    <property name="orientation">vertical</property>
+    
+    <style>
+      <class name="collection_box" />
+    </style>
+
 
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="collection_row_box">
         <property name="orientation">horizontal</property>
         <property name="hexpand">True</property>
-        <property name="visible">True</property>
         <property name="margin-bottom">7</property>
         <property name="margin-top">7</property>
-
-        <style>
-          <class name="collection_box" />
-        </style>
 
         <child>
           <object class="GtkImage" id="collection_icon">

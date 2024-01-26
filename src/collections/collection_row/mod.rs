@@ -3,7 +3,11 @@ mod imp;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::Object;
-use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
+use gtk::gdk::MotionEvent;
+use gtk::EventControllerMotion;
+use gtk::{
+    gio::ListStore, glib, DirectionType, ListItem, ListView, SignalListItemFactory, SingleSelection,
+};
 
 use super::collection_item::CollectionItem;
 use crate::database::get_database;
@@ -28,6 +32,29 @@ impl Default for CollectionRow {
 impl CollectionRow {
     pub fn new() -> Self {
         Object::builder().build()
+    }
+
+    /// Compute visibility of collection menu on hover.
+    pub fn process_hover(&self) {
+        // Get widgets.
+        let collection_menu = self.imp().collection_menu.clone();
+        let collection_menu_clone = collection_menu.clone();
+
+        let collection_row_box = self.imp().collection_row_box.clone();
+
+        // Make menu button invisible by default.
+        collection_menu.set_opacity(0.0);
+
+        // Make visible on hover enter and invisible on hover leave.
+        let enter_handler = EventControllerMotion::new();
+        enter_handler.connect_enter(move |_, _, _| {
+            collection_menu_clone.set_opacity(1.0);
+        });
+        enter_handler.connect_leave(move |_| {
+            collection_menu.set_opacity(0.4);
+        });
+
+        collection_row_box.add_controller(enter_handler);
     }
 
     /// Send a notification to delete specified collection.
