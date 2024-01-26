@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{glib, Box, CompositeTemplate, Label};
+use gtk::{glib, CompositeTemplate, Image, Label};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
@@ -12,11 +12,7 @@ pub struct RequestRow {
     #[template_child]
     pub name: TemplateChild<Label>,
     #[template_child]
-    pub protocol: TemplateChild<Label>,
-    #[template_child]
-    pub request_icon_box: TemplateChild<Box>,
-    #[template_child]
-    pub httpmethod: TemplateChild<Label>,
+    pub request_icon: TemplateChild<Image>,
     pub bindings: RefCell<Vec<Binding>>,
 }
 
@@ -25,9 +21,6 @@ impl ObjectImpl for RequestRow {
     fn constructed(&self) {
         // Calls at the time window is constructed.
         self.parent_constructed();
-
-        let obj = self.obj();
-        obj.setup_display();
     }
 }
 

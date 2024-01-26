@@ -19,6 +19,8 @@ pub struct RequestItem {
     pub httpmethod: RefCell<String>,
     #[property(get, set)]
     pub url: RefCell<String>,
+    #[property(get, set)]
+    pub icon: RefCell<String>,
 }
 
 // The central trait for subclassing a GObject

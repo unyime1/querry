@@ -27,21 +27,9 @@
     </style>
 
     <child>
-      <object class="GtkBox" id="request_icon_box">
-        <style>
-          <class name="requests_method_box" />
-        </style>
-        <child>
-          <object class="GtkLabel" id="httpmethod">
-            <property name="visible">False</property>
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkLabel" id="protocol">
-            <property name="visible">False</property>
-          </object>
-        </child>
+      <object class="GtkImage" id="request_icon">
+        <property name="file">resources/icons/post.png</property>
+        <property name="icon-size">2</property>
       </object>
     </child>
 
