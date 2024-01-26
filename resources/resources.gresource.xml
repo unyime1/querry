@@ -7,7 +7,9 @@
     <file compressed="true" preprocess="xml-stripblanks">collection_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">request_row.ui</file>
     <file compressed="true">style.css</file>
-    <file compressed="true">icons/rest.png</file>
-    <file compressed="true">icons/socket.png</file>
+    <file compressed="true">icons/post.png</file>
+    <file compressed="true">icons/get.png</file>
+    <file compressed="true">icons/put.png</file>
+    <file compressed="true">icons/delete.png</file>
   </gresource>
 </gresources>

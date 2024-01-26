@@ -10,7 +10,8 @@ pub struct CollectionData {
 }
 
 pub fn get_all_collections(db_connection: &Connection) -> RuResult<Vec<CollectionData>> {
-    let mut stmt = db_connection.prepare("SELECT id, name FROM collection")?;
+    let mut stmt =
+        db_connection.prepare("SELECT id, name FROM collection ORDER BY created_at DESC")?;
     let rows = stmt.query_map(params![], |row| {
         Ok(CollectionData {
             id: row.get(0)?,

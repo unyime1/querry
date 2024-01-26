@@ -2,7 +2,7 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{gio, glib, CompositeTemplate, Image, Label, ListView, MenuButton};
+use gtk::{gio, glib, Box, CompositeTemplate, Image, Label, ListView, MenuButton};
 use once_cell::sync::OnceCell;
 
 // Object holding the state
@@ -19,10 +19,10 @@ pub struct CollectionRow {
     pub collection_label: TemplateChild<Label>,
     #[template_child]
     pub collection_menu: TemplateChild<MenuButton>,
-
     pub collection_id: RefCell<String>,
-    // Vector holding the bindings to properties of `TaskObject`
     pub bindings: RefCell<Vec<Binding>>,
+    #[template_child]
+    pub collection_row_box: TemplateChild<Box>,
 }
 
 // Trait shared by all GObjects
@@ -32,6 +32,8 @@ impl ObjectImpl for CollectionRow {
         self.parent_constructed();
 
         let obj = self.obj();
+        obj.process_hover();
+        obj.process_requests_visibility();
     }
 }
 

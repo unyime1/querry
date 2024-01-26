@@ -1,5 +1,6 @@
 mod imp;
 
+use crate::utils::crud::requests::{HTTPMethods, ProcolTypes};
 use glib::Object;
 use gtk::glib;
 
@@ -16,9 +17,8 @@ impl RequestItem {
         http_method: Option<String>,
     ) -> Self {
         let parsed_url = url.unwrap_or(String::from(""));
-        let parsed_http_method = http_method.unwrap_or(String::from(""));
-
-        println!("{}, {}", parsed_http_method, parsed_url);
+        let parsed_http_method = &http_method.unwrap_or(String::from(""));
+        let icon = Self::compute_request_icon(&protocol, &parsed_http_method);
 
         Object::builder()
             .property("id", id)
@@ -26,6 +26,31 @@ impl RequestItem {
             .property("protocol", protocol)
             .property("httpmethod", parsed_http_method)
             .property("url", parsed_url)
+            .property("icon", icon)
             .build()
+    }
+
+    /// Compute the right icon for request box.
+    pub fn compute_request_icon(protocol: &String, http_method: &String) -> String {
+        let parsed_protocol = match ProcolTypes::from_string(&protocol) {
+            Some(data) => data,
+            None => ProcolTypes::Http,
+        };
+
+        if parsed_protocol == ProcolTypes::Http {
+            let parsed_http_method = match HTTPMethods::from_string(&http_method) {
+                Some(data) => data,
+                None => HTTPMethods::Get,
+            };
+
+            match parsed_http_method {
+                HTTPMethods::Post => "resources/icons/post.png".to_string(),
+                HTTPMethods::Get => "resources/icons/get.png".to_string(),
+                HTTPMethods::Put => "resources/icons/put.png".to_string(),
+                HTTPMethods::Delete => "resources/icons/delete.png".to_string(),
+            }
+        } else {
+            "resources/icons/get.png".to_string()
+        }
     }
 }

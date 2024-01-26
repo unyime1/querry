@@ -3,7 +3,7 @@ use std::error::Error;
 use rusqlite::Connection;
 use uuid::Uuid;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ProcolTypes {
     Http,
     Websocket,
@@ -23,7 +23,7 @@ impl ToString for ProcolTypes {
 }
 
 impl ProcolTypes {
-    fn from_string(s: &str) -> Option<ProcolTypes> {
+    pub fn from_string(s: &str) -> Option<ProcolTypes> {
         match s {
             "HTTP" => Some(ProcolTypes::Http),
             "WS" => Some(ProcolTypes::Websocket),
@@ -34,7 +34,7 @@ impl ProcolTypes {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum HTTPMethods {
     Post,
     Get,
@@ -54,7 +54,7 @@ impl ToString for HTTPMethods {
 }
 
 impl HTTPMethods {
-    fn from_string(s: &str) -> Option<HTTPMethods> {
+    pub fn from_string(s: &str) -> Option<HTTPMethods> {
         match s {
             "POST" => Some(HTTPMethods::Post),
             "GET" => Some(HTTPMethods::Get),
@@ -80,7 +80,7 @@ pub fn get_collection_requests(
     collection_id: &str,
 ) -> Result<Vec<RequestData>, Box<dyn Error>> {
     let mut stmt = db_connection
-        .prepare("SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE collection_id=?1")?;
+        .prepare("SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE collection_id=?1 ORDER BY created_at DESC")?;
 
     let mut result_rows = stmt.query([collection_id])?;
 

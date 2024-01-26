@@ -20,28 +20,15 @@
   <template class="QuerryRequestRow" parent="GtkBox">
     <property name="orientation">horizontal</property>
     <property name="hexpand">True</property>
-    <property name="visible">True</property>
 
     <style>
       <class name="requests_box" />
     </style>
 
     <child>
-      <object class="GtkBox" id="request_icon_box">
-        <style>
-          <class name="requests_method_box" />
-        </style>
-        <child>
-          <object class="GtkLabel" id="httpmethod">
-            <property name="visible">False</property>
-          </object>
-        </child>
-
-        <child>
-          <object class="GtkLabel" id="protocol">
-            <property name="visible">False</property>
-          </object>
-        </child>
+      <object class="GtkImage" id="request_icon">
+        <property name="file">resources/icons/post.png</property>
+        <property name="icon-size">2</property>
       </object>
     </child>
 
@@ -52,7 +39,7 @@
     </child>
 
     <child>
-      <object class="GtkMenuButton" id="collection_menu">
+      <object class="GtkMenuButton" id="request_menu">
         <property name="icon-name">view-more-symbolic</property>
         <property name="menu-model">main-menu</property>
         <property name="tooltip-text" translatable="yes">More actions</property>

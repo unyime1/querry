@@ -3,6 +3,7 @@ mod imp;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::Object;
+use gtk::EventControllerMotion;
 use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
 
 use super::collection_item::CollectionItem;
@@ -28,6 +29,47 @@ impl Default for CollectionRow {
 impl CollectionRow {
     pub fn new() -> Self {
         Object::builder().build()
+    }
+
+    pub fn process_requests_visibility(&self) {
+        let requests_list = self.imp().requests_list.clone();
+        let collection_icon = self.imp().collection_icon.clone();
+
+        collection_icon.connect_icon_name_notify(move |image_item| {
+            let icon_name = image_item.icon_name();
+            if icon_name.is_none() {
+                requests_list.set_visible(false);
+            } else {
+                if icon_name == Some("folder-visiting-symbolic".into()) {
+                    requests_list.set_visible(false);
+                } else {
+                    requests_list.set_visible(true);
+                }
+            }
+        });
+    }
+
+    /// Compute visibility of collection menu on hover.
+    pub fn process_hover(&self) {
+        // Get widgets.
+        let collection_menu = self.imp().collection_menu.clone();
+        let collection_menu_clone = collection_menu.clone();
+
+        let collection_row_box = self.imp().collection_row_box.clone();
+
+        // Make menu button invisible by default.
+        collection_menu.set_opacity(0.0);
+
+        // Make visible on hover enter and invisible on hover leave.
+        let enter_handler = EventControllerMotion::new();
+        enter_handler.connect_enter(move |_, _, _| {
+            collection_menu_clone.set_opacity(1.0);
+        });
+        enter_handler.connect_leave(move |_| {
+            collection_menu.set_opacity(0.0);
+        });
+
+        collection_row_box.add_controller(enter_handler);
     }
 
     /// Send a notification to delete specified collection.
@@ -67,7 +109,7 @@ impl CollectionRow {
             request_data.protocol,
             request_data.http_method,
         );
-        self.get_requests_store().insert(0, &request_item)
+        self.get_requests_store().insert(0, &request_item);
     }
 
     pub fn bind(&self, collection_item: &CollectionItem) {
@@ -213,5 +255,7 @@ impl CollectionRow {
         self.get_requests_list().set_model(Some(&selection_model));
         self.get_requests_list().set_factory(Some(&factory));
         self.get_requests_list().set_single_click_activate(true);
+        self.get_requests_list()
+            .set_css_classes(&vec!["collections_list"]);
     }
 }
