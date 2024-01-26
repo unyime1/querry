@@ -80,7 +80,7 @@ pub fn get_collection_requests(
     collection_id: &str,
 ) -> Result<Vec<RequestData>, Box<dyn Error>> {
     let mut stmt = db_connection
-        .prepare("SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE collection_id=?1")?;
+        .prepare("SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE collection_id=?1 ORDER BY created_at DESC")?;
 
     let mut result_rows = stmt.query([collection_id])?;
 
