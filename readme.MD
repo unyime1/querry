@@ -16,7 +16,7 @@ If you wish to view the current stage of the project:
 2. Install GTK4 (https://gtk-rs.org/gtk4-rs/stable/latest/book/installation.html)
 3. Install Libadwaita (https://gtk-rs.org/gtk4-rs/stable/latest/book/libadwaita.html)
 4. Clone the `master` branch
-5. Compile and run project with `cargo run --release`
+5. Compile and run project with `cargo run --release`.
 
 
 ### Contribution
