@@ -1,6 +1,6 @@
 ## Querry
 
-Querry is a lightweight API request client designed for simplicity and efficiency. The current objective of this project is to serve as an open-source alternative client for developers that prefer a tool with low system resource usage, full local storage of sensitive request data and load testing capabilities.
+Querry is a lightweight cross-platform API request client designed for simplicity and efficiency. The current objective of this project is to serve as an open-source alternative client for developers that prefer a tool with low system resource usage, full local storage of sensitive request data and load testing capabilities.
 
 ### Tech used.
 1. Rust
