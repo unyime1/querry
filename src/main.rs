@@ -1,6 +1,5 @@
 mod collections;
 mod database;
-mod requests;
 mod rest;
 mod utils;
 mod window;

@@ -1,6 +1,7 @@
 mod collection_item;
 mod collection_row;
 mod imp;
+mod requests;
 
 use adw::{prelude::*, MessageDialog, ResponseAppearance};
 use glib::Object;
