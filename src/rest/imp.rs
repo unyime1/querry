@@ -12,6 +12,8 @@ pub struct RestWindow {
     pub paned_primary: TemplateChild<Paned>,
     #[template_child]
     pub paned_secondary: TemplateChild<Paned>,
+    #[template_child]
+    pub requests_view_box: TemplateChild<Bin>,
 }
 
 // The central trait for subclassing a GObject
@@ -37,7 +39,7 @@ impl ObjectImpl for RestWindow {
         self.parent_constructed();
 
         let obj = self.obj();
-        obj.fix_collections_ui();
+        obj.embed_children_ui();
         obj.validate_paned_primary_position();
         obj.validate_paned_secondary_position();
     }

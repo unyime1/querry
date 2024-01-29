@@ -1,5 +1,6 @@
 mod collections;
 mod database;
+mod requests_view;
 mod rest;
 mod utils;
 mod window;

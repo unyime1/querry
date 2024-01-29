@@ -37,16 +37,7 @@
                     <property name="orientation">vertical</property>
         
                     <child>
-                      <object class="GtkLabel" id="label-top-1">
-                        <property name="visible">True</property>
-                        <property name="label">top Panel 1</property>
-                      </object>
-                    </child>
-        
-                    <child>
-                      <object class="GtkLabel" id="label-top-2">
-                        <property name="visible">True</property>
-                        <property name="label">top Panel 2</property>
+                      <object class="AdwBin" id="requests_view_box">
                       </object>
                     </child>
         
