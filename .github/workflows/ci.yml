@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    name: examples
+    name: Build and test
     runs-on: ubuntu-22.04
     container:
       image: ghcr.io/gtk-rs/gtk4-rs/gtk4:latest

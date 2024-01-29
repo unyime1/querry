@@ -7,8 +7,8 @@ use gtk::EventControllerMotion;
 use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
 
 use super::collection_item::CollectionItem;
+use super::requests::{request_item::RequestItem, request_row::RequestRow};
 use crate::database::get_database;
-use crate::requests::{request_item::RequestItem, request_row::RequestRow};
 use crate::utils::{
     crud::requests::{create_request, get_collection_requests, ProcolTypes},
     messaging::{AppEvent, EVENT_CHANNEL},
