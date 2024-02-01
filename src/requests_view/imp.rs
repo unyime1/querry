@@ -1,11 +1,23 @@
+use std::cell::RefCell;
+
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate};
+use gtk::{glib, Box, CompositeTemplate, EditableLabel, Label};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/requests_view.ui")]
-pub struct RequestsView {}
+pub struct RequestsView {
+    #[template_child]
+    pub filled_state_box: TemplateChild<Box>,
+    #[template_child]
+    pub collection_name: TemplateChild<Label>,
+    #[template_child]
+    pub divider: TemplateChild<Label>,
+    #[template_child]
+    pub request_name: TemplateChild<EditableLabel>,
+    pub request_id: RefCell<String>,
+}
 
 // The central trait for subclassing a GObject
 #[glib::object_subclass]
@@ -30,6 +42,9 @@ impl ObjectImpl for RequestsView {
         self.parent_constructed();
 
         let obj = self.obj();
+        obj.set_child_widgets_visibilty(false);
+        obj.listen_request_view();
+        obj.listen_request_view();
     }
 }
 

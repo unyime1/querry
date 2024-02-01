@@ -2,13 +2,14 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::Binding;
-use gtk::{glib, Box, CompositeTemplate, Image, Label, MenuButton};
+use gtk::{glib, CompositeTemplate, Image, Label, MenuButton};
 
 // Object holding the state
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/org/etim/querry/request_row.ui")]
 pub struct RequestRow {
-    pub request_id: RefCell<String>,
+    #[template_child]
+    pub request_id: TemplateChild<Label>,
     #[template_child]
     pub name: TemplateChild<Label>,
     #[template_child]
@@ -24,7 +25,7 @@ impl ObjectImpl for RequestRow {
         // Calls at the time window is constructed.
         self.parent_constructed();
         let obj = self.obj();
-        obj.process_hover()
+        obj.process_hover();
     }
 }
 

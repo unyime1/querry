@@ -145,7 +145,7 @@ pub fn delete_request(
 pub fn get_single_request(
     id: String,
     db_connection: &Connection,
-) -> Result<Option<RequestData>, Box<dyn Error>> {
+) -> Result<RequestData, Box<dyn Error>> {
     let mut stmt = db_connection.prepare(
         "SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE id=?1",
     )?;
@@ -164,7 +164,8 @@ pub fn get_single_request(
         });
     }
 
-    Ok(requests.first().cloned())
+    let request_item = requests.first().ok_or("")?;
+    Ok(request_item.clone())
 }
 
 #[cfg(test)]
@@ -211,13 +212,11 @@ mod tests {
             .expect("Cant get collections");
 
         let fetched_request = get_single_request(request.id, &db).unwrap();
-        assert!(fetched_request.is_some());
-        let fetched_request_some = fetched_request.unwrap();
 
-        assert!(fetched_request_some.name == "New Request");
-        assert!(fetched_request_some.protocol == "HTTP");
-        assert!(fetched_request_some.http_method == Some("GET".to_string()));
-        assert!(fetched_request_some.url.is_none());
+        assert!(fetched_request.name == "New Request");
+        assert!(fetched_request.protocol == "HTTP");
+        assert!(fetched_request.http_method == Some("GET".to_string()));
+        assert!(fetched_request.url.is_none());
     }
 
     #[test]
@@ -228,16 +227,14 @@ mod tests {
             .expect("Cant get collections");
 
         let fetched_request = get_single_request(request.id, &db).unwrap();
-        assert!(fetched_request.is_some());
-        let fetched_request_some = fetched_request.unwrap();
 
-        assert!(fetched_request_some.name == "New Request");
-        assert!(fetched_request_some.protocol == "HTTP");
-        assert!(fetched_request_some.http_method == Some("GET".to_string()));
-        assert!(fetched_request_some.url.is_none());
+        assert!(fetched_request.name == "New Request");
+        assert!(fetched_request.protocol == "HTTP");
+        assert!(fetched_request.http_method == Some("GET".to_string()));
+        assert!(fetched_request.url.is_none());
 
-        delete_request(fetched_request_some.id.clone(), &db).unwrap();
-        let fetched_request_new = get_single_request(fetched_request_some.id, &db).unwrap();
-        assert!(fetched_request_new.is_none());
+        delete_request(fetched_request.id.clone(), &db).unwrap();
+        let fetched_request_new = get_single_request(fetched_request.id, &db);
+        assert!(fetched_request_new.is_err())
     }
 }

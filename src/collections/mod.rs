@@ -268,7 +268,7 @@ impl CollectionsWindow {
                             this.calc_visible_child();
                         }
                     }
-                    AppEvent::RequestDeleted(_) => todo!(),
+                    _ => {},
                 }
             }
         }));

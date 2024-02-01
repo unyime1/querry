@@ -11,7 +11,7 @@
     </style>
 
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="filled_state_box">
         <property name="orientation">horizontal</property>
         <property name="hexpand">true</property>
 
@@ -22,7 +22,7 @@
         </child>
 
         <child>
-          <object class="GtkLabel">
+          <object class="GtkLabel"  id="divider">
             <property name="label">/</property>
 
             <style>
