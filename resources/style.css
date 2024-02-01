@@ -76,3 +76,18 @@
 listview row {
     background-color:transparent;
 }
+
+.requests_view_box {
+    padding-left: 9px;
+    padding-right: 9px;
+}
+
+.divider {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+editablelabel stack text {
+    border-radius: 5px;
+    border: 2px solid rgb(189, 63, 14);
+}

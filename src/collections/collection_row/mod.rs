@@ -236,7 +236,6 @@ impl CollectionRow {
                 .expect("The child has to be a `RequestRow`.");
 
             request_row.bind(&request_item);
-            request_row.set_request_id(request_item.id().to_string())
         });
 
         // Tell factory how to unbind `RequestRow` from `RequestItem`

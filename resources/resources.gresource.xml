@@ -6,6 +6,7 @@
     <file compressed="true" preprocess="xml-stripblanks">collection.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">collection_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks">request_row.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks">requests_view.ui</file>
     <file compressed="true">style.css</file>
     <file compressed="true">icons/post.png</file>
     <file compressed="true">icons/get.png</file>

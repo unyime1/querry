@@ -4,6 +4,7 @@ use lazy_static::lazy_static;
 pub enum AppEvent {
     CollectionDeleted(String),
     RequestDeleted(String),
+    ViewRequestItem(String),
 }
 
 lazy_static! {

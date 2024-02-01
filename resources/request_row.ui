@@ -46,5 +46,12 @@
       </object>
     </child>
 
+
+    <child>
+      <object class="GtkLabel" id="request_id">
+        <property name="visible">False</property>
+      </object>
+    </child>
+
   </template>
 </interface>

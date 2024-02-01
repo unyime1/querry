@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="QuerryRequestsView" parent="GtkBox">
+    <property name="hexpand">true</property>
+    <property name="vexpand">true</property>
+    <property name="visible">True</property>
+    <property name="orientation">vertical</property>
+
+    <style>
+      <class name="requests_view_box" />
+    </style>
+
+    <child>
+      <object class="GtkBox" id="filled_state_box">
+        <property name="orientation">horizontal</property>
+        <property name="hexpand">true</property>
+
+        <child>
+          <object class="GtkLabel" id="collection_name">
+            <property name="label">piqy</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkLabel"  id="divider">
+            <property name="label">/</property>
+
+            <style>
+              <class name="divider" />
+            </style>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkEditableLabel" id="request_name">
+            <property name="text">create account</property>
+          </object>
+        </child>
+
+      </object>
+    </child>
+    
+  </template>
+</interface>
