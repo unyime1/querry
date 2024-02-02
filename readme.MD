@@ -1,5 +1,4 @@
 ## Querry
-
 Querry is a lightweight cross-platform API request client designed for simplicity and efficiency.
 
 ### Tech used.
@@ -24,4 +23,4 @@ Project currently doesn't accept pull requests until the initial working version
 
 
 ### Security Vulnerabilities
-Please send a mail to `lordunyime@gmail.com` if you discover a security vulnerability.
+To report security vulnerabilities, please don't create a public issue. Instead, use the private reporting feature. See [Privately reporting a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability)
