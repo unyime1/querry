@@ -164,7 +164,7 @@ pub fn get_single_request(
         });
     }
 
-    let request_item = requests.first().ok_or("")?;
+    let request_item = requests.first().ok_or("Cannot find request item.")?;
     Ok(request_item.clone())
 }
 

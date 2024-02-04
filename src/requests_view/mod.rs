@@ -8,7 +8,10 @@ use gtk::{
 
 use crate::database::get_database;
 use crate::utils::{
-    crud::{collections::get_single_collection, requests::get_single_request},
+    crud::{
+        collections::get_single_collection,
+        requests::{get_single_request, update_request_item},
+    },
     messaging::{AppEvent, EVENT_CHANNEL},
 };
 
@@ -37,10 +40,29 @@ impl RequestsView {
     /// Monitor changes to request_name
     pub fn montitor_request_name_changes(&self) {
         let request_name = self.imp().request_name.clone();
+        let db = match get_database() {
+            Ok(data) => data,
+            Err(_) => {
+                tracing::error!("Could not get database connection.");
+                return;
+            }
+        };
 
-        request_name.connect_editing_notify(move |item| {
+        request_name.connect_editing_notify(clone!(@weak self as this => move |item| {
+            let request_id = this.imp().request_id.borrow().to_string();
             let new_text = item.text();
-        });
+
+            match update_request_item(
+                request_id, Some(new_text.to_string()), None, None, None, &db
+            ) {
+                Ok(_) => {
+                    // Dispatch new request name to collection list.
+                },
+                Err(_) => {
+                    tracing::error!("Could not update request name.");
+                }
+            };
+        }));
     }
 
     /// Listen to messages to displa request.
