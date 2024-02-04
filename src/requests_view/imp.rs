@@ -45,6 +45,7 @@ impl ObjectImpl for RequestsView {
         obj.set_child_widgets_visibilty(false);
         obj.listen_request_view();
         obj.listen_request_view();
+        obj.montitor_request_name_changes();
     }
 }
 

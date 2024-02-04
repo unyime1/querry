@@ -10,7 +10,7 @@ use super::collection_item::CollectionItem;
 use super::requests::{request_item::RequestItem, request_row::RequestRow};
 use crate::database::get_database;
 use crate::utils::{
-    crud::requests::{create_request, get_collection_requests, ProcolTypes},
+    crud::requests::{create_request, get_collection_requests, ProtocolTypes},
     messaging::{AppEvent, EVENT_CHANNEL},
 };
 
@@ -94,7 +94,8 @@ impl CollectionRow {
 
         let collection_id = self.imp().collection_id.borrow();
 
-        let request_data = match create_request(ProcolTypes::Http, collection_id.to_string(), &db) {
+        let request_data = match create_request(ProtocolTypes::Http, collection_id.to_string(), &db)
+        {
             Ok(data) => data,
             Err(_) => {
                 tracing::error!("Could not create request.");

@@ -34,6 +34,15 @@ impl RequestsView {
         divider.set_visible(visibity);
     }
 
+    /// Monitor changes to request_name
+    pub fn montitor_request_name_changes(&self) {
+        let request_name = self.imp().request_name.clone();
+
+        request_name.connect_editing_notify(move |item| {
+            let new_text = item.text();
+        });
+    }
+
     /// Listen to messages to displa request.
     pub fn listen_request_view(&self) {
         let db = match get_database() {

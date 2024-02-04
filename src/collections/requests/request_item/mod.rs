@@ -1,6 +1,6 @@
 mod imp;
 
-use crate::utils::crud::requests::{HTTPMethods, ProcolTypes};
+use crate::utils::crud::requests::{HTTPMethods, ProtocolTypes};
 use glib::Object;
 use gtk::glib;
 
@@ -32,12 +32,12 @@ impl RequestItem {
 
     /// Compute the right icon for request box.
     pub fn compute_request_icon(protocol: &String, http_method: &String) -> String {
-        let parsed_protocol = match ProcolTypes::from_string(&protocol) {
+        let parsed_protocol = match ProtocolTypes::from_string(&protocol) {
             Some(data) => data,
-            None => ProcolTypes::Http,
+            None => ProtocolTypes::Http,
         };
 
-        if parsed_protocol == ProcolTypes::Http {
+        if parsed_protocol == ProtocolTypes::Http {
             let parsed_http_method = match HTTPMethods::from_string(&http_method) {
                 Some(data) => data,
                 None => HTTPMethods::Get,
