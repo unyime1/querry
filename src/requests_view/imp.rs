@@ -17,6 +17,7 @@ pub struct RequestsView {
     #[template_child]
     pub request_name: TemplateChild<EditableLabel>,
     pub request_id: RefCell<String>,
+    pub collection_id: RefCell<String>,
 }
 
 // The central trait for subclassing a GObject

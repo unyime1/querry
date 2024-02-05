@@ -3,6 +3,7 @@ mod imp;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::Object;
+use gtk::glib::{clone, PropertyGet};
 use gtk::EventControllerMotion;
 use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
 
@@ -257,5 +258,37 @@ impl CollectionRow {
         self.get_requests_list().set_single_click_activate(true);
         self.get_requests_list()
             .set_css_classes(&vec!["collections_list"]);
+    }
+
+    /// Rename request messages
+    pub fn listen_rename_request(&self) {
+        glib::spawn_future_local(clone!(@weak self as this => async move {
+            let requests_store = this.get_requests_store();
+
+            while let Ok(response) = EVENT_CHANNEL.1.recv().await {
+                match response {
+                    AppEvent::RenameRequestItem(new_name, request_id, collection_id) => {
+                        let local_collection_id = this.imp().collection_id.borrow().to_string();
+                        let label = this.imp().collection_label.clone().label();
+
+                        println!("Label {}, local - {}, Incoming {}", label, local_collection_id, collection_id);
+
+                        if local_collection_id == collection_id {
+                            let request_item = requests_store
+                            .iter::<RequestItem>()
+                            .find(|ref item| item.as_ref().unwrap().id() == request_id);
+
+                            if let Some(request_item) = request_item {
+                                if let Ok(request_item) = request_item {
+                                    request_item.set_name(new_name);
+                                }
+                            }
+                        }
+
+                    },
+                    _ => {},
+                }
+            };
+        }));
     }
 }

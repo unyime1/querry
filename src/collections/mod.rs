@@ -267,7 +267,7 @@ impl CollectionsWindow {
                             delete_collection(collection_id, &db).expect("Can't delete item");
                             this.calc_visible_child();
                         }
-                    }
+                    },
                     _ => {},
                 }
             }

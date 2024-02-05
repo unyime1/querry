@@ -5,6 +5,7 @@ pub enum AppEvent {
     CollectionDeleted(String),
     RequestDeleted(String),
     ViewRequestItem(String),
+    RenameRequestItem(String, String, String), // new_name, request_id, collection_id
 }
 
 lazy_static! {

@@ -13,6 +13,7 @@ use crate::utils::{
         requests::{get_single_request, update_request_item},
     },
     messaging::{AppEvent, EVENT_CHANNEL},
+    tokio_runtime::runtime,
 };
 
 glib::wrapper! {
@@ -50,13 +51,21 @@ impl RequestsView {
 
         request_name.connect_editing_notify(clone!(@weak self as this => move |item| {
             let request_id = this.imp().request_id.borrow().to_string();
+            let collection_id = this.imp().collection_id.borrow().to_string();
             let new_text = item.text();
 
             match update_request_item(
-                request_id, Some(new_text.to_string()), None, None, None, &db
+                &request_id, Some(new_text.to_string()), None, None, None, &db
             ) {
                 Ok(_) => {
-                    // Dispatch new request name to collection list.
+                    // Dispatch new request name to the collectionsrow Widget.
+                    runtime().spawn(async move {
+                        EVENT_CHANNEL
+                            .0
+                            .send(AppEvent::RenameRequestItem(new_text.to_string(), request_id, collection_id))
+                            .await
+                            .expect("Channel should be open");
+                    });
                 },
                 Err(_) => {
                     tracing::error!("Could not update request name.");
@@ -98,6 +107,7 @@ impl RequestsView {
                         this.imp().collection_name.set_label(&collection_item.name);
                         this.imp().request_name.set_text(&request_item.name);
                         *this.imp().request_id.borrow_mut() = request_item.id;
+                        *this.imp().collection_id.borrow_mut() = collection_item.id;
 
                         this.set_child_widgets_visibilty(true);
 

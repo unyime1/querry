@@ -170,7 +170,7 @@ pub fn get_single_request(
 
 /// Update a request item.
 pub fn update_request_item(
-    id: String,
+    id: &str,
     name: Option<String>,
     protocol: Option<ProtocolTypes>,
     http_method: Option<HTTPMethods>,
@@ -290,7 +290,7 @@ mod tests {
         assert!(fetched_request.url.is_none());
 
         let updated_request = update_request_item(
-            fetched_request.id,
+            &fetched_request.id,
             Some("Hello Request".to_string()),
             None,
             None,

@@ -37,7 +37,7 @@ fn build_ui(app: &Application) {
     // Create a new custom window and present it
     let window = Window::new(app);
 
-    window.maximize();
+    // window.maximize();
     window.present();
 }
 
