@@ -70,7 +70,6 @@ impl RequestRow {
                 EVENT_CHANNEL
                     .0
                     .send(AppEvent::ViewRequestItem(request_id_copy))
-                    .await
                     .expect("Channel should be open");
             });
         });

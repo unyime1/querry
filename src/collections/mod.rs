@@ -253,7 +253,8 @@ impl CollectionsWindow {
                 }
             };
 
-            while let Ok(response) = EVENT_CHANNEL.1.recv().await {
+            let mut rx = EVENT_CHANNEL.0.subscribe();
+            while let Ok(response) = rx.recv().await {
                 match response {
                     AppEvent::CollectionDeleted(collection_id) => {
                         // Identify collection item from ListStore and remove.
@@ -267,7 +268,7 @@ impl CollectionsWindow {
                             delete_collection(collection_id, &db).expect("Can't delete item");
                             this.calc_visible_child();
                         }
-                    }
+                    },
                     _ => {},
                 }
             }

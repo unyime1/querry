@@ -3,6 +3,7 @@ mod imp;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::Object;
+use gtk::glib::{clone, PropertyGet};
 use gtk::EventControllerMotion;
 use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
 
@@ -10,7 +11,7 @@ use super::collection_item::CollectionItem;
 use super::requests::{request_item::RequestItem, request_row::RequestRow};
 use crate::database::get_database;
 use crate::utils::{
-    crud::requests::{create_request, get_collection_requests, ProcolTypes},
+    crud::requests::{create_request, get_collection_requests, ProtocolTypes},
     messaging::{AppEvent, EVENT_CHANNEL},
 };
 
@@ -79,7 +80,6 @@ impl CollectionRow {
         EVENT_CHANNEL
             .0
             .send(AppEvent::CollectionDeleted(id))
-            .await
             .expect("Channel should be open");
     }
 
@@ -94,7 +94,8 @@ impl CollectionRow {
 
         let collection_id = self.imp().collection_id.borrow();
 
-        let request_data = match create_request(ProcolTypes::Http, collection_id.to_string(), &db) {
+        let request_data = match create_request(ProtocolTypes::Http, collection_id.to_string(), &db)
+        {
             Ok(data) => data,
             Err(_) => {
                 tracing::error!("Could not create request.");
@@ -256,5 +257,35 @@ impl CollectionRow {
         self.get_requests_list().set_single_click_activate(true);
         self.get_requests_list()
             .set_css_classes(&vec!["collections_list"]);
+    }
+
+    /// Rename request messages
+    pub fn listen_rename_request(&self) {
+        glib::spawn_future_local(clone!(@weak self as this => async move {
+            let requests_store = this.get_requests_store();
+
+            let mut rx = EVENT_CHANNEL.0.subscribe();
+            while let Ok(response) = rx.recv().await {
+                match response {
+                    AppEvent::RenameRequestItem(new_name, request_id, collection_id) => {
+                        let local_collection_id = this.imp().collection_id.borrow().to_string();
+
+                        if local_collection_id == collection_id {
+                            let request_item = requests_store
+                            .iter::<RequestItem>()
+                            .find(|ref item| item.as_ref().unwrap().id() == request_id);
+
+                            if let Some(request_item) = request_item {
+                                if let Ok(request_item) = request_item {
+                                    request_item.set_name(new_name);
+                                }
+                            }
+                        }
+
+                    },
+                    _ => {},
+                }
+            };
+        }));
     }
 }

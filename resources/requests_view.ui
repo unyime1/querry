@@ -33,7 +33,6 @@
 
         <child>
           <object class="GtkEditableLabel" id="request_name">
-            <property name="text">create account</property>
           </object>
         </child>
 
