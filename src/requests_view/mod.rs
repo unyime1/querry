@@ -1,5 +1,7 @@
 mod imp;
 
+use std::borrow::BorrowMut;
+
 use glib::Object;
 use gtk::{
     glib::{self, clone, subclass::types::ObjectSubclassIsExt},
@@ -63,7 +65,6 @@ impl RequestsView {
                         EVENT_CHANNEL
                             .0
                             .send(AppEvent::RenameRequestItem(new_text.to_string(), request_id, collection_id))
-                            .await
                             .expect("Channel should be open");
                     });
                 },
@@ -85,7 +86,9 @@ impl RequestsView {
         };
 
         glib::spawn_future_local(clone!(@weak self as this => async move {
-            while let Ok(response) = EVENT_CHANNEL.1.recv().await {
+            let mut rx = EVENT_CHANNEL.0.subscribe();
+
+            while let Ok(response) = rx.recv().await {
                 match response {
                     AppEvent::ViewRequestItem(request_id) => {
                         let request_item = match get_single_request(request_id, &db) {

@@ -80,7 +80,6 @@ impl CollectionRow {
         EVENT_CHANNEL
             .0
             .send(AppEvent::CollectionDeleted(id))
-            .await
             .expect("Channel should be open");
     }
 
@@ -265,13 +264,11 @@ impl CollectionRow {
         glib::spawn_future_local(clone!(@weak self as this => async move {
             let requests_store = this.get_requests_store();
 
-            while let Ok(response) = EVENT_CHANNEL.1.recv().await {
+            let mut rx = EVENT_CHANNEL.0.subscribe();
+            while let Ok(response) = rx.recv().await {
                 match response {
                     AppEvent::RenameRequestItem(new_name, request_id, collection_id) => {
                         let local_collection_id = this.imp().collection_id.borrow().to_string();
-                        let label = this.imp().collection_label.clone().label();
-
-                        println!("Label {}, local - {}, Incoming {}", label, local_collection_id, collection_id);
 
                         if local_collection_id == collection_id {
                             let request_item = requests_store
