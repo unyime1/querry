@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
+  <menu id="requests-methods">
+    <item>
+      <attribute name="label" translatable="yes">POST</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">GET</attribute>
+    </item>
+
+    <item>
+      <attribute name="label" translatable="yes">PUT</attribute>
+    </item>
+
+    <item>
+      <attribute name="label" translatable="yes">DELETE</attribute>
+    </item>
+  </menu>
+
   <template class="QuerryRequestsView" parent="GtkBox">
     <property name="hexpand">true</property>
     <property name="vexpand">true</property>
-    <property name="visible">True</property>
     <property name="orientation">vertical</property>
 
     <style>
@@ -11,13 +27,12 @@
     </style>
 
     <child>
-      <object class="GtkBox" id="filled_state_box">
+      <object class="GtkBox" id="names_box">
         <property name="orientation">horizontal</property>
-        <property name="hexpand">true</property>
+        <property name="visible">False</property>
 
         <child>
           <object class="GtkLabel" id="collection_name">
-            <property name="label">piqy</property>
           </object>
         </child>
 
@@ -36,6 +51,49 @@
           </object>
         </child>
 
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkBox" id="actions_box">
+        <property name="orientation">horizontal</property>
+        <property name="visible">False</property>
+
+        <style>
+          <class name="requests_actions_box" />
+        </style>
+
+        <child>
+          <object class="GtkMenuButton" id="requests_menu">
+            <property name="label">Post</property>
+            <property name="menu-model">requests-methods</property>
+
+            <style>
+              <class name="requests_menu" />
+            </style>
+          </object>
+        </child>
+        
+        <child>
+          <object class="GtkEntry" id="entry_box">
+            <attributes>
+              <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
+              <attribute name="background" value="red" start="5" end="10"/>
+            </attributes>
+            <property name="hexpand">true</property>
+          </object>
+        </child>
+
+        <child>
+          <object class="GtkButton" id="send_request">
+            <property name="label">Send</property>
+
+            <style>
+              <class name="send_requests_btn" />
+            </style>
+          </object>
+        </child>
+  
       </object>
     </child>
     

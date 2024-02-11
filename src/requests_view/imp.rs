@@ -9,8 +9,6 @@ use gtk::{glib, Box, CompositeTemplate, EditableLabel, Label};
 #[template(resource = "/org/etim/querry/requests_view.ui")]
 pub struct RequestsView {
     #[template_child]
-    pub filled_state_box: TemplateChild<Box>,
-    #[template_child]
     pub collection_name: TemplateChild<Label>,
     #[template_child]
     pub divider: TemplateChild<Label>,
@@ -18,6 +16,10 @@ pub struct RequestsView {
     pub request_name: TemplateChild<EditableLabel>,
     pub request_id: RefCell<String>,
     pub collection_id: RefCell<String>,
+    #[template_child]
+    pub actions_box: TemplateChild<Box>,
+    #[template_child]
+    pub names_box: TemplateChild<Box>,
 }
 
 // The central trait for subclassing a GObject
@@ -43,8 +45,6 @@ impl ObjectImpl for RequestsView {
         self.parent_constructed();
 
         let obj = self.obj();
-        obj.set_child_widgets_visibilty(false);
-        obj.listen_request_view();
         obj.listen_request_view();
         obj.montitor_request_name_changes();
     }

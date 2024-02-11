@@ -91,3 +91,16 @@ editablelabel stack text {
     border-radius: 5px;
     border: 2px solid rgb(189, 63, 14);
 }
+
+
+.requests_menu {
+    margin-right: 3px;
+}
+
+.send_requests_btn {
+    margin-left: 3px;
+}
+
+.requests_actions_box {
+    margin-top: 8px;
+}

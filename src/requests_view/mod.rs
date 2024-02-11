@@ -1,7 +1,5 @@
 mod imp;
 
-use std::borrow::BorrowMut;
-
 use glib::Object;
 use gtk::{
     glib::{self, clone, subclass::types::ObjectSubclassIsExt},
@@ -30,14 +28,12 @@ impl RequestsView {
     }
 
     /// Set children of RequestView to either visible or invisible.
-    pub fn set_child_widgets_visibilty(&self, visibity: bool) {
-        let collection_name = self.imp().collection_name.clone();
-        let request_name = self.imp().request_name.clone();
-        let divider = self.imp().divider.clone();
+    pub fn set_child_widgets_visibilty(&self, visibility: bool) {
+        let actions_box = self.imp().actions_box.clone();
+        let names_box = self.imp().names_box.clone();
 
-        collection_name.set_visible(visibity);
-        request_name.set_visible(visibity);
-        divider.set_visible(visibity);
+        actions_box.set_visible(visibility);
+        names_box.set_visible(visibility);
     }
 
     /// Monitor changes to request_name
