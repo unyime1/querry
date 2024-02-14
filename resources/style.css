@@ -104,3 +104,7 @@ editablelabel stack text {
 .requests_actions_box {
     margin-top: 8px;
 }
+
+.requests_separator {
+    margin-top: 8px;
+}

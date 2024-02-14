@@ -2,7 +2,9 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, EditableLabel, Label};
+use gtk::{glib, Box, CompositeTemplate, EditableLabel, Entry, Label, MenuButton, Separator};
+
+use super::HTTPMethods;
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
@@ -20,6 +22,14 @@ pub struct RequestsView {
     pub actions_box: TemplateChild<Box>,
     #[template_child]
     pub names_box: TemplateChild<Box>,
+    #[template_child]
+    pub separator: TemplateChild<Separator>,
+    #[template_child]
+    pub separator_2: TemplateChild<Separator>,
+    #[template_child]
+    pub requests_menu: TemplateChild<MenuButton>,
+    #[template_child]
+    pub entry_box: TemplateChild<Entry>,
 }
 
 // The central trait for subclassing a GObject
@@ -31,6 +41,40 @@ impl ObjectSubclass for RequestsView {
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
+
+        klass.install_action_async(
+            "req.set-method-post",
+            None,
+            |request_view, _, _| async move {
+                request_view.update_request_method(HTTPMethods::Post).await;
+            },
+        );
+
+        klass.install_action_async(
+            "req.set-method-get",
+            None,
+            |request_view, _, _| async move {
+                request_view.update_request_method(HTTPMethods::Get).await;
+            },
+        );
+
+        klass.install_action_async(
+            "req.set-method-put",
+            None,
+            |request_view, _, _| async move {
+                request_view.update_request_method(HTTPMethods::Put).await;
+            },
+        );
+
+        klass.install_action_async(
+            "req.set-method-delete",
+            None,
+            |request_view, _, _| async move {
+                request_view
+                    .update_request_method(HTTPMethods::Delete)
+                    .await;
+            },
+        );
     }
 
     fn instance_init(obj: &InitializingObject<Self>) {

@@ -3,17 +3,21 @@
   <menu id="requests-methods">
     <item>
       <attribute name="label" translatable="yes">POST</attribute>
+      <attribute name="action">req.set-method-post</attribute>
     </item>
     <item>
       <attribute name="label" translatable="yes">GET</attribute>
+      <attribute name="action">req.set-method-get</attribute>
     </item>
 
     <item>
       <attribute name="label" translatable="yes">PUT</attribute>
+      <attribute name="action">req.set-method-put</attribute>
     </item>
 
     <item>
       <attribute name="label" translatable="yes">DELETE</attribute>
+      <attribute name="action">req.set-method-delete</attribute>
     </item>
   </menu>
 
@@ -51,6 +55,17 @@
           </object>
         </child>
 
+      </object>
+    </child>
+  
+    <child>
+      <object class="GtkSeparator" id="separator">
+        <property name="orientation">horizontal</property>
+        <property name="visible">False</property>
+
+        <style>
+          <class name="requests_separator" />
+        </style>
       </object>
     </child>
 
@@ -94,6 +109,17 @@
           </object>
         </child>
   
+      </object>
+    </child>
+
+    <child>
+      <object class="GtkSeparator" id="separator_2">
+        <property name="orientation">horizontal</property>
+        <property name="visible">False</property>
+
+        <style>
+          <class name="requests_separator" />
+        </style>
       </object>
     </child>
     
