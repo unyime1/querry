@@ -1,7 +1,5 @@
 mod imp;
 
-use std::cell::RefCell;
-
 use glib::Object;
 use gtk::{
     glib::{self, clone, subclass::types::ObjectSubclassIsExt},
@@ -163,6 +161,36 @@ impl RequestsView {
                     _ => {},
                 }
             }
+        }));
+    }
+
+    /// Listen for changes in URL values and update item url.
+    pub fn monitor_url_changes(&self) {
+        let entry = self.imp().entry_box.clone();
+        let db = match get_database() {
+            Ok(data) => data,
+            Err(_) => {
+                tracing::error!("Could not get database connection.");
+                return;
+            }
+        };
+
+        entry.connect_changed(clone!(@weak self as this => move |item| {
+            let request_id = this.imp().request_id.borrow().to_string();
+            match update_request_item(
+                &request_id,
+                None,
+                None,
+                None,
+                Some(item.text().to_string()),
+                &db,
+            ) {
+                Ok(_) => {
+                }
+                Err(_) => {
+                    tracing::error!("Could not update url.");
+                }
+            };
         }));
     }
 }

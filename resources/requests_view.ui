@@ -91,10 +91,6 @@
         
         <child>
           <object class="GtkEntry" id="entry_box">
-            <attributes>
-              <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
-              <attribute name="background" value="red" start="5" end="10"/>
-            </attributes>
             <property name="hexpand">true</property>
           </object>
         </child>

@@ -91,6 +91,7 @@ impl ObjectImpl for RequestsView {
         let obj = self.obj();
         obj.listen_request_view();
         obj.montitor_request_name_changes();
+        obj.monitor_url_changes();
     }
 }
 
