@@ -2,14 +2,14 @@ use std::cell::RefCell;
 
 use adw::subclass::prelude::*;
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, EditableLabel, Label};
+use gtk::{glib, Box, CompositeTemplate, EditableLabel, Entry, Label, MenuButton, Separator};
+
+use super::HTTPMethods;
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
 #[template(resource = "/org/etim/querry/requests_view.ui")]
 pub struct RequestsView {
-    #[template_child]
-    pub filled_state_box: TemplateChild<Box>,
     #[template_child]
     pub collection_name: TemplateChild<Label>,
     #[template_child]
@@ -18,6 +18,18 @@ pub struct RequestsView {
     pub request_name: TemplateChild<EditableLabel>,
     pub request_id: RefCell<String>,
     pub collection_id: RefCell<String>,
+    #[template_child]
+    pub actions_box: TemplateChild<Box>,
+    #[template_child]
+    pub names_box: TemplateChild<Box>,
+    #[template_child]
+    pub separator: TemplateChild<Separator>,
+    #[template_child]
+    pub separator_2: TemplateChild<Separator>,
+    #[template_child]
+    pub requests_menu: TemplateChild<MenuButton>,
+    #[template_child]
+    pub entry_box: TemplateChild<Entry>,
 }
 
 // The central trait for subclassing a GObject
@@ -29,6 +41,40 @@ impl ObjectSubclass for RequestsView {
 
     fn class_init(klass: &mut Self::Class) {
         klass.bind_template();
+
+        klass.install_action_async(
+            "req.set-method-post",
+            None,
+            |request_view, _, _| async move {
+                request_view.update_request_method(HTTPMethods::Post).await;
+            },
+        );
+
+        klass.install_action_async(
+            "req.set-method-get",
+            None,
+            |request_view, _, _| async move {
+                request_view.update_request_method(HTTPMethods::Get).await;
+            },
+        );
+
+        klass.install_action_async(
+            "req.set-method-put",
+            None,
+            |request_view, _, _| async move {
+                request_view.update_request_method(HTTPMethods::Put).await;
+            },
+        );
+
+        klass.install_action_async(
+            "req.set-method-delete",
+            None,
+            |request_view, _, _| async move {
+                request_view
+                    .update_request_method(HTTPMethods::Delete)
+                    .await;
+            },
+        );
     }
 
     fn instance_init(obj: &InitializingObject<Self>) {
@@ -43,10 +89,9 @@ impl ObjectImpl for RequestsView {
         self.parent_constructed();
 
         let obj = self.obj();
-        obj.set_child_widgets_visibilty(false);
-        obj.listen_request_view();
         obj.listen_request_view();
         obj.montitor_request_name_changes();
+        obj.monitor_url_changes();
     }
 }
 

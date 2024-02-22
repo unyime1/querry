@@ -33,8 +33,8 @@ impl RestWindow {
         let paned_primary = self.imp().paned_primary.clone();
         paned_primary.connect_position_notify(move |paned| {
             let paned_position = paned.position();
-            if paned_position < 350 {
-                paned.set_position(350);
+            if paned_position < 300 {
+                paned.set_position(300);
             } else if paned_position > 700 {
                 paned.set_position(700);
             };

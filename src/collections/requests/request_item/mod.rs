@@ -18,7 +18,7 @@ impl RequestItem {
     ) -> Self {
         let parsed_url = url.unwrap_or(String::from(""));
         let parsed_http_method = &http_method.unwrap_or(String::from(""));
-        let icon = Self::compute_request_icon(&protocol, &parsed_http_method);
+        let icon = compute_request_icon(&protocol, &parsed_http_method);
 
         Object::builder()
             .property("id", id)
@@ -29,28 +29,28 @@ impl RequestItem {
             .property("icon", icon)
             .build()
     }
+}
 
-    /// Compute the right icon for request box.
-    pub fn compute_request_icon(protocol: &String, http_method: &String) -> String {
-        let parsed_protocol = match ProtocolTypes::from_string(&protocol) {
+/// Compute the right icon for request box.
+pub fn compute_request_icon(protocol: &String, http_method: &String) -> String {
+    let parsed_protocol = match ProtocolTypes::from_string(&protocol) {
+        Some(data) => data,
+        None => ProtocolTypes::Http,
+    };
+
+    if parsed_protocol == ProtocolTypes::Http {
+        let parsed_http_method = match HTTPMethods::from_string(&http_method) {
             Some(data) => data,
-            None => ProtocolTypes::Http,
+            None => HTTPMethods::Get,
         };
 
-        if parsed_protocol == ProtocolTypes::Http {
-            let parsed_http_method = match HTTPMethods::from_string(&http_method) {
-                Some(data) => data,
-                None => HTTPMethods::Get,
-            };
-
-            match parsed_http_method {
-                HTTPMethods::Post => "resources/icons/post.png".to_string(),
-                HTTPMethods::Get => "resources/icons/get.png".to_string(),
-                HTTPMethods::Put => "resources/icons/put.png".to_string(),
-                HTTPMethods::Delete => "resources/icons/delete.png".to_string(),
-            }
-        } else {
-            "resources/icons/get.png".to_string()
+        match parsed_http_method {
+            HTTPMethods::Post => "resources/icons/post.png".to_string(),
+            HTTPMethods::Get => "resources/icons/get.png".to_string(),
+            HTTPMethods::Put => "resources/icons/put.png".to_string(),
+            HTTPMethods::Delete => "resources/icons/delete.png".to_string(),
         }
+    } else {
+        "resources/icons/get.png".to_string()
     }
 }

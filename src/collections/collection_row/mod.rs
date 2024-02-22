@@ -8,7 +8,10 @@ use gtk::EventControllerMotion;
 use gtk::{gio::ListStore, glib, ListItem, ListView, SignalListItemFactory, SingleSelection};
 
 use super::collection_item::CollectionItem;
-use super::requests::{request_item::RequestItem, request_row::RequestRow};
+use super::requests::{
+    request_item::{compute_request_icon, RequestItem},
+    request_row::RequestRow,
+};
 use crate::database::get_database;
 use crate::utils::{
     crud::requests::{create_request, get_collection_requests, ProtocolTypes},
@@ -282,6 +285,25 @@ impl CollectionRow {
                             }
                         }
 
+                    },
+                    AppEvent::UpdateHttpMethod(http_method, request_id, collection_id) => {
+                        let local_collection_id = this.imp().collection_id.borrow().to_string();
+                        if local_collection_id == collection_id {
+                            let request_item = requests_store
+                            .iter::<RequestItem>()
+                            .find(|ref item| item.as_ref().unwrap().id() == request_id);
+
+                            if let Some(request_item) = request_item {
+                                if let Ok(request_item) = request_item {
+                                    request_item.set_httpmethod(http_method.to_string().clone());
+                                    let icon = compute_request_icon(
+                                        &ProtocolTypes::Http.to_string(),
+                                        &http_method.to_string()
+                                    );
+                                    request_item.set_icon(icon);
+                                }
+                            }
+                        }
                     },
                     _ => {},
                 }
