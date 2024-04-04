@@ -5,8 +5,8 @@ mod rest;
 mod utils;
 mod window;
 
-use adw::{prelude::*, Application};
-use gtk::{gdk::Display, gio, glib, CssProvider};
+use adw::prelude::*;
+use gtk::{gdk::Display, gio, glib, Application, CssProvider};
 
 use database::{get_database, migrate_database};
 use window::Window;
