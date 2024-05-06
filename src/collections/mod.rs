@@ -3,13 +3,13 @@ mod collection_row;
 mod imp;
 mod requests;
 
-use adw::{prelude::*, MessageDialog, ResponseAppearance};
+use adw::prelude::*;
 use glib::Object;
 use gtk::{
     gio::ListStore,
     glib,
     glib::{clone, subclass::types::ObjectSubclassIsExt, Cast, CastNone},
-    Entry, ListItem, ListView, SignalListItemFactory, SingleSelection,
+    ListItem, ListView, SignalListItemFactory, SingleSelection,
 };
 
 use crate::database::get_database;
@@ -167,55 +167,13 @@ impl CollectionsWindow {
         }
     }
 
-    async fn new_collection(&self) {
+    fn get_root_widget(&self) -> Window {
         let window: Window = self.root().unwrap().downcast::<Window>().unwrap();
+        window
+    }
 
-        // Create entry
-        let entry = Entry::builder()
-            .placeholder_text("Name")
-            .activates_default(true)
-            .build();
-
-        let cancel_response = "cancel";
-        let create_response = "create";
-
-        // Create new dialog
-        let dialog = MessageDialog::builder()
-            .heading("New Collection")
-            .modal(true)
-            .transient_for(&window)
-            .destroy_with_parent(true)
-            .close_response(cancel_response)
-            .default_response(create_response)
-            .extra_child(&entry)
-            .build();
-        dialog.add_responses(&[(cancel_response, "Cancel"), (create_response, "Create")]);
-        // Make the dialog button insensitive initially
-        dialog.set_response_enabled(create_response, false);
-        dialog.set_response_appearance(create_response, ResponseAppearance::Suggested);
-
-        // Set entry's css class to "error", when there is no text in it
-        entry.connect_changed(clone!(@weak dialog => move |entry| {
-            let text = entry.text();
-            let empty = text.is_empty();
-
-            dialog.set_response_enabled(create_response, !empty);
-
-            if empty {
-                entry.add_css_class("error");
-            } else {
-                entry.remove_css_class("error");
-            }
-        }));
-
-        let response = dialog.choose_future().await;
-
-        // Return if the user chose `cancel_response`
-        if response == cancel_response {
-            return;
-        }
-
-        let name = entry.text().to_string();
+    async fn new_collection(&self) {
+        let name = String::from("New Collection");
         let db = match get_database() {
             Ok(data) => data,
             Err(_) => {

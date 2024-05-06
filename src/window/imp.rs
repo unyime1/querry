@@ -1,6 +1,6 @@
-use adw::{subclass::prelude::*, ApplicationWindow, Bin};
+use adw::{subclass::prelude::*, Bin};
 use glib::subclass::InitializingObject;
-use gtk::{glib, Box, CompositeTemplate, StackSidebar};
+use gtk::{glib, ApplicationWindow, Box, CompositeTemplate, StackSidebar};
 
 // Initialize composite template for Window.
 #[derive(CompositeTemplate, Default)]
