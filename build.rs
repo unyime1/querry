@@ -1,7 +1,3 @@
 fn main() {
-    glib_build_tools::compile_resources(
-        &["resources"],
-        "resources/resources.gresource.xml",
-        "querry.gresource",
-    );
+    slint_build::compile("ui/app-window.slint").expect("Slint build failed");
 }
