@@ -2,11 +2,11 @@ extern crate rusqlite;
 
 use std::error::Error;
 
-use crate::utils::sys_dir::{get_db_path, get_test_db_path};
+use crate::utils::sys_dir::get_db_path;
 use rusqlite::Connection;
 
 pub fn get_database() -> Result<Connection, Box<dyn Error>> {
-    let db_path = get_db_path()?;
+    let db_path = get_db_path(Some(false))?;
     let db = Connection::open(db_path)?;
     Ok(db)
 }
@@ -50,7 +50,7 @@ pub fn migrate_database(db_connection: &Connection) -> Result<(), Box<dyn Error>
 
 /// Setup a clean database for tests.
 pub fn setup_test_db() -> Result<Connection, Box<dyn Error>> {
-    let db_path = get_test_db_path()?;
+    let db_path = get_db_path(Some(true))?;
     let db = Connection::open(db_path)?;
 
     match db.execute("DROP TABLE collection", ()) {
