@@ -1,0 +1,37 @@
+export component VerticalSplit inherits Rectangle {
+    in-out property <float> handle_position: 0.5;
+
+    touch := TouchArea {
+        property<bool> on_handle: abs(self.mouse-x - (handle.x)) < 5px;
+        mouse-cursor: on_handle ? col-resize : default;
+
+        property<float> mouse_position;
+
+        moved => {
+            mouse_position = self.mouse-x / parent.width;
+            if (mouse_position >= 0.05 && mouse_position <= 0.95 && self.pressed) {
+                handle_position = mouse_position;
+            }
+        }
+    }
+
+    left := Rectangle {
+        x: parent.x;
+        width: handle.x - handle.width / 2;
+        background: red;
+    }
+
+    handle := Rectangle {
+        x: handle_position * parent.width;
+        width: 3px;
+        height: parent.height;
+        background: @linear-gradient(90deg, #ddd, #aaa);
+    }
+
+    right := Rectangle {
+        width: (1 - handle_position) * parent.width;
+        x: left.width + handle.width / 2; // Position right side after the handle
+        background: blue;
+    }
+}
+
