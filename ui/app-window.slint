@@ -1,18 +1,22 @@
 import { Button, VerticalBox } from "std-widgets.slint";
+import {VerticalSplit} from "tests.slint";
+
 
 export component AppWindow inherits Window {
     in-out property <int> counter: 42;
     callback request-increase-value();
-    VerticalBox {
-        Text {
-            text: "Counter: \{root.counter}";
-        }
+    // VerticalBox {
+    //     Text {
+    //         text: "Counter: \{root.counter}";
+    //     }
 
-        Button {
-            text: "Increase value";
-            clicked => {
-                root.request-increase-value();
-            }
-        }
-    }
+    //     Button {
+    //         text: "Increase value";
+    //         clicked => {
+    //             root.request-increase-value();
+    //         }
+    //     }
+    // }
+
+    VerticalSplit {}
 }
