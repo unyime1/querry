@@ -1,47 +1,39 @@
-use std::{error::Error, fs};
+use std::{
+    error::Error,
+    fs::{self, File},
+    path::PathBuf,
+};
 
-use crate::APP_ID;
+use directories::ProjectDirs;
 
-pub fn get_db_path() -> Result<String, Box<dyn Error>> {
-    // let mut path = glib::user_data_dir();
-    // path.push(APP_ID);
+/// Get the database path based on whether it's a test or not.
+pub fn get_db_path(is_test: Option<bool>) -> Result<String, Box<dyn Error>> {
+    let file_path: PathBuf;
 
-    // // Create the directory if it doesn't exist
-    // if !path.exists() {
-    //     fs::create_dir_all(&path)?;
-    // }
+    let is_test = is_test.unwrap_or(false);
+    if is_test {
+        // If it's a test, use a temporary directory
+        file_path = std::env::temp_dir().join("querry_test.db");
+    } else {
+        // For non-test cases, use the user data directory
+        let project_dirs = ProjectDirs::from("org", "etim", "querry")
+            .ok_or("Unable to get project directories")?;
+        file_path = project_dirs.data_dir().join("querry.db");
+    }
 
-    // let file_path = path.join("querry.db");
+    // Ensure parent directory exists
+    if let Some(parent) = file_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
 
-    // // Convert PathBuf to String
-    // let path_str = file_path
-    //     .to_str()
-    //     .ok_or("Invalid Unicode in path")?
-    //     .to_string();
+    // Create the file if it doesn't exist
+    if !file_path.exists() {
+        File::create(&file_path)?; // This creates an empty file
+    }
 
-    // Ok(path_str)
-
-    Ok("querry.db".to_string())
-}
-
-pub fn get_test_db_path() -> Result<String, Box<dyn Error>> {
-    // let mut path = glib::user_data_dir();
-    // path.push(APP_ID);
-
-    // // Create the directory if it doesn't exist
-    // if !path.exists() {
-    //     fs::create_dir_all(&path)?;
-    // }
-
-    // let file_path = path.join("querry_test.db");
-
-    // // Convert PathBuf to String
-    // let path_str = file_path
-    //     .to_str()
-    //     .ok_or("Invalid Unicode in path")?
-    //     .to_string();
-
-    // Ok(path_str)
-
-    Ok("querry_test.db".to_string())
+    let path_str = file_path
+        .to_str()
+        .ok_or("Invalid Unicode in path")?
+        .to_string();
+    Ok(path_str)
 }
