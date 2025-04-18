@@ -1,0 +1,64 @@
+import { BaseButton } from "../components/buttons.slint";
+import { Theme } from "../theme.slint";
+import { VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { AppLogic } from "../global.slint";
+
+
+component GetStartedButton inherits BaseButton {
+    Text {
+        text: "Get started";
+        font-size: Theme.label_font_size_medium_small;
+        color: Theme.label_text_color;
+    }
+}
+
+
+
+export component LandingPage inherits Rectangle {
+    background: Theme.app_background_color;
+    padding: 20px;
+
+
+    VerticalLayout {
+        width: 100%;
+        height: 100%;
+        alignment: center;
+        spacing: 20px;
+        
+        Image {
+            source: @image-url("../icons/rocket_launch.svg");
+            width: 70px;
+            height: 70px;
+            x: (parent.width - self.width) / 2;            
+        }
+
+        Text {
+            text: "Welcome to Querry ";
+            font-size: Theme.label_font_size_medium;
+            color: Theme.label_text_color;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            text: "An open-source request client built for developers.";
+            font-size: Theme.label_font_size_medium_small;
+            color: Theme.label_text_color;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            text: "Save, run, and organize your API calls with ease — lightweight and private.";
+            font-size: Theme.label_font_size_medium_small;
+            color: Theme.label_text_color;
+            horizontal-alignment: center;
+        }
+
+        GetStartedButton {
+            x: ((parent.width - self.width) / 2) + sin(animation-tick() * 360deg / 2000ms) * 4px;
+            clicked => { AppLogic.change_page(2); }
+        }
+    }
+
+}
+
+

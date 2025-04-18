@@ -1,10 +1,12 @@
 import { Button, VerticalBox } from "std-widgets.slint";
-import {VerticalSplit} from "base_split.slint";
+import { LandingPage } from "./components/landing_page.slint";
+import { Theme } from "./theme.slint";
 
 
 export component AppWindow inherits Window {
-    in-out property <int> counter: 42;
-    callback request-increase-value();
-
-    VerticalSplit {}
+    preferred-width: 700px;
+    preferred-height: 600px;
+    title: "Querry";
+    background: Theme.app_background_color;
+    LandingPage {}
 }
