@@ -20,7 +20,7 @@ export component IconButton inherits Rectangle {
 
     touch := TouchArea {
         clicked => { root.checked = !root.checked }
-     }
+    }
 }
 
 
@@ -32,6 +32,7 @@ export component ThemeButton inherits IconButton {
     clicked => {
         Theme.dark_theme = !self.checked;
     }
+
 }
 
 
@@ -46,6 +47,7 @@ export component BaseButton inherits Rectangle {
     border-radius: 8px;
     opacity: touch.pressed ? 0.7 : 1.0;
     border-color: Theme.icon_button_border_color;
+    background: touch.has-hover ? Theme.button_hover_color : Theme.app_background_color;
 
     touch := TouchArea {
         clicked => { root.checked = !root.checked }
