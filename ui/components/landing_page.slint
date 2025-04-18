@@ -13,7 +13,6 @@ component GetStartedButton inherits BaseButton {
 }
 
 
-
 export component LandingPage inherits Rectangle {
     background: Theme.app_background_color;
     padding: 20px;
@@ -26,10 +25,11 @@ export component LandingPage inherits Rectangle {
         spacing: 20px;
         
         Image {
-            source: @image-url("../icons/rocket_launch.svg");
-            width: 70px;
-            height: 70px;
-            x: (parent.width - self.width) / 2;            
+            source: @image-url("../icons/launch.svg");
+            width: 250px;
+            height: 250px;
+            x: (parent.width - self.width) / 2;
+            opacity: 0.5;         
         }
 
         Text {
