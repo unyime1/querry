@@ -1,0 +1,53 @@
+import { Theme } from "../theme.slint";
+
+export component IconButton inherits Rectangle {
+    in-out property icon <=> icon.source;
+    callback clicked <=> touch.clicked;
+    in-out property <bool> checked;
+
+    width: 40px;
+    height: 40px;
+    border-width: touch.has-hover ? 1.5px : 1px;
+    border-radius: 12px;
+    opacity: touch.pressed ? 0.7 : 1.0;
+    border-color: Theme.icon_button_border_color;
+
+    icon:= Image {
+        colorize: Theme.icon_button_image_overlay_color;
+        width: 20px;
+        height: 20px;
+    }
+
+    touch := TouchArea {
+        clicked => { root.checked = !root.checked }
+     }
+}
+
+
+
+export component ThemeButton inherits IconButton {
+    icon: Theme.dark_theme ? @image-url("../icons/sun.svg"): @image-url("../icons/moon.svg");
+    checked: Theme.dark_theme;
+
+    clicked => {
+        Theme.dark_theme = !self.checked;
+    }
+}
+
+
+
+export component BaseButton inherits Rectangle {
+    callback clicked <=> touch.clicked;
+    in-out property <bool> checked;
+
+    width: 100px;
+    height: 40px;
+    border-width: touch.has-hover ? 1.5px : 1px;
+    border-radius: 8px;
+    opacity: touch.pressed ? 0.7 : 1.0;
+    border-color: Theme.icon_button_border_color;
+
+    touch := TouchArea {
+        clicked => { root.checked = !root.checked }
+    }
+}
