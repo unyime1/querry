@@ -14,9 +14,7 @@ component GetStartedButton inherits BaseButton {
 
 
 export component LandingPage inherits Rectangle {
-    background: Theme.app_background_color;
     padding: 20px;
-
 
     VerticalLayout {
         width: 100%;
@@ -44,6 +42,7 @@ export component LandingPage inherits Rectangle {
             font-size: Theme.label_font_size_medium_small;
             color: Theme.label_text_color;
             horizontal-alignment: center;
+            opacity: Theme.text_opacity;
         }
 
         Text {
@@ -51,6 +50,7 @@ export component LandingPage inherits Rectangle {
             font-size: Theme.label_font_size_medium_small;
             color: Theme.label_text_color;
             horizontal-alignment: center;
+            opacity: Theme.text_opacity;
         }
 
         GetStartedButton {
