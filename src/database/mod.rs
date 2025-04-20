@@ -7,6 +7,7 @@ use rusqlite::Connection;
 
 pub fn get_database() -> Result<Connection, Box<dyn Error>> {
     let db_path = get_db_path(Some(false))?;
+    println!("Path - {}", db_path);
     let db = Connection::open(db_path)?;
     Ok(db)
 }
