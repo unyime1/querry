@@ -1,16 +1,25 @@
 // Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
-use std::error::Error;
+use database::migrate_database;
+use slint::{ComponentHandle, PlatformError};
 
 mod database;
 mod utils;
 
-slint::include_modules!();
+use lib::{
+    callbacks::collections::{check_startup_page, process_page_change},
+    database::get_database,
+    AppConfig, AppWindow,
+};
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let ui = AppWindow::new()?;
-    ui.run()?;
+fn main() -> Result<(), PlatformError> {
+    let db = get_database().expect("Could not connect to DB");
+    migrate_database(&db).expect("Could not apply migrations");
 
-    Ok(())
+    let app = AppWindow::new()?;
+
+    check_startup_page(&db, &app).unwrap();
+    process_page_change(&app).unwrap();
+
+    app.run()
 }

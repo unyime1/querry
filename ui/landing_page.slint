@@ -1,7 +1,7 @@
-import { BaseButton } from "../components/buttons.slint";
-import { Theme } from "../theme.slint";
+import { BaseButton } from "./components/buttons.slint";
+import { Theme } from "./theme.slint";
 import { VerticalBox, HorizontalBox } from "std-widgets.slint";
-import { AppLogic } from "../global.slint";
+import { AppConfig } from "./global.slint";
 
 
 component GetStartedButton inherits BaseButton {
@@ -13,11 +13,8 @@ component GetStartedButton inherits BaseButton {
 }
 
 
-
 export component LandingPage inherits Rectangle {
-    background: Theme.app_background_color;
     padding: 20px;
-
 
     VerticalLayout {
         width: 100%;
@@ -26,10 +23,11 @@ export component LandingPage inherits Rectangle {
         spacing: 20px;
         
         Image {
-            source: @image-url("../icons/rocket_launch.svg");
-            width: 70px;
-            height: 70px;
-            x: (parent.width - self.width) / 2;            
+            source: @image-url("./icons/launch.svg");
+            width: 250px;
+            height: 250px;
+            x: (parent.width - self.width) / 2;
+            opacity: 0.5;         
         }
 
         Text {
@@ -44,6 +42,7 @@ export component LandingPage inherits Rectangle {
             font-size: Theme.label_font_size_medium_small;
             color: Theme.label_text_color;
             horizontal-alignment: center;
+            opacity: Theme.text_opacity;
         }
 
         Text {
@@ -51,11 +50,12 @@ export component LandingPage inherits Rectangle {
             font-size: Theme.label_font_size_medium_small;
             color: Theme.label_text_color;
             horizontal-alignment: center;
+            opacity: Theme.text_opacity;
         }
 
         GetStartedButton {
             x: ((parent.width - self.width) / 2) + sin(animation-tick() * 360deg / 2000ms) * 4px;
-            clicked => { AppLogic.change_page(2); }
+            clicked => { AppConfig.change_page(2); }
         }
     }
 

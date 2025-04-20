@@ -1,6 +1,10 @@
 import { Button, VerticalBox } from "std-widgets.slint";
-import { LandingPage } from "./components/landing_page.slint";
+import { LandingPage } from "./landing_page.slint";
 import { Theme } from "./theme.slint";
+import { AppConfig } from "./global.slint";
+import { MainPage } from "./main.slint";
+
+export { AppConfig }
 
 
 export component AppWindow inherits Window {
@@ -8,5 +12,7 @@ export component AppWindow inherits Window {
     preferred-height: 600px;
     title: "Querry";
     background: Theme.app_background_color;
-    LandingPage {}
+
+    if AppConfig.page == 1 : LandingPage {}
+    if AppConfig.page == 2 : MainPage {}
 }

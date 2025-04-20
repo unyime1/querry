@@ -41,13 +41,12 @@ export component BaseButton inherits Rectangle {
     callback clicked <=> touch.clicked;
     in-out property <bool> checked;
 
-    width: 100px;
+    opacity: touch.pressed ? 0.5 : 0.8;
+    width: 120px;
     height: 40px;
-    border-width: touch.has-hover ? 1.5px : 1px;
-    border-radius: 8px;
-    opacity: touch.pressed ? 0.7 : 1.0;
+    border-radius: Theme.border_radius;
     border-color: Theme.icon_button_border_color;
-    background: touch.has-hover ? Theme.button_hover_color : Theme.app_background_color;
+    background: touch.has-hover ? Theme.button_hover_color : Theme.button_default_color;
 
     touch := TouchArea {
         clicked => { root.checked = !root.checked }
