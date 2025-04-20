@@ -1,7 +1,7 @@
 import { BaseButton } from "./components/buttons.slint";
 import { Theme } from "./theme.slint";
 import { VerticalBox, HorizontalBox } from "std-widgets.slint";
-import { AppLogic } from "./global.slint";
+import { AppConfig } from "./global.slint";
 
 
 component GetStartedButton inherits BaseButton {
@@ -23,7 +23,7 @@ export component LandingPage inherits Rectangle {
         spacing: 20px;
         
         Image {
-            source: @image-url("../icons/launch.svg");
+            source: @image-url("./icons/launch.svg");
             width: 250px;
             height: 250px;
             x: (parent.width - self.width) / 2;
@@ -55,7 +55,7 @@ export component LandingPage inherits Rectangle {
 
         GetStartedButton {
             x: ((parent.width - self.width) / 2) + sin(animation-tick() * 360deg / 2000ms) * 4px;
-            clicked => { AppLogic.change_page(2); }
+            clicked => { AppConfig.change_page(2); }
         }
     }
 

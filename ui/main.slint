@@ -1,0 +1,12 @@
+import { Theme } from "./theme.slint";
+
+export component MainPage inherits Rectangle {
+    padding: 20px;
+
+    Text {
+        text: "Welcome to Querry ";
+        font-size: Theme.label_font_size_medium;
+        color: Theme.label_text_color;
+        horizontal-alignment: center;
+    }
+}

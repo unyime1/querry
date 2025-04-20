@@ -1,16 +1,18 @@
 // Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
-use std::error::Error;
+use slint::ComponentHandle;
 
 mod database;
 mod utils;
 
-slint::include_modules!();
+use lib::{AppConfig, AppWindow};
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let ui = AppWindow::new()?;
-    ui.run()?;
+fn main() -> Result<(), slint::PlatformError> {
+    let app = AppWindow::new()?;
 
-    Ok(())
+    // Allow calling from the command line to
+    // load a specified TODO file.
+    let cfg = app.global::<AppConfig>();
+
+    app.run()
 }

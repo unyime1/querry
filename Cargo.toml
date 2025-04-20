@@ -1,7 +1,11 @@
 [package]
 name = "querry"
 version = "0.1.0"
+authors = ["Unyime Etim <lordunyime@gmail.com>"]
 edition = "2021"
+build = "build.rs"
+description = "Rust request client application that uses the Slint GUI framework"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -15,3 +19,7 @@ directories = "5.0"
 
 [build-dependencies]
 slint-build = "1.10.0"
+
+[lib]
+name = "lib"
+path = "src/lib.rs"
