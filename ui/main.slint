@@ -1,12 +1,43 @@
 import { Theme } from "./theme.slint";
+import { CollectionSection } from "./components/collections.slint";
+import { RequestsSection } from "./components/requests.slint";
+import { HeadersSection } from "./components/headers.slint";
 
 export component MainPage inherits Rectangle {
-    padding: 20px;
+    in-out property <float> handle_position: 0.15;
 
-    Text {
-        text: "Welcome to Querry ";
-        font-size: Theme.label_font_size_medium;
-        color: Theme.label_text_color;
-        horizontal-alignment: center;
+    touch := TouchArea {
+        property<bool> on_handle: abs(self.mouse-x - (handle.x)) < 5px;
+        mouse-cursor: on_handle ? col-resize : default;
+
+        property<float> mouse_position;
+
+        moved => {
+            mouse_position = self.mouse-x / parent.width;
+            if (mouse_position >= 0.1 && mouse_position <= 0.25 && self.pressed) {
+                handle_position = mouse_position;
+            }
+        }
+    }
+
+
+    left := CollectionSection {
+        x: parent.x;
+        width: handle.x - handle.width / 2;
+    }
+
+    handle := Rectangle {
+        x: root.handle_position * parent.width;
+        width: 0px;
+        height: parent.height;
+        border-color: Theme.app_background_color;
+    }
+
+    right := VerticalLayout {
+        width: (1 - root.handle_position) * parent.width;
+        x: left.width + handle.width / 2; // Position right side after the handle
+
+        HeadersSection {}
+        RequestsSection {}
     }
 }
