@@ -4,9 +4,12 @@ import { Theme } from "../theme.slint";
 
 export component CollectionSection inherits Rectangle {
     padding: 20px;
+    border-color: Theme.border_color;
+    vertical-stretch: 1;
+    border-width: Theme.border_width;
 
     Text {
-        text: "Welcome to Collections ";
+        text: "Collections ";
         font-size: Theme.label_font_size_medium;
         color: Theme.label_text_color;
         horizontal-alignment: center;
