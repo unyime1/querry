@@ -4,22 +4,23 @@ export component SearchForm inherits Rectangle {
     border-radius: Theme.border_radius;
     border-color: Theme.border_color;
     border-width: Theme.border_width;
-    height: text.height;
-    background: red;
- 
+
+    // Property to store the text before the last edit
+    property<string> previous_text: text.text;
+
     HorizontalLayout {
-        spacing: 10px;
-        padding-left: 3px;
+        spacing: 3px;
+        padding-left: 5px;
         padding-top: 3px;
 
         image := Image {
             source: @image-url("../icons/search.svg");
             opacity: Theme.text_opacity;
             vertical-alignment: center;
+            width: 25px;
         }
-        
+
         text := TextInput {
-            height: 30px;
             text: "Filter";
             color: Theme.label_text_color;
             horizontal-stretch: 1;
@@ -29,15 +30,25 @@ export component SearchForm inherits Rectangle {
             wrap: no-wrap;
             single-line: true;
 
+            property <length> available_width_for_text;
+
             edited() => {
-                debug("With", text.width);
-                if (text.width - image.width > root.width) {
-                    text.read-only = true;
+                // Calculate the available width for the text within the HorizontalLayout.
+                // This is the width of the parent (SearchForm) minus the width of the image,
+                // the spacing between the image and text, and any padding.
+                // Assuming no padding-right on the HorizontalLayout for simplicity in this calculation.
+                available_width_for_text = root.width - image.width - parent.spacing - parent.padding-left;
+
+                // Check if the current text width exceeds the available width.
+                // text.width in the edited() callback gives the width of the text after the edit.
+                if (text.width > available_width_for_text) {
+                    // If overflow, revert the text to its state before the last edit.
+                    text.text = previous_text;
                 } else {
-                    text.read-only = false;
+                    // If no overflow, update previous_text for the next edit.
+                    previous_text = text.text;
                 }
             }
         }
     }
-    
 }
