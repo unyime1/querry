@@ -2,16 +2,18 @@ import { Theme } from "../theme.slint";
 
 export component SearchForm inherits Rectangle {
     border-radius: Theme.border_radius;
-    border-color: Theme.border_color;
-    border-width: Theme.border_width;
+    border-color: touch_area.has-hover ? Theme.form_hover_color : text.has-focus ? Theme.form_hover_color : Theme.border_color;
+    border-width: touch_area.has-hover ? Theme.form_hover_border_width : text.has-focus ? Theme.form_hover_border_width : Theme.border_width;
 
     // Property to store the text before the last edit
     property<string> previous_text: text.text;
 
-    HorizontalLayout {
+    layout := HorizontalLayout {
         spacing: 3px;
-        padding-left: 5px;
+        padding-left: 3px;
+        padding-right: 3px;
         padding-top: 3px;
+        padding-bottom: 3px;
 
         image := Image {
             source: @image-url("../icons/search.svg");
@@ -20,35 +22,47 @@ export component SearchForm inherits Rectangle {
             width: 25px;
         }
 
-        text := TextInput {
-            text: "Filter";
-            color: Theme.label_text_color;
+        touch_area := TouchArea{ 
             horizontal-stretch: 1;
-            vertical-alignment: center;
-            opacity: Theme.text_opacity;
-            font-size: Theme.label_font_size_small;
-            wrap: no-wrap;
-            single-line: true;
+            vertical-stretch: 1;
 
-            property <length> available_width_for_text;
-
-            edited() => {
-                // Calculate the available width for the text within the HorizontalLayout.
-                // This is the width of the parent (SearchForm) minus the width of the image,
-                // the spacing between the image and text, and any padding.
-                // Assuming no padding-right on the HorizontalLayout for simplicity in this calculation.
-                available_width_for_text = root.width - image.width - parent.spacing - parent.padding-left;
-
-                // Check if the current text width exceeds the available width.
-                // text.width in the edited() callback gives the width of the text after the edit.
-                if (text.width > available_width_for_text) {
-                    // If overflow, revert the text to its state before the last edit.
-                    text.text = previous_text;
-                } else {
-                    // If no overflow, update previous_text for the next edit.
-                    previous_text = text.text;
-                }
+            clicked => {
+                debug("clicked")
             }
-        }
+
+            text := TextInput {
+                color: Theme.label_text_color;
+                horizontal-stretch: 1;
+                vertical-alignment: center;
+                opacity: Theme.text_opacity;
+                font-size: Theme.label_font_size_small;
+                wrap: no-wrap;
+                single-line: true;
+                
+                property <bool> pure: true;
+                property <length> available_width_for_text;
+    
+                edited() => {
+                    debug("Hwllloo");
+                    // Calculate the available width for the text within the HorizontalLayout.
+                    // This is the width of the parent (SearchForm) minus the width of the image,
+                    // the spacing between the image and text, and any padding.
+                    // Assuming no padding-right on the HorizontalLayout for simplicity in this calculation.
+                    available_width_for_text = root.width - image.width - layout.spacing - parent.padding-left;
+    
+                    // Check if the current text width exceeds the available width.
+                    // text.width in the edited() callback gives the width of the text after the edit.
+                    if (text.width > available_width_for_text) {
+                        // If overflow, revert the text to its state before the last edit.
+                        text.text = previous_text;
+                    } else {
+                        // If no overflow, update previous_text for the next edit.
+                        previous_text = text.text;
+                    }
+                }
+    
+            }
+        } 
+        
     }
 }
