@@ -17,9 +17,10 @@ export component SearchForm inherits Rectangle {
 
         image := Image {
             source: @image-url("../icons/search.svg");
-            opacity: Theme.text_opacity;
-            vertical-alignment: center;
-            width: 25px;
+            width: Theme.icon_width;
+            touch := TouchArea {}
+            opacity: touch.has-hover ? Theme.icon_opacity_hover : Theme.icon_opacity;
+            colorize: Theme.icon_button_image_overlay_color;
         }
 
         touch_area := TouchArea{ 

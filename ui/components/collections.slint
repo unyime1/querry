@@ -1,5 +1,6 @@
 import { Theme } from "../theme.slint";
 import {SearchForm} from "./forms.slint";
+import { IconButton } from "./buttons.slint";
 
 
 export component CollectionSection inherits Rectangle {
@@ -9,15 +10,26 @@ export component CollectionSection inherits Rectangle {
     
     VerticalLayout { 
         padding-bottom: 8px;
-        padding-top: 45px;
+        padding-top: 8px;
         padding-left: 5px;
         padding-right: 5px;
 
-        Text {
-            text: "Collections ";
-            font-size: Theme.label_font_size_medium;
-            color: Theme.label_text_color;
-            horizontal-alignment: center;
+        HorizontalLayout {
+            horizontal-stretch: 1;
+            alignment: end;
+            padding-right: 5px;
+
+            image := Image {
+                source: @image-url("../icons/create_folder.svg");
+                width: touch.pressed ? Theme.icon_width_pressed : Theme.icon_width;
+                opacity: touch.has-hover ? Theme.icon_opacity_hover : Theme.icon_opacity;
+                colorize: Theme.icon_button_image_overlay_color;
+                
+                touch := TouchArea {}
+            }
+        }
+
+        Rectangle {
             vertical-stretch: 1;
         }
         
