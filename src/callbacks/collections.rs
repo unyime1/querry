@@ -1,7 +1,7 @@
 use std::{error::Error, rc::Rc};
 
 use rusqlite::Connection;
-use slint::{ComponentHandle, VecModel};
+use slint::{ComponentHandle, Model, VecModel};
 
 use crate::{
     utils::crud::collections::{create_collection, get_all_collections},
@@ -51,7 +51,7 @@ pub fn process_get_collections(db: &Connection, app: &AppWindow) -> Result<(), B
     let config = app.global::<AppConfig>();
     let weak_app = app.as_weak();
 
-    let items_model = std::rc::Rc::new(slint::VecModel::from(collection_data));
+    let items_model = Rc::new(VecModel::from(collection_data));
     config.on_get_collections(move || {
         let app = weak_app.upgrade().unwrap();
         let cfg = app.global::<AppConfig>();
@@ -59,5 +59,27 @@ pub fn process_get_collections(db: &Connection, app: &AppWindow) -> Result<(), B
         cfg.set_collection_items(items_model.clone().into());
     });
 
+    Ok(())
+}
+
+pub fn process_create_collection(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn Error>> {
+    let new_collection = create_collection("New Collection".to_string(), &db)?;
+
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    let collection_item = CollectionItem {
+        id: new_collection.id.into(),
+        name: new_collection.name.into(),
+    };
+    config.on_create_collection(move || {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+        items.insert(0, collection_item.clone());
+
+        cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
+    });
     Ok(())
 }
