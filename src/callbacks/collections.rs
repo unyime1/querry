@@ -22,6 +22,24 @@ pub fn check_startup_page(db: &Connection, app: &AppWindow) -> Result<(), Box<dy
     Ok(())
 }
 
+pub fn load_collections(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn Error>> {
+    let collection_items = get_all_collections(db)?;
+
+    let mut collection_data: Vec<CollectionItem> = Vec::new();
+    for collection_item in collection_items {
+        collection_data.push(CollectionItem {
+            id: collection_item.id.into(),
+            name: collection_item.name.into(),
+        });
+    }
+    let items_model = Rc::new(VecModel::from(collection_data));
+
+    let config = app.global::<AppConfig>();
+    config.set_collection_items(items_model.clone().into());
+
+    Ok(())
+}
+
 pub fn process_page_change(app: &AppWindow) -> Result<(), Box<dyn Error>> {
     let config = app.global::<AppConfig>();
     let weak_app = app.as_weak();

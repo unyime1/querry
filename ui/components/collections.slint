@@ -1,13 +1,16 @@
 import { Theme } from "../theme.slint";
 import {SearchForm} from "./forms.slint";
 import { IconButton } from "./buttons.slint";
+import { AppConfig, CollectionItem} from "../global.slint";
+import { CollectionComponent } from "./collection_item.slint";
 
 
 export component CollectionSection inherits Rectangle {
     border-color: Theme.border_color;
     vertical-stretch: 1;
     border-width: Theme.border_width;
-    
+    in-out property <[CollectionItem]> collection_items: AppConfig.collection_items;
+
     VerticalLayout { 
         padding-bottom: 8px;
         padding-top: 8px;
@@ -25,12 +28,20 @@ export component CollectionSection inherits Rectangle {
                 opacity: touch.has-hover ? Theme.icon_opacity_hover : Theme.icon_opacity;
                 colorize: Theme.icon_button_image_overlay_color;
                 
-                touch := TouchArea {}
+                touch := TouchArea {
+                    clicked => {
+                        AppConfig.create_collection();
+                    }
+                }
             }
         }
 
-        Rectangle {
+        VerticalLayout {
             vertical-stretch: 1;
+            for list-item[i] in collection_items: CollectionComponent {
+                name: list-item.name;
+                id: list-item.id;
+            }
         }
         
         SearchForm {

@@ -8,7 +8,8 @@ mod utils;
 
 use lib::{
     callbacks::collections::{
-        check_startup_page, process_create_collection, process_get_collections, process_page_change,
+        check_startup_page, load_collections, process_create_collection, process_get_collections,
+        process_page_change,
     },
     database::get_database,
     AppConfig, AppWindow,
@@ -21,8 +22,10 @@ fn main() -> Result<(), PlatformError> {
     let app = AppWindow::new()?;
 
     check_startup_page(&db, &app).unwrap();
+    load_collections(&db, &app).unwrap();
     process_page_change(&app).unwrap();
     process_get_collections(&db, &app).unwrap();
     process_create_collection(&db, &app).unwrap();
+
     app.run()
 }
