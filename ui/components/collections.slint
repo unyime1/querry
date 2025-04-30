@@ -9,6 +9,7 @@ export component CollectionSection inherits Rectangle {
     border-color: Theme.border_color;
     vertical-stretch: 1;
     border-width: Theme.border_width;
+    clip: true;
     in-out property <[CollectionItem]> collection_items: AppConfig.collection_items;
 
     VerticalLayout { 

@@ -17,11 +17,13 @@ export component CollectionComponent inherits Rectangle {
         padding-bottom: 5px;
         padding-left: 10px;
         padding-right: 10px;
+        spacing: 10px;
 
         folder := Image {
             source: @image-url("../icons/folder.svg");
             width: Theme.icon_width;
             colorize: Theme.primary_color;
+            padding-right: 10px;
         }
 
         Text {
@@ -34,6 +36,7 @@ export component CollectionComponent inherits Rectangle {
             source: @image-url("../icons/more.svg");
             width: Theme.icon_width;
             colorize: Theme.primary_color;
+            padding-left: 10px;
         }
         
     }
