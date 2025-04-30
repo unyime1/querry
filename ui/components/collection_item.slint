@@ -6,26 +6,36 @@ export component CollectionComponent inherits Rectangle {
     in property <string> name;
     in property <string> id;
 
-    padding: 5px;
+    height: 40px;
+    border-radius: Theme.border_radius;
+    background: touch-area.has-hover ? Theme.dark_theme ? Theme.app_background_color.darker(-50%) : Theme.app_background_color.darker(30%) : Theme.app_background_color;
+    touch-area := TouchArea { }
 
-    Rectangle {
-        height: 30px;
-        background: Theme.app_background_color.darker(20%);
-        border-radius: Theme.border_radius;
-        border-color: Theme.border_color;
-        border-width: Theme.border_width;
-        animate drop-shadow-blur {
-            duration: 100ms;
-            easing: ease-out;
+    HorizontalLayout {
+        alignment: space-between;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+
+        folder := Image {
+            source: @image-url("../icons/folder.svg");
+            width: Theme.icon_width;
+            colorize: Theme.primary_color;
         }
-        
+
         Text {
             text: name;
             font-size: Theme.label_font_size_medium;
             color: Theme.label_text_color;
         }
 
-        touch-area := TouchArea { }
+        more := Image {
+            source: @image-url("../icons/more.svg");
+            width: Theme.icon_width;
+            colorize: Theme.primary_color;
+        }
+        
     }
     
 }    

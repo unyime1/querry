@@ -2,7 +2,7 @@ import { Theme } from "../theme.slint";
 
 export component SearchForm inherits Rectangle {
     border-radius: Theme.border_radius;
-    border-color: touch_area.has-hover ? Theme.form_hover_color : text.has-focus ? Theme.form_hover_color : Theme.border_color;
+    border-color: touch_area.has-hover ? Theme.hover_color : text.has-focus ? Theme.hover_color : Theme.border_color;
     border-width: touch_area.has-hover ? Theme.form_hover_border_width : text.has-focus ? Theme.form_hover_border_width : Theme.border_width;
 
     // Property to store the text before the last edit
@@ -19,8 +19,7 @@ export component SearchForm inherits Rectangle {
             source: @image-url("../icons/search.svg");
             width: Theme.icon_width;
             touch := TouchArea {}
-            opacity: touch.has-hover ? Theme.icon_opacity_hover : Theme.icon_opacity;
-            colorize: Theme.icon_button_image_overlay_color;
+            colorize: Theme.primary_color;
         }
 
         touch_area := TouchArea{ 

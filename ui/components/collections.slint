@@ -19,14 +19,14 @@ export component CollectionSection inherits Rectangle {
 
         HorizontalLayout {
             horizontal-stretch: 1;
-            alignment: end;
+            height: 50px;
+            alignment: LayoutAlignment.end;
             padding-right: 5px;
 
             image := Image {
                 source: @image-url("../icons/create_folder.svg");
                 width: touch.pressed ? Theme.icon_width_pressed : Theme.icon_width;
-                opacity: touch.has-hover ? Theme.icon_opacity_hover : Theme.icon_opacity;
-                colorize: Theme.icon_button_image_overlay_color;
+                colorize: Theme.primary_color;
                 
                 touch := TouchArea {
                     clicked => {
@@ -36,15 +36,19 @@ export component CollectionSection inherits Rectangle {
             }
         }
 
-        VerticalLayout {
-            vertical-stretch: 1;
+        VerticalLayout { 
             for list-item[i] in collection_items: CollectionComponent {
                 name: list-item.name;
                 id: list-item.id;
             }
         }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
         
         SearchForm {
+            height: 50px;
         }
     }
 }
