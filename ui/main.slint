@@ -14,7 +14,7 @@ export component MainPage inherits Rectangle {
 
         moved => {
             mouse_position = self.mouse-x / parent.width;
-            if (mouse_position >= 0.1 && mouse_position <= 0.3 && self.pressed) {
+            if (mouse_position >= 0.04 && mouse_position <= 0.5 && self.pressed) {
                 handle_position = mouse_position;
             }
         }
