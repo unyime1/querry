@@ -1,4 +1,16 @@
+export struct CollectionItem {
+    id: string,
+    name: string,
+}
+
+
 export global AppConfig {
     in-out property <int> page: 1;
+    in-out property <[CollectionItem]> collection_items: [];
+    
     callback change_page(int);
+    callback create_collection;
+    callback get_collections;
+    callback update_collection(CollectionItem);
+    callback remove_collection(string);
 }

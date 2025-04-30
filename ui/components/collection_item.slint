@@ -1,0 +1,45 @@
+import { Button, CheckBox, HorizontalBox, VerticalBox } from "std-widgets.slint";
+import { AppConfig } from "../global.slint";
+import { Theme } from "../theme.slint";
+
+export component CollectionComponent inherits Rectangle {
+    in property <string> name;
+    in property <string> id;
+
+    height: 40px;
+    border-radius: Theme.border_radius;
+    background: touch-area.has-hover ? Theme.dark_theme ? Theme.app_background_color.darker(-50%) : Theme.app_background_color.darker(30%) : Theme.app_background_color;
+    touch-area := TouchArea { }
+
+    HorizontalLayout {
+        alignment: space-between;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        spacing: 10px;
+
+        folder := Image {
+            source: @image-url("../icons/folder.svg");
+            width: Theme.icon_width;
+            colorize: Theme.primary_color;
+            padding-right: 10px;
+        }
+
+        Text {
+            vertical-alignment: center;
+            text: name;
+            font-size: Theme.label_font_size_medium_small;
+            color: Theme.label_text_color;
+        }
+
+        more := Image {
+            source: @image-url("../icons/more.svg");
+            width: Theme.icon_width;
+            colorize: Theme.primary_color;
+            padding-left: 10px;
+        }
+        
+    }
+    
+}    

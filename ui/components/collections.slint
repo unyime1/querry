@@ -1,17 +1,55 @@
 import { Theme } from "../theme.slint";
-
+import {SearchForm} from "./forms.slint";
+import { IconButton } from "./buttons.slint";
+import { AppConfig, CollectionItem} from "../global.slint";
+import { CollectionComponent } from "./collection_item.slint";
 
 
 export component CollectionSection inherits Rectangle {
-    padding: 20px;
     border-color: Theme.border_color;
     vertical-stretch: 1;
     border-width: Theme.border_width;
+    clip: true;
+    in-out property <[CollectionItem]> collection_items: AppConfig.collection_items;
 
-    Text {
-        text: "Collections ";
-        font-size: Theme.label_font_size_medium;
-        color: Theme.label_text_color;
-        horizontal-alignment: center;
+    VerticalLayout { 
+        padding-bottom: 8px;
+        padding-top: 8px;
+        padding-left: 5px;
+        padding-right: 5px;
+
+        HorizontalLayout {
+            horizontal-stretch: 1;
+            height: 50px;
+            alignment: LayoutAlignment.end;
+            padding-right: 5px;
+
+            image := Image {
+                source: @image-url("../icons/create_folder.svg");
+                width: touch.pressed ? Theme.icon_width_pressed : Theme.icon_width;
+                colorize: Theme.primary_color;
+                
+                touch := TouchArea {
+                    clicked => {
+                        AppConfig.create_collection();
+                    }
+                }
+            }
+        }
+
+        VerticalLayout { 
+            for list-item[i] in collection_items: CollectionComponent {
+                name: list-item.name;
+                id: list-item.id;
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+        }
+        
+        SearchForm {
+            height: 50px;
+        }
     }
 }
