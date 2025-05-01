@@ -1,3 +1,5 @@
+import { ListView } from "std-widgets.slint";
+
 import { Theme } from "../theme.slint";
 import {SearchForm} from "./forms.slint";
 import { IconButton } from "./buttons.slint";
@@ -37,15 +39,15 @@ export component CollectionSection inherits Rectangle {
             }
         }
 
-        VerticalLayout { 
-            for list-item[i] in collection_items: CollectionComponent {
-                name: list-item.name;
-                id: list-item.id;
-            }
-        }
-
-        Rectangle {
+        VerticalLayout {
             vertical-stretch: 1;
+            ListView {
+                for list-item[i] in collection_items: CollectionComponent {
+                    name: list-item.name;
+                    id: list-item.id;
+                }
+            }
+            
         }
         
         SearchForm {
