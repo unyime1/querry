@@ -7,12 +7,6 @@ export component GridView inherits ScrollView {
     viewport-width: 1000px; // to be set from outside as this.parent.width;
 
     in property <int> columns: 4;
-
-    in property <int> maximumColumns: 5;
-    in property <int> maximumColumnWidth: 400;
-    in property <int> minimumColumnWidth: 320;
-
-    in property <int> preferredCellHeight: 180;
-    in property <int> preferredCellWidth: 300;
-    in property <int> expectedWidth: (self.width / 1px) / columns;
+    in property <int> preferred_cell_height: 100;
+    in property <int> expected_width: (self.width / 1px) / columns;
 }

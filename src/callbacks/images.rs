@@ -18,6 +18,18 @@ pub fn process_get_images(app: &AppWindow) -> Result<(), Box<dyn Error>> {
         PathBuf::from("ui/icons/more.svg"),
         PathBuf::from("ui/icons/close.svg"),
         PathBuf::from("ui/icons/more.svg"),
+        PathBuf::from("ui/icons/close.svg"),
+        PathBuf::from("ui/icons/more.svg"),
+        PathBuf::from("ui/icons/close.svg"),
+        PathBuf::from("ui/icons/more.svg"),
+        PathBuf::from("ui/icons/close.svg"),
+        PathBuf::from("ui/icons/more.svg"),
+        PathBuf::from("ui/icons/close.svg"),
+        PathBuf::from("ui/icons/more.svg"),
+        PathBuf::from("ui/icons/close.svg"),
+        PathBuf::from("ui/icons/more.svg"),
+        PathBuf::from("ui/icons/close.svg"),
+        PathBuf::from("ui/icons/more.svg"),
     ];
 
     // --- Load images from paths and collect into a Vec<slint::Image> ---
