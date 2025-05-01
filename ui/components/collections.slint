@@ -11,6 +11,7 @@ export component CollectionSection inherits Rectangle {
     border-width: Theme.border_width;
     clip: true;
     in-out property <[CollectionItem]> collection_items: AppConfig.collection_items;
+    background: Theme.dark_theme ? Theme.app_background_color.darker(-30%) : Theme.app_background_color.darker(30%);
 
     VerticalLayout { 
         padding-bottom: 8px;
