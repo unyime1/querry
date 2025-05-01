@@ -28,8 +28,8 @@ export component CollectionComponent inherits Rectangle {
 
             touch := TouchArea{
                 clicked => {
+                    AppConfig.get_icons();
                     AppConfig.show_icons_popup = true;
-                    root.accessible-checked = true;
                 }
             }
         }

@@ -5,20 +5,16 @@ export struct CollectionItem {
 }
 
 
-export struct CollectionIcon {
-    name: string,
-}
-
-
 export global AppConfig {
     in-out property <int> page: 1;
     in-out property <[CollectionItem]> collection_items: [];
-    in-out property <[CollectionIcon]> collection_icons: [];
     in-out property <bool> show_icons_popup: false;
+    in-out property <[image]> icons: [];
     
     callback change_page(int);
     callback create_collection;
     callback get_collections;
     callback update_collection(CollectionItem);
     callback remove_collection(string);
+    callback get_icons();
 }
