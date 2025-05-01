@@ -1,9 +1,9 @@
 export global Theme {
-    in-out property <bool> dark_theme: true;
+    in-out property <bool> dark_theme: false;
 
     in-out property<color> app_background_color: dark_theme ? #111214 : #F5F5ED;
     in-out property<color> primary_color: #cc5e04;
-    in-out property<color> hover_color: primary_color.darker(20%);
+    in-out property<color> hover_color: dark_theme ? primary_color.darker(-20%) : primary_color.darker(20%);
     in-out property<length> hover_border_width: 2px;
 
     in-out property<color> label_text_color: dark_theme ? #fefefe : #101010;

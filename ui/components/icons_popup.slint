@@ -87,11 +87,19 @@ export component IconsPopup inherits Rectangle {
                         height: view.preferred_cell_height * 1px;
                         x: (Math.mod(index, view.columns)) * self.width ;
                         y: Math.floor(index / view.columns) * self.height;
+                        background: touch.has-hover ? Theme.hover_color : Theme.app_background_color;
+                        border-radius: Theme.border_radius;
+                        
                         
                         Image {
                             source: icon;
                             width: 100%;
                             height: 100%;
+                            
+                        }
+
+                        touch := TouchArea {
+                            mouse-cursor: self.has-hover ? pointer : default;
                         }
                     }
                 }
