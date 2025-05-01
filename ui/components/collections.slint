@@ -28,8 +28,7 @@ export component CollectionSection inherits Rectangle {
             image := Image {
                 source: @image-url("../icons/create_folder.svg");
                 width: touch.pressed ? Theme.icon_width_pressed : Theme.icon_width;
-                colorize: Theme.primary_color;
-                
+                colorize: Theme.icon_color;
                 touch := TouchArea {
                     clicked => {
                         AppConfig.create_collection();

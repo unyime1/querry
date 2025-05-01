@@ -23,8 +23,8 @@ export component CollectionComponent inherits Rectangle {
         folder := Image {
             source: @image-url("../icons/folder.svg");
             width: Theme.icon_width;
-            colorize: Theme.primary_color;
             padding-right: 10px;
+            colorize: Theme.icon_color;
         }
 
         Text {
@@ -37,8 +37,8 @@ export component CollectionComponent inherits Rectangle {
         more := Image {
             source: @image-url("../icons/more.svg");
             width: Theme.icon_width;
-            colorize: Theme.primary_color;
             padding-left: 10px;
+            colorize: Theme.icon_color;
         }
         
     }

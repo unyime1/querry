@@ -13,26 +13,13 @@ export component IconButton inherits Rectangle {
     border-color: Theme.icon_button_border_color;
 
     icon:= Image {
-        colorize: Theme.icon_button_image_overlay_color;
-        width: 20px;
-        height: 20px;
+        width: 30px;
+        height: 30px;
     }
 
     touch := TouchArea {
         clicked => { root.checked = !root.checked }
     }
-}
-
-
-
-export component ThemeButton inherits IconButton {
-    icon: Theme.dark_theme ? @image-url("../icons/sun.svg"): @image-url("../icons/moon.svg");
-    checked: Theme.dark_theme;
-
-    clicked => {
-        Theme.dark_theme = !self.checked;
-    }
-
 }
 
 
