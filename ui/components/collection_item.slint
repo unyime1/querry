@@ -8,8 +8,9 @@ export component CollectionComponent inherits Rectangle {
 
     height: 40px;
     border-radius: Theme.border_radius;
-    background: touch-area.has-hover ? Theme.dark_theme ? Theme.app_background_color.darker(-50%) : Theme.app_background_color.darker(30%) : Theme.app_background_color;
-    touch-area := TouchArea { }
+    touch-area := TouchArea {}
+    border-color: touch-area.has-hover ? Theme.primary_color : self.background;
+    border-width: Theme.hover_border_width;
 
     HorizontalLayout {
         alignment: space-between;
@@ -22,8 +23,15 @@ export component CollectionComponent inherits Rectangle {
         folder := Image {
             source: @image-url("../icons/folder.svg");
             width: Theme.icon_width;
-            colorize: Theme.primary_color;
             padding-right: 10px;
+            colorize: Theme.icon_color;
+
+            touch := TouchArea{
+                clicked => {
+                    AppConfig.get_icons();
+                    AppConfig.show_icons_popup = true;
+                }
+            }
         }
 
         Text {
@@ -36,10 +44,9 @@ export component CollectionComponent inherits Rectangle {
         more := Image {
             source: @image-url("../icons/more.svg");
             width: Theme.icon_width;
-            colorize: Theme.primary_color;
             padding-left: 10px;
+            colorize: Theme.icon_color;
         }
         
     }
-    
 }    

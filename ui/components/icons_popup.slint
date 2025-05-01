@@ -1,0 +1,103 @@
+
+import { Theme } from "../theme.slint";
+import { AppConfig } from "../global.slint";
+
+import { GridView } from "./gridview.slint";
+import { ScrollView } from "std-widgets.slint";
+
+
+export component IconsPopup inherits Rectangle {
+    width: 600px;
+    height: 500px;
+    background: Theme.popup_background_dim_color;
+    visible: AppConfig.show_icons_popup;
+    border-radius: Theme.border_radius;
+    property <ImageRendering> name;
+
+    TouchArea {
+        clicked => {
+            AppConfig.show_icons_popup = false;
+        }
+    }
+
+    child := Rectangle {
+        width: root.width - 5px;
+        height: root.height - 5px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        z: 100;
+        clip: true;
+
+        background: Theme.popup_background_color;
+        border-color: Theme.border_color;
+        border-radius: Theme.border_radius;
+        border-width: Theme.border_width;
+
+        // to block clicks going to the TouchArea underneath
+        TouchArea { }
+
+        VerticalLayout {
+            height: 100%;
+            HorizontalLayout {
+                horizontal-stretch: 1;
+
+                Rectangle {
+                    horizontal-stretch: 1;
+                    height: 40px;
+                    // background: transparent;
+                    Text {
+                        text: "Select icon";
+                        color: Theme.label_text_color;
+                        font-size: Theme.label_font_size_medium;
+                    }
+
+                    Rectangle {
+                        width: parent.width;
+                        height: 1px;
+                        y: parent.height;
+                        background: Theme.border_color;
+                    }
+
+                    Image {
+                        source: @image-url("../icons/close.svg");
+                        colorize: Theme.icon_color;
+                        width: 24px;
+                        height: 24px;
+                        x: parent.width - self.width - 10px;
+                        opacity: close_touch.pressed ? 0.7 : 1.0;
+
+                        close_touch := TouchArea {
+                            clicked => {
+                                AppConfig.show_icons_popup = false;
+                            }
+                        }
+                    }
+                }
+            }
+        
+            Rectangle {
+                vertical-stretch: 1;
+
+                view := GridView {
+                    viewport-height: Math.round(AppConfig.icons.length / self.columns) * self.preferred_cell_height * 1px;
+                    viewport-width: parent.width;
+
+                    for icon[index] in AppConfig.icons: Rectangle {
+                        width: view.expected_width * 1px;
+                        height: view.preferred_cell_height * 1px;
+                        x: (Math.mod(index, view.columns)) * self.width ;
+                        y: Math.floor(index / view.columns) * self.height;
+                        
+                        Image {
+                            source: icon;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+                }
+            }
+
+            
+        }
+    }
+}

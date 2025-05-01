@@ -1,5 +1,5 @@
 import { Theme } from "../theme.slint";
-
+import { IconsPopup } from "./icons_popup.slint";
 
 
 export component RequestsSection inherits Rectangle {
@@ -14,4 +14,7 @@ export component RequestsSection inherits Rectangle {
         color: Theme.label_text_color;
         horizontal-alignment: center;
     }
+
+
+    popup := IconsPopup {}
 }

@@ -1,3 +1,5 @@
+import { ListView } from "std-widgets.slint";
+
 import { Theme } from "../theme.slint";
 import {SearchForm} from "./forms.slint";
 import { IconButton } from "./buttons.slint";
@@ -11,6 +13,7 @@ export component CollectionSection inherits Rectangle {
     border-width: Theme.border_width;
     clip: true;
     in-out property <[CollectionItem]> collection_items: AppConfig.collection_items;
+    background: Theme.dark_theme ? Theme.app_background_color.darker(-30%) : Theme.app_background_color.darker(30%);
 
     VerticalLayout { 
         padding-bottom: 8px;
@@ -27,8 +30,7 @@ export component CollectionSection inherits Rectangle {
             image := Image {
                 source: @image-url("../icons/create_folder.svg");
                 width: touch.pressed ? Theme.icon_width_pressed : Theme.icon_width;
-                colorize: Theme.primary_color;
-                
+                colorize: Theme.icon_color;
                 touch := TouchArea {
                     clicked => {
                         AppConfig.create_collection();
@@ -37,19 +39,19 @@ export component CollectionSection inherits Rectangle {
             }
         }
 
-        VerticalLayout { 
-            for list-item[i] in collection_items: CollectionComponent {
-                name: list-item.name;
-                id: list-item.id;
-            }
-        }
-
-        Rectangle {
+        VerticalLayout {
             vertical-stretch: 1;
+            ListView {
+                for list-item[i] in collection_items: CollectionComponent {
+                    name: list-item.name;
+                    id: list-item.id;
+                }
+            }
+            
         }
         
         SearchForm {
-            height: 50px;
+            height: 30px;
         }
     }
 }

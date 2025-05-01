@@ -55,7 +55,10 @@ export component LandingPage inherits Rectangle {
 
         GetStartedButton {
             x: ((parent.width - self.width) / 2) + sin(animation-tick() * 360deg / 2000ms) * 4px;
-            clicked => { AppConfig.change_page(2); }
+            
+            TouchArea {
+                clicked => { AppConfig.change_page(2); }
+            }
         }
     }
 
