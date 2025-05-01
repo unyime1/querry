@@ -1,12 +1,20 @@
 export struct CollectionItem {
     id: string,
     name: string,
+    // icon: string
+}
+
+
+export struct CollectionIcon {
+    name: string,
 }
 
 
 export global AppConfig {
     in-out property <int> page: 1;
     in-out property <[CollectionItem]> collection_items: [];
+    in-out property <[CollectionIcon]> collection_icons: [];
+    in-out property <bool> show_icons_popup: false;
     
     callback change_page(int);
     callback create_collection;

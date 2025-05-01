@@ -25,6 +25,12 @@ export component CollectionComponent inherits Rectangle {
             width: Theme.icon_width;
             padding-right: 10px;
             colorize: Theme.icon_color;
+
+            touch := TouchArea{
+                clicked => {
+                    AppConfig.show_icons_popup = true;
+                }
+            }
         }
 
         Text {
@@ -42,5 +48,4 @@ export component CollectionComponent inherits Rectangle {
         }
         
     }
-    
 }    

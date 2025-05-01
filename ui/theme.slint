@@ -1,5 +1,5 @@
 export global Theme {
-    in-out property <bool> dark_theme: false;
+    in-out property <bool> dark_theme: true;
 
     in-out property<color> app_background_color: dark_theme ? #111214 : #F5F5ED;
     in-out property<color> primary_color: #cc5e04;
@@ -21,8 +21,11 @@ export global Theme {
     in-out property <float> icon_opacity_hover: 0.5;
 
     in-out property<color> icon_button_border_color: dark_theme ? #2B2C30 : #D3D3E0;
-    in-out property<color> icon_button_image_overlay_color: dark_theme ? #fefefe : #101010;
 
     in-out property<color> border_color: dark_theme ? #2B2C30 : #D3D3E0;
     in-out property<color> icon_color: dark_theme ? #e5e6eb : #1f1f20;
+
+    in-out property <color> popup_background_dim_color: dark_theme ? #5e5a5a71 : #32313172;
+    in-out property <color> popup_background_color: dark_theme ? #111214 : #F5F5ED;
+    in-out property <color> popup_border_color: dark_theme ? #2B2C30 : #D3D3E0;
 }
