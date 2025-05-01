@@ -76,19 +76,43 @@ export component IconsPopup inherits Rectangle {
             }
 
 
-            view := ScrollView {
+            // view := ScrollView {
+            //     for icon[index] in AppConfig.icons: Rectangle {
+            //         x: Math.mod(index, 4) * 100px;
+            //         y: Math.floor(index / 4) * 100px;
+    
+            //         Image {
+            //             source: icon;
+            //             width: 100%;
+            //             height: 100%;
+            //         }
+            //     }
+                
+            // }
+        
+            Rectangle {
+                vertical-stretch: 1;
 
-                for icon[index] in AppConfig.icons: Rectangle {
-                    x: mod(index, 4) * 30px;
-                    y: floor(index / 4) * 30px;
+                view := GridView {
+                    viewport-height: Math.round(AppConfig.icons.length / self.columns) * 180px;
+                    viewport-width: parent.width;
 
-                    Image {
-                        source: icon;
-                        width: 30px;
-                        height: 30px;
+                    for icon[index] in AppConfig.icons: Rectangle {
+                        width: view.expectedWidth * 1px;
+                        height: view.preferredCellHeight * 1px;
+                        x: (Math.mod(index, view.columns)) * self.width ;
+                        y: Math.floor(index / view.columns) * self.height;
+                        
+                        Image {
+                            source: icon;
+                            width: 100%;
+                            height: 100%;
+                        }
                     }
                 }
             }
+
+            
         }
     }
 }
