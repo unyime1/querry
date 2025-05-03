@@ -38,6 +38,7 @@ export component CollectionSection inherits Rectangle {
                 }
 
                 touch := TouchArea {
+                    mouse-cursor: self.has-hover ? pointer : default;
                     clicked => {
                         AppConfig.create_collection();
                     }
