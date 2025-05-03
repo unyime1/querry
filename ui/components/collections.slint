@@ -23,14 +23,20 @@ export component CollectionSection inherits Rectangle {
 
         HorizontalLayout {
             horizontal-stretch: 1;
-            height: 50px;
             alignment: LayoutAlignment.end;
             padding-right: 5px;
 
-            image := Image {
-                source: @image-url("../icons/create_folder.svg");
-                width: touch.pressed ? Theme.icon_width_pressed : Theme.icon_width;
-                colorize: Theme.icon_color;
+            Rectangle {
+                width: Theme.icon_box_with;
+                height: Theme.icon_box_with;
+                background: touch.has-hover ? Theme.hover_color : root.background;
+                border-radius: Theme.border_radius;
+                        
+                image := Image {
+                    source: @image-url("../icons/create_folder.svg");
+                    colorize: Theme.icon_color;
+                }
+
                 touch := TouchArea {
                     clicked => {
                         AppConfig.create_collection();

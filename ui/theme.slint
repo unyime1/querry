@@ -1,5 +1,5 @@
 export global Theme {
-    in-out property <bool> dark_theme: false;
+    in-out property <bool> dark_theme: true;
 
     in-out property<color> app_background_color: dark_theme ? #111214 : #F5F5ED;
     in-out property<color> primary_color: #cc5e04;
@@ -10,12 +10,13 @@ export global Theme {
     in-out property<length> label_font_size_small: 10pt;
     in-out property<length> label_font_size_medium_small: 12pt;
     in-out property<length> label_font_size_medium: 17pt;
+    in-out property<length> icon_box_with: 32px;
     in-out property<length> label_font_size_large: 26pt;
 
     in-out property <length> border_radius: 8px;
     in-out property <float> text_opacity: 0.7;
     in-out property <length> border_width: 1px;
-    in-out property <length> icon_width: 25px;
+    in-out property <length> icon_width: 23px;
     in-out property <length> icon_width_pressed: 24px;
     in-out property <float> icon_opacity: 0.7;
     in-out property <float> icon_opacity_hover: 0.5;
@@ -28,4 +29,5 @@ export global Theme {
     in-out property <color> popup_background_dim_color: dark_theme ? #5e5a5a71 : #32313172;
     in-out property <color> popup_background_color: dark_theme ? #111214 : #F5F5ED;
     in-out property <color> popup_border_color: dark_theme ? #2B2C30 : #D3D3E0;
+
 }

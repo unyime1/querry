@@ -20,17 +20,25 @@ export component CollectionComponent inherits Rectangle {
         padding-right: 10px;
         spacing: 10px;
 
-        folder := Image {
-            source: @image-url("../icons/folder.svg");
-            width: Theme.icon_width;
-            padding-right: 10px;
-            colorize: Theme.icon_color;
+
+        Rectangle {
+            width: Theme.icon_box_with;
+            height: Theme.icon_box_with;
+            background: touch.has-hover ? Theme.hover_color : root.background;
+            border-radius: Theme.border_radius;
 
             touch := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
                 clicked => {
                     AppConfig.get_icons();
                     AppConfig.show_icons_popup = true;
                 }
+            }
+
+            folder := Image {
+                source: @image-url("../icons/folder.svg");
+                padding-right: 10px;
+                colorize: Theme.icon_color;
             }
         }
 
@@ -41,11 +49,20 @@ export component CollectionComponent inherits Rectangle {
             color: Theme.label_text_color;
         }
 
-        more := Image {
-            source: @image-url("../icons/more.svg");
-            width: Theme.icon_width;
-            padding-left: 10px;
-            colorize: Theme.icon_color;
+
+        Rectangle {
+            width: Theme.icon_box_with;
+            height: Theme.icon_box_with;
+            background: more_touch.has-hover ? Theme.hover_color : root.background;
+            border-radius: Theme.border_radius;
+
+            more_touch := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
+            }
+            more := Image {
+                source: @image-url("../icons/more.svg");
+                colorize: Theme.icon_color;
+            }
         }
         
     }

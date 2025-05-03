@@ -44,7 +44,6 @@ export component IconsPopup inherits Rectangle {
                 Rectangle {
                     horizontal-stretch: 1;
                     height: 40px;
-                    // background: transparent;
                     Text {
                         text: "Select icon";
                         color: Theme.label_text_color;
@@ -67,6 +66,7 @@ export component IconsPopup inherits Rectangle {
                         opacity: close_touch.pressed ? 0.7 : 1.0;
 
                         close_touch := TouchArea {
+                            mouse-cursor: self.has-hover ? pointer : default;
                             clicked => {
                                 AppConfig.show_icons_popup = false;
                             }
@@ -95,7 +95,6 @@ export component IconsPopup inherits Rectangle {
                             source: icon;
                             width: 100%;
                             height: 100%;
-                            
                         }
 
                         touch := TouchArea {
