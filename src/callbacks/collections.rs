@@ -5,7 +5,7 @@ use slint::{ComponentHandle, Model, VecModel};
 
 use crate::{
     callbacks::images::load_image_item,
-    utils::crud::collections::{create_collection, get_all_collections},
+    utils::crud::collections::{create_collection, get_all_collections, update_collection_item},
     AppConfig, AppWindow, CollectionItem,
 };
 
@@ -135,6 +135,49 @@ pub fn process_create_collection(
 
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
         items.insert(0, collection_item.clone());
+        cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
+    });
+    Ok(())
+}
+
+/// Update a collection
+pub fn process_update_collection(
+    db: Rc<Connection>,
+    app: &AppWindow,
+) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    let db_for_closure = db.clone();
+    config.on_update_collection(move |id, name, icon, index| {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        let new_collection = match update_collection_item(&id, &name, &icon, db_for_closure.clone())
+        {
+            Ok(data) => data,
+            Err(error) => {
+                eprintln!("Error updating collection  - {}", error);
+                return;
+            }
+        };
+        let icon_item = match load_image_item(&new_collection.icon) {
+            Ok(data) => data,
+            Err(error) => {
+                eprintln!("Error loading image  - {}", error);
+                return;
+            }
+        };
+        let collection_item = CollectionItem {
+            id: new_collection.id.into(),
+            name: new_collection.name.into(),
+            icon: icon_item,
+        };
+
+        let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+        if let Some(item_ref) = items.get_mut(index as usize) {
+            *item_ref = collection_item;
+        }
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });
     Ok(())

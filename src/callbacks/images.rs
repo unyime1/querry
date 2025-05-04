@@ -1,7 +1,7 @@
 use slint::{ComponentHandle, Image, VecModel};
 use std::{error::Error, path::PathBuf, rc::Rc};
 
-use crate::{utils::get_icon_pack_names, AppConfig, AppWindow};
+use crate::{utils::get_icon_pack_names, AppConfig, AppWindow, IconsModel};
 
 pub fn load_image_item(icon: &str) -> Result<Image, Box<dyn Error>> {
     let path = PathBuf::from(format!("ui/icons_pack/{}", icon));
@@ -20,13 +20,21 @@ pub fn process_get_images(app: &AppWindow) -> Result<(), Box<dyn Error>> {
     );
 
     // --- Load images from paths and collect into a Vec<slint::Image> ---
-    let mut loaded_icons: Vec<Image> = Vec::new();
+    let mut loaded_icons: Vec<IconsModel> = Vec::new();
 
     for path in image_paths {
         match Image::load_from_path(&path) {
             Ok(image) => {
                 // Image loaded successfully, add it to our vector
-                loaded_icons.push(image);
+                loaded_icons.push(IconsModel {
+                    image: image,
+                    name: path
+                        .file_name()
+                        .unwrap()
+                        .to_string_lossy()
+                        .to_string()
+                        .into(),
+                });
             }
             Err(e) => {
                 // Failed to load the image. Print an error and skip this path.

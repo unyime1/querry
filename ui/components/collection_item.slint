@@ -1,5 +1,5 @@
 import { Button, CheckBox, HorizontalBox, VerticalBox } from "std-widgets.slint";
-import { AppConfig } from "../global.slint";
+import { AppConfig, CollectionItemActive } from "../global.slint";
 import { Theme } from "../theme.slint";
 
 export component CollectionComponent inherits Rectangle {
@@ -7,10 +7,11 @@ export component CollectionComponent inherits Rectangle {
     in property <string> id;
     in property <color> component_background;
     in property <image> icon;
+    in property <int> index;
 
     height: 40px;
     touch-area := TouchArea {}
-    background: touch-area.has-hover ? component_background.darker(20%) : component_background;
+    background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.index == index ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
 
     HorizontalLayout {
@@ -31,6 +32,12 @@ export component CollectionComponent inherits Rectangle {
             touch := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
                 clicked => {
+                    AppConfig.active_collection_item = {
+                        id: id,
+                        name: name,
+                        index: index
+                    };
+                    
                     AppConfig.get_icons();
                     AppConfig.show_icons_popup = true;
                 }

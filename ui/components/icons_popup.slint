@@ -1,6 +1,6 @@
 
 import { Theme } from "../theme.slint";
-import { AppConfig } from "../global.slint";
+import { AppConfig, CollectionItemActive } from "../global.slint";
 
 import { GridView } from "./gridview.slint";
 import { ScrollView } from "std-widgets.slint";
@@ -68,6 +68,11 @@ export component IconsPopup inherits Rectangle {
                             mouse-cursor: self.has-hover ? pointer : default;
                             clicked => {
                                 AppConfig.show_icons_popup = false;
+                                AppConfig.active_collection_item = {
+                                    name: "",
+                                    id: "",
+                                    index: -1
+                                };
                             }
                         }
                     }
@@ -91,13 +96,27 @@ export component IconsPopup inherits Rectangle {
                         
                         
                         Image {
-                            source: icon;
+                            source: icon.image;
                             width: 100%;
                             height: 100%;
                         }
 
                         touch := TouchArea {
                             mouse-cursor: self.has-hover ? pointer : default;
+                            clicked => {
+                                AppConfig.update_collection(
+                                    AppConfig.active_collection_item.id,
+                                    AppConfig.active_collection_item.name,
+                                    icon.name,
+                                    AppConfig.active_collection_item.index
+                                );
+                                AppConfig.show_icons_popup = false;
+                                AppConfig.active_collection_item = {
+                                    name: "",
+                                    id: "",
+                                    index: -1
+                                };
+                            }
                         }
                     }
                 }
