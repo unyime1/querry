@@ -17,7 +17,8 @@ pub fn migrate_database(db_connection: &Connection) -> Result<(), Box<dyn Error>
         "CREATE TABLE IF NOT EXISTS collection(
                 id UUID NOT NULL PRIMARY KEY,
                 created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                name TEXT NOT NULL
+                name TEXT NOT NULL,
+                icon TEXT
             )",
         (), // empty list of parameters.
     )?;

@@ -1,7 +1,7 @@
 export struct CollectionItem {
     id: string,
     name: string,
-    // icon: string
+    icon: image
 }
 
 
@@ -17,4 +17,5 @@ export global AppConfig {
     callback update_collection(CollectionItem);
     callback remove_collection(string);
     callback get_icons();
+    callback set_collection_icon(int, string);
 }

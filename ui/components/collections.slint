@@ -49,10 +49,11 @@ export component CollectionSection inherits Rectangle {
         VerticalLayout {
             vertical-stretch: 1;
             ListView {
-                for list-item[i] in collection_items: CollectionComponent {
-                    name: list-item.name;
-                    id: list-item.id;
+                for list_item[i] in collection_items: CollectionComponent {
+                    name: list_item.name;
+                    id: list_item.id;
                     component_background: root.background;
+                    icon: list_item.icon;
                 }
             }
             

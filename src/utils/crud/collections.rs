@@ -1,5 +1,7 @@
 use std::error::Error;
 
+use crate::utils::get_icon_pack_names;
+use rand::{rng, seq::IndexedRandom};
 use rusqlite::{params, Connection, Result as RuResult};
 use uuid::Uuid;
 
@@ -7,15 +9,17 @@ use uuid::Uuid;
 pub struct CollectionData {
     pub id: String,
     pub name: String,
+    pub icon: String,
 }
 
 pub fn get_all_collections(db_connection: &Connection) -> RuResult<Vec<CollectionData>> {
     let mut stmt =
-        db_connection.prepare("SELECT id, name FROM collection ORDER BY created_at DESC")?;
+        db_connection.prepare("SELECT id, name, icon FROM collection ORDER BY created_at DESC")?;
     let rows = stmt.query_map(params![], |row| {
         Ok(CollectionData {
             id: row.get(0)?,
             name: row.get(1)?,
+            icon: row.get(2)?,
         })
     })?;
 
@@ -27,20 +31,29 @@ pub fn create_collection(
     name: String,
     db_connection: &Connection,
 ) -> Result<CollectionData, Box<dyn Error>> {
-    let mut stmt = db_connection
-        .prepare("INSERT INTO collection (id, name) VALUES (?1, ?2) RETURNING id, name")?;
+    let icon_items = get_icon_pack_names()?;
+    let mut rng = rng();
+    let random_icon = icon_items
+        .choose(&mut rng)
+        .map(|s| s.to_string())
+        .unwrap_or("1F4A6.svg".to_string());
+    let mut stmt = db_connection.prepare(
+        "INSERT INTO collection (id, name, icon) VALUES (?1, ?2, ?3) RETURNING id, name, icon",
+    )?;
 
-    let mut result_rows = stmt.query([Uuid::new_v4().to_string(), name])?;
+    let mut result_rows = stmt.query([Uuid::new_v4().to_string(), name, random_icon])?;
 
     let mut collections: Vec<CollectionData> = Vec::new();
     while let Some(row) = result_rows.next()? {
         collections.push(CollectionData {
             id: row.get(0)?,
             name: row.get(1)?,
+            icon: row.get(2)?,
         });
     }
 
     let collection_item = collections.first().ok_or("Could not save collection.")?;
+    println!("Created new collection");
     Ok(collection_item.clone())
 }
 
@@ -59,7 +72,7 @@ pub fn get_single_collection(
     id: String,
     db_connection: &Connection,
 ) -> Result<CollectionData, Box<dyn Error>> {
-    let mut stmt = db_connection.prepare("SELECT id, name FROM collection WHERE id=?1")?;
+    let mut stmt = db_connection.prepare("SELECT id, name, icon FROM collection WHERE id=?1")?;
 
     let mut result_rows = stmt.query([id])?;
 
@@ -68,6 +81,7 @@ pub fn get_single_collection(
         collections.push(CollectionData {
             id: row.get(0)?,
             name: row.get(1)?,
+            icon: row.get(2)?,
         });
     }
 
@@ -111,5 +125,6 @@ mod tests {
             get_single_collection(collection.id.clone(), &db).expect("cant get collections");
         assert!(single_collection.id == collection.id);
         assert!(single_collection.name == collection.name);
+        assert!(!single_collection.icon.is_empty());
     }
 }
