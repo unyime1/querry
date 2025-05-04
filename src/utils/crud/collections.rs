@@ -27,6 +27,30 @@ pub fn get_all_collections(db_connection: Rc<Connection>) -> RuResult<Vec<Collec
     collections
 }
 
+/// Update a collection item.
+pub fn update_collection_item(
+    id: &str,
+    name: &str,
+    icon: &str,
+    db_connection: Rc<Connection>,
+) -> Result<CollectionData, Box<dyn Error>> {
+    let mut stmt = db_connection
+        .prepare("UPDATE collection SET name=?1, icon=?2 WHERE id = ?3 RETURNING id, name, icon")?;
+    let mut rows = stmt.query([name, icon, id])?;
+
+    let mut collections: Vec<CollectionData> = Vec::new();
+    while let Some(row) = rows.next()? {
+        collections.push(CollectionData {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            icon: row.get(2)?,
+        });
+    }
+
+    let collection_item = collections.first().ok_or("Could not save collection.")?;
+    Ok(collection_item.clone())
+}
+
 pub fn create_collection(
     name: String,
     db_connection: Rc<Connection>,
@@ -125,5 +149,20 @@ mod tests {
         assert!(single_collection.id == collection.id);
         assert!(single_collection.name == collection.name);
         assert!(!single_collection.icon.is_empty());
+    }
+
+    #[test]
+    fn test_update_collection() {
+        let db = setup_test_db().expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), db.clone())
+            .expect("Cant get collections");
+
+        let single_collection =
+            update_collection_item(&collection.id, "hey", "icon.png", db.clone())
+                .expect("cant get collections");
+
+        assert!(single_collection.id == collection.id);
+        assert!(single_collection.name == "hey".to_string());
+        assert!(single_collection.icon == "icon.png".to_string());
     }
 }
