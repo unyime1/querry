@@ -1,5 +1,8 @@
 // Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use std::rc::Rc;
+
 use database::migrate_database;
 use slint::{ComponentHandle, PlatformError};
 
@@ -20,15 +23,17 @@ use lib::{
 
 fn main() -> Result<(), PlatformError> {
     let db = get_database().expect("Could not connect to DB");
-    migrate_database(&db).expect("Could not apply migrations");
+    let shared_db = Rc::new(db);
+
+    migrate_database(shared_db.clone()).expect("Could not apply migrations");
 
     let app = AppWindow::new()?;
 
-    check_startup_page(&db, &app).unwrap();
-    load_collections(&db, &app).unwrap();
+    check_startup_page(shared_db.clone(), &app).unwrap();
+    load_collections(shared_db.clone(), &app).unwrap();
     process_page_change(&app).unwrap();
-    process_get_collections(&db, &app).unwrap();
-    process_create_collection(&db, &app).unwrap();
+    process_get_collections(shared_db.clone(), &app).unwrap();
+    process_create_collection(shared_db.clone(), &app).unwrap();
     process_get_images(&app).unwrap();
 
     app.run()
