@@ -52,6 +52,7 @@ export component CollectionSection inherits Rectangle {
                 for list-item[i] in collection_items: CollectionComponent {
                     name: list-item.name;
                     id: list-item.id;
+                    component_background: root.background;
                 }
             }
             

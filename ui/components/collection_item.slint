@@ -5,11 +5,11 @@ import { Theme } from "../theme.slint";
 export component CollectionComponent inherits Rectangle {
     in property <string> name;
     in property <string> id;
+    in property <color> component_background;
 
     height: 40px;
-    border-radius: Theme.border_radius;
     touch-area := TouchArea {}
-    border-color: touch-area.has-hover ? Theme.primary_color : self.background;
+    background: touch-area.has-hover ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
 
     HorizontalLayout {
