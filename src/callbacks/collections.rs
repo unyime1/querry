@@ -4,11 +4,13 @@ use rusqlite::Connection;
 use slint::{ComponentHandle, Model, VecModel};
 
 use crate::{
-    utils::crud::collections::{create_collection, get_all_collections},
+    callbacks::images::load_image_item,
+    utils::crud::collections::{create_collection, get_all_collections, update_collection_item},
     AppConfig, AppWindow, CollectionItem,
 };
 
-pub fn check_startup_page(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn Error>> {
+/// Set page to view on app start.
+pub fn check_startup_page(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box<dyn Error>> {
     let collection_items = get_all_collections(db)?;
     let mut page: i32 = 1;
 
@@ -22,14 +24,22 @@ pub fn check_startup_page(db: &Connection, app: &AppWindow) -> Result<(), Box<dy
     Ok(())
 }
 
-pub fn load_collections(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn Error>> {
+/// Create load all collections on app start.
+pub fn load_collections(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box<dyn Error>> {
     let collection_items = get_all_collections(db)?;
 
     let mut collection_data: Vec<CollectionItem> = Vec::new();
     for collection_item in collection_items {
+        let icon_item = match load_image_item(&collection_item.icon) {
+            Ok(data) => data,
+            Err(_) => {
+                continue;
+            }
+        };
         collection_data.push(CollectionItem {
             id: collection_item.id.into(),
             name: collection_item.name.into(),
+            icon: icon_item,
         });
     }
     let items_model = Rc::new(VecModel::from(collection_data));
@@ -40,6 +50,7 @@ pub fn load_collections(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn 
     Ok(())
 }
 
+/// Change page on ask
 pub fn process_page_change(app: &AppWindow) -> Result<(), Box<dyn Error>> {
     let config = app.global::<AppConfig>();
     let weak_app = app.as_weak();
@@ -54,15 +65,23 @@ pub fn process_page_change(app: &AppWindow) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn process_get_collections(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn Error>> {
+/// Get collections
+pub fn process_get_collections(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box<dyn Error>> {
     let collection_items = get_all_collections(db)?;
 
     let mut collection_data: Vec<CollectionItem> = Vec::new();
 
     for collection_item in collection_items {
+        let icon_item = match load_image_item(&collection_item.icon) {
+            Ok(data) => data,
+            Err(_) => {
+                continue;
+            }
+        };
         collection_data.push(CollectionItem {
             id: collection_item.id.into(),
             name: collection_item.name.into(),
+            icon: icon_item,
         });
     }
 
@@ -80,23 +99,85 @@ pub fn process_get_collections(db: &Connection, app: &AppWindow) -> Result<(), B
     Ok(())
 }
 
-pub fn process_create_collection(db: &Connection, app: &AppWindow) -> Result<(), Box<dyn Error>> {
-    let new_collection = create_collection("New Collection".to_string(), &db)?;
-
+/// Create a collection
+pub fn process_create_collection(
+    db: Rc<Connection>,
+    app: &AppWindow,
+) -> Result<(), Box<dyn Error>> {
     let config = app.global::<AppConfig>();
     let weak_app = app.as_weak();
 
-    let collection_item = CollectionItem {
-        id: new_collection.id.into(),
-        name: new_collection.name.into(),
-    };
+    let db_for_closure = db.clone();
     config.on_create_collection(move || {
         let app = weak_app.upgrade().unwrap();
         let cfg = app.global::<AppConfig>();
 
+        let new_collection =
+            match create_collection("New Collection".to_string(), db_for_closure.clone()) {
+                Ok(data) => data,
+                Err(error) => {
+                    eprintln!("Error Creating collection  - {}", error);
+                    return;
+                }
+            };
+        let icon_item = match load_image_item(&new_collection.icon) {
+            Ok(data) => data,
+            Err(error) => {
+                eprintln!("Error loading image  - {}", error);
+                return;
+            }
+        };
+        let collection_item = CollectionItem {
+            id: new_collection.id.into(),
+            name: new_collection.name.into(),
+            icon: icon_item,
+        };
+
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
         items.insert(0, collection_item.clone());
+        cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
+    });
+    Ok(())
+}
 
+/// Update a collection
+pub fn process_update_collection(
+    db: Rc<Connection>,
+    app: &AppWindow,
+) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    let db_for_closure = db.clone();
+    config.on_update_collection(move |id, name, icon, index| {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        let new_collection = match update_collection_item(&id, &name, &icon, db_for_closure.clone())
+        {
+            Ok(data) => data,
+            Err(error) => {
+                eprintln!("Error updating collection  - {}", error);
+                return;
+            }
+        };
+        let icon_item = match load_image_item(&new_collection.icon) {
+            Ok(data) => data,
+            Err(error) => {
+                eprintln!("Error loading image  - {}", error);
+                return;
+            }
+        };
+        let collection_item = CollectionItem {
+            id: new_collection.id.into(),
+            name: new_collection.name.into(),
+            icon: icon_item,
+        };
+
+        let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+        if let Some(item_ref) = items.get_mut(index as usize) {
+            *item_ref = collection_item;
+        }
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });
     Ok(())

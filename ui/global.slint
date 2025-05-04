@@ -1,20 +1,34 @@
 export struct CollectionItem {
     id: string,
     name: string,
-    // icon: string
+    icon: image
+}
+
+
+export struct CollectionItemActive {
+    id: string,
+    name: string,
+    index: int
+}
+
+export struct IconsModel { 
+    image: image,
+    name: string
 }
 
 
 export global AppConfig {
     in-out property <int> page: 1;
     in-out property <[CollectionItem]> collection_items: [];
+    in-out property <CollectionItemActive> active_collection_item;
     in-out property <bool> show_icons_popup: false;
-    in-out property <[image]> icons: [];
+    in-out property <[IconsModel]> icons: [];
     
     callback change_page(int);
     callback create_collection;
     callback get_collections;
-    callback update_collection(CollectionItem);
+    callback update_collection(string, string, string, int);
     callback remove_collection(string);
     callback get_icons();
+    callback set_collection_icon(int, string);
 }
