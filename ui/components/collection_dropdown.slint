@@ -1,0 +1,78 @@
+
+import { Theme } from "../theme.slint";
+import { AppConfig, CollectionItemActive } from "../global.slint";
+
+import { GridView } from "./gridview.slint";
+import { ScrollView } from "std-widgets.slint";
+
+
+export component CollectionsDropDown inherits Rectangle {
+    width: 200px;
+    background: Theme.app_background_color;
+    border-radius: Theme.border_radius;
+    border-color: Theme.border_color;
+    border-width: Theme.border_width;
+
+    VerticalLayout {
+        Rectangle {
+            padding: 5px;
+            height: 40px;
+            background: touch.has-hover ? Theme.hover_color : Theme.app_background_color;
+
+            touch := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
+                clicked => {}
+            }
+
+            HorizontalLayout {
+                horizontal-stretch: 1;
+                alignment: start;
+                spacing: 15px;
+                
+    
+                Image {
+                    vertical-alignment: center;
+                    source: @image-url("../icons/delete.svg");
+                    colorize: Theme.icon_color;
+                }
+                Text {
+                    vertical-alignment: center;
+                    text: "Delete Collection";
+                    color: Theme.label_text_color;
+                    font-size: Theme.label_font_size_medium_small;
+                }
+            }
+        }
+
+        Rectangle {
+            padding: 5px;
+            height: 40px;
+            background: touch_2.has-hover ? Theme.hover_color : Theme.app_background_color;
+
+            touch_2 := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
+                clicked => {}
+            }
+
+            HorizontalLayout {
+                horizontal-stretch: 1;
+                alignment: start;
+                spacing: 15px;
+    
+                Image {
+                    vertical-alignment: center;
+                    source: @image-url("../icons/http.svg");
+                    colorize: Theme.icon_color;
+                }
+                Text {
+                    vertical-alignment: center;
+                    text: "Add http Request";
+                    color: Theme.label_text_color;
+                    font-size: Theme.label_font_size_medium_small;
+                }
+            }
+        }
+        
+    }
+
+}
