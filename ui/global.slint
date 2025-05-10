@@ -8,7 +8,9 @@ export struct CollectionItem {
 export struct CollectionItemActive {
     id: string,
     name: string,
-    index: int
+    index: int,
+    x: length,
+    y: length
 }
 
 export struct IconsModel { 
@@ -22,6 +24,7 @@ export global AppConfig {
     in-out property <[CollectionItem]> collection_items: [];
     in-out property <CollectionItemActive> active_collection_item;
     in-out property <bool> show_icons_popup: false;
+    in-out property <bool> show_collection_more_dropdown: false;
     in-out property <[IconsModel]> icons: [];
     
     callback change_page(int);

@@ -1,7 +1,6 @@
 import { Button, CheckBox, HorizontalBox, VerticalBox } from "std-widgets.slint";
 import { AppConfig, CollectionItemActive } from "../global.slint";
 import { Theme } from "../theme.slint";
-import { CollectionsDropDown } from "./collection_dropdown.slint";
 
 
 export component CollectionComponent inherits Rectangle {
@@ -10,18 +9,11 @@ export component CollectionComponent inherits Rectangle {
     in property <color> component_background;
     in property <image> icon;
     in property <int> index;
-    property <bool> more_visible: false;
 
     height: 40px;
     touch-area := TouchArea {}
     background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.index == index ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
-
-    CollectionsDropDown {
-        visible: more_visible;
-        // x: root.x + 5px;
-        // y: root.y + 5px;
-    }
 
     HorizontalLayout {
         alignment: space-between;
@@ -44,11 +36,13 @@ export component CollectionComponent inherits Rectangle {
                     AppConfig.active_collection_item = {
                         id: id,
                         name: name,
-                        index: index
+                        index: index,
+                        x: root.x + root.width,
+                        y: root.y + root.height
                     };
                     
                     AppConfig.get_icons();
-                    AppConfig.show_icons_popup = true;
+                    AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
                 }
             }
 
@@ -67,7 +61,7 @@ export component CollectionComponent inherits Rectangle {
         }
 
 
-        Rectangle {
+        more_btn := Rectangle {
             width: Theme.icon_box_with;
             height: Theme.icon_box_with;
             background: more_touch.has-hover ? Theme.hover_color : root.background;
@@ -76,8 +70,18 @@ export component CollectionComponent inherits Rectangle {
             more_touch := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
 
-                clicked => {
-                    root.more_visible = true;
+                clicked => { 
+                    AppConfig.active_collection_item = {
+                        id: id,
+                        name: name,
+                        index: index,
+                        x: root.x + root.width,
+                        y: root.y + root.height
+                    };
+
+                    AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+
+                    debug(AppConfig.active_collection_item.x, AppConfig.active_collection_item.y)
                 }   
             }
             more := Image {

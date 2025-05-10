@@ -8,16 +8,22 @@ import { ScrollView } from "std-widgets.slint";
 
 export component CollectionsDropDown inherits Rectangle {
     width: 200px;
-    background: Theme.app_background_color;
+    background: Theme.app_background_color.darker(20%);
     border-radius: Theme.border_radius;
-    border-color: Theme.border_color;
-    border-width: Theme.border_width;
+    visible: AppConfig.show_collection_more_dropdown;
+    height: delete.height + add_http.height + 10px;
+    x: AppConfig.active_collection_item.x;
+    y: AppConfig.active_collection_item.y + 30px;
+    z: 101;
+
 
     VerticalLayout {
-        Rectangle {
-            padding: 5px;
+        delete := Rectangle {
+            border-radius: Theme.border_radius;
+            padding-left: 5px;
+            padding-right: 5px;
             height: 40px;
-            background: touch.has-hover ? Theme.hover_color : Theme.app_background_color;
+            background: touch.has-hover ? Theme.hover_color : root.background;
 
             touch := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
@@ -44,10 +50,12 @@ export component CollectionsDropDown inherits Rectangle {
             }
         }
 
-        Rectangle {
-            padding: 5px;
+        add_http := Rectangle {
+            border-radius: Theme.border_radius;
+            padding-left: 5px;
+            padding-right: 5px;
             height: 40px;
-            background: touch_2.has-hover ? Theme.hover_color : Theme.app_background_color;
+            background: touch_2.has-hover ? Theme.hover_color : root.background;
 
             touch_2 := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
