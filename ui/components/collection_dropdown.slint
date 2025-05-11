@@ -13,15 +13,14 @@ export component CollectionsDropDown inherits Rectangle {
     visible: AppConfig.show_collection_more_dropdown;
     height: delete.height + add_http.height + 10px;
     x: AppConfig.active_collection_item.x;
-    y: AppConfig.active_collection_item.y + 30px;
+    y: AppConfig.active_collection_item.y;
     z: 101;
 
+    property <length> items_padding_left: 5px;
 
     VerticalLayout {
         delete := Rectangle {
             border-radius: Theme.border_radius;
-            padding-left: 5px;
-            padding-right: 5px;
             height: 40px;
             background: touch.has-hover ? Theme.hover_color : root.background;
 
@@ -34,6 +33,7 @@ export component CollectionsDropDown inherits Rectangle {
                 horizontal-stretch: 1;
                 alignment: start;
                 spacing: 15px;
+                padding-left: root.items_padding_left;
                 
     
                 Image {
@@ -52,8 +52,6 @@ export component CollectionsDropDown inherits Rectangle {
 
         add_http := Rectangle {
             border-radius: Theme.border_radius;
-            padding-left: 5px;
-            padding-right: 5px;
             height: 40px;
             background: touch_2.has-hover ? Theme.hover_color : root.background;
 
@@ -68,6 +66,7 @@ export component CollectionsDropDown inherits Rectangle {
                 horizontal-stretch: 1;
                 alignment: start;
                 spacing: 15px;
+                padding-left: root.items_padding_left;
     
                 Image {
                     vertical-alignment: center;

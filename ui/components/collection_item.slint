@@ -74,11 +74,7 @@ export component CollectionComponent inherits Rectangle {
 
                 clicked => {
                     position_x = root.x + root.width;
-                    position_y = root.y + root.height;
-
-                    if (position_y > AppConfig.window_height) || (position_y + 90px >= AppConfig.window_height) {
-                        position_y = AppConfig.window_height - 150px;
-                    }
+                    position_y = (index * root.height) + AppConfig.collections_viewport_y;
 
                     AppConfig.active_collection_item = {
                         id: id,
@@ -89,8 +85,6 @@ export component CollectionComponent inherits Rectangle {
                     };
 
                     AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
-
-                    debug(AppConfig.active_collection_item.x, AppConfig.active_collection_item.y)
                 }   
             }
             more := Image {
