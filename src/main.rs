@@ -13,7 +13,8 @@ use lib::{
     callbacks::{
         collections::{
             check_startup_page, load_collections, process_create_collection,
-            process_get_collections, process_page_change, process_update_collection,
+            process_get_collections, process_page_change, process_remove_collection,
+            process_update_collection,
         },
         images::process_get_images,
     },
@@ -36,6 +37,8 @@ fn main() -> Result<(), PlatformError> {
     process_create_collection(shared_db.clone(), &app).unwrap();
     process_get_images(&app).unwrap();
     process_update_collection(shared_db.clone(), &app).unwrap();
+    process_remove_collection(shared_db.clone(), &app).unwrap();
 
-    app.run()
+    app.run()?;
+    Ok(())
 }

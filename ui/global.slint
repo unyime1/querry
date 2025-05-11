@@ -8,7 +8,9 @@ export struct CollectionItem {
 export struct CollectionItemActive {
     id: string,
     name: string,
-    index: int
+    index: int,
+    x: length,
+    y: length
 }
 
 export struct IconsModel { 
@@ -18,17 +20,20 @@ export struct IconsModel {
 
 
 export global AppConfig {
+    in-out property <length> window_height;
+    in-out property <length> window_width;
+    in-out property <length> collections_viewport_y;
+
     in-out property <int> page: 1;
     in-out property <[CollectionItem]> collection_items: [];
     in-out property <CollectionItemActive> active_collection_item;
     in-out property <bool> show_icons_popup: false;
+    in-out property <bool> show_collection_more_dropdown: false;
     in-out property <[IconsModel]> icons: [];
     
     callback change_page(int);
     callback create_collection;
     callback get_collections;
-    callback update_collection(string, string, string, int);
-    callback remove_collection(string);
-    callback get_icons();
-    callback set_collection_icon(int, string);
+    callback update_collection(string, string, string, int);  // id, name, icon, index
+    callback remove_collection(string, int);  // id, index
 }

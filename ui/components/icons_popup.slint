@@ -49,13 +49,6 @@ export component IconsPopup inherits Rectangle {
                         font-size: Theme.label_font_size_medium;
                     }
 
-                    Rectangle {
-                        width: parent.width;
-                        height: 1px;
-                        y: parent.height;
-                        background: Theme.border_color;
-                    }
-
                     Image {
                         source: @image-url("../icons/close.svg");
                         colorize: Theme.icon_color;
@@ -71,12 +64,20 @@ export component IconsPopup inherits Rectangle {
                                 AppConfig.active_collection_item = {
                                     name: "",
                                     id: "",
-                                    index: -1
+                                    index: -1,
+                                    x:-1px,
+                                    y:-1px
                                 };
                             }
                         }
                     }
                 }
+            }
+
+            Rectangle {
+                width: parent.width;
+                height: 1px;
+                background: Theme.border_color;
             }
         
             Rectangle {

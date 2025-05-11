@@ -2,6 +2,7 @@ import { Button, CheckBox, HorizontalBox, VerticalBox } from "std-widgets.slint"
 import { AppConfig, CollectionItemActive } from "../global.slint";
 import { Theme } from "../theme.slint";
 
+
 export component CollectionComponent inherits Rectangle {
     in property <string> name;
     in property <string> id;
@@ -35,11 +36,11 @@ export component CollectionComponent inherits Rectangle {
                     AppConfig.active_collection_item = {
                         id: id,
                         name: name,
-                        index: index
+                        index: index,
+                        x: root.x + root.width,
+                        y: root.y + root.height
                     };
-                    
-                    AppConfig.get_icons();
-                    AppConfig.show_icons_popup = true;
+                    AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
                 }
             }
 
@@ -58,7 +59,7 @@ export component CollectionComponent inherits Rectangle {
         }
 
 
-        Rectangle {
+        more_btn := Rectangle {
             width: Theme.icon_box_with;
             height: Theme.icon_box_with;
             background: more_touch.has-hover ? Theme.hover_color : root.background;
@@ -66,6 +67,23 @@ export component CollectionComponent inherits Rectangle {
 
             more_touch := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
+                property<length> position_x;
+                property<length> position_y;
+
+                clicked => {
+                    position_x = root.x + root.width;
+                    position_y = (index * root.height) + AppConfig.collections_viewport_y;
+
+                    AppConfig.active_collection_item = {
+                        id: id,
+                        name: name,
+                        index: index,
+                        x: position_x,
+                        y: position_y
+                    };
+
+                    AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+                }   
             }
             more := Image {
                 source: @image-url("../icons/more.svg");

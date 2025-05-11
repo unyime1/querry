@@ -1,11 +1,13 @@
-use std::{error::Error, rc::Rc};
+use std::{error::Error, ptr::null, rc::Rc};
 
 use rusqlite::Connection;
 use slint::{ComponentHandle, Model, VecModel};
 
 use crate::{
     callbacks::images::load_image_item,
-    utils::crud::collections::{create_collection, get_all_collections, update_collection_item},
+    utils::crud::collections::{
+        create_collection, delete_collection, get_all_collections, update_collection_item,
+    },
     AppConfig, AppWindow, CollectionItem,
 };
 
@@ -177,6 +179,35 @@ pub fn process_update_collection(
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
         if let Some(item_ref) = items.get_mut(index as usize) {
             *item_ref = collection_item;
+        }
+        cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
+    });
+    Ok(())
+}
+
+/// Update a collection
+pub fn process_remove_collection(
+    db: Rc<Connection>,
+    app: &AppWindow,
+) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    let db_for_closure = db.clone();
+    config.on_remove_collection(move |id, index| {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        match delete_collection(&id, db_for_closure.clone()) {
+            Ok(_) => {}
+            Err(error) => {
+                eprintln!("Error deleting collection  - {}", error);
+                return;
+            }
+        };
+        let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+        if let Some(_) = items.get_mut(index as usize) {
+            items.remove(index as usize);
         }
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });

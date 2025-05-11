@@ -1,0 +1,130 @@
+
+import { Theme } from "../theme.slint";
+import { AppConfig, CollectionItemActive } from "../global.slint";
+
+import { GridView } from "./gridview.slint";
+import { ScrollView } from "std-widgets.slint";
+
+
+export component CollectionsDropDown inherits Rectangle {
+    width: 200px;
+    background: Theme.app_background_color.darker(20%);
+    border-radius: Theme.border_radius;
+    visible: AppConfig.show_collection_more_dropdown;
+    height: delete.height + add_http.height + duplicate.height;
+    x: AppConfig.active_collection_item.x;
+    y: AppConfig.active_collection_item.y;
+    z: 101;
+
+    property <length> items_padding_left: 5px;
+
+    VerticalLayout {
+        delete := Rectangle {
+            border-radius: Theme.border_radius;
+            height: 40px;
+            background: touch.has-hover ? Theme.hover_color : root.background;
+
+            touch := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
+                clicked => {
+                    AppConfig.remove_collection(AppConfig.active_collection_item.id, AppConfig.active_collection_item.index);
+                    AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+                    AppConfig.active_collection_item = {
+                        name: "",
+                        id: "",
+                        index: -1,
+                        x:-1px,
+                        y:-1px
+                    };
+                }
+            }
+
+            HorizontalLayout {
+                horizontal-stretch: 1;
+                alignment: start;
+                spacing: 15px;
+                padding-left: root.items_padding_left;
+                
+    
+                Image {
+                    vertical-alignment: center;
+                    source: @image-url("../icons/delete.svg");
+                    colorize: Theme.icon_color;
+                }
+                Text {
+                    vertical-alignment: center;
+                    text: "Delete";
+                    color: Theme.label_text_color;
+                    font-size: Theme.label_font_size_medium_small;
+                }
+            }
+        }
+
+        add_http := Rectangle {
+            border-radius: Theme.border_radius;
+            height: 40px;
+            background: touch_2.has-hover ? Theme.hover_color : root.background;
+
+            touch_2 := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
+                clicked => {
+                    debug(AppConfig.window_width, AppConfig.window_height)
+                }
+            }
+
+            HorizontalLayout {
+                horizontal-stretch: 1;
+                alignment: start;
+                spacing: 15px;
+                padding-left: root.items_padding_left;
+    
+                Image {
+                    vertical-alignment: center;
+                    source: @image-url("../icons/http.svg");
+                    colorize: Theme.icon_color;
+                }
+                Text {
+                    vertical-alignment: center;
+                    text: "Add Request";
+                    color: Theme.label_text_color;
+                    font-size: Theme.label_font_size_medium_small;
+                }
+            }
+        }
+
+
+        duplicate := Rectangle {
+            border-radius: Theme.border_radius;
+            height: 40px;
+            background: touch_dub.has-hover ? Theme.hover_color : root.background;
+
+            touch_dub := TouchArea{
+                mouse-cursor: self.has-hover ? pointer : default;
+                clicked => {
+                    debug(AppConfig.window_width, AppConfig.window_height)
+                }
+            }
+
+            HorizontalLayout {
+                horizontal-stretch: 1;
+                alignment: start;
+                spacing: 15px;
+                padding-left: root.items_padding_left;
+    
+                Image {
+                    vertical-alignment: center;
+                    source: @image-url("../icons/duplicate.svg");
+                    colorize: Theme.icon_color;
+                }
+                Text {
+                    vertical-alignment: center;
+                    text: "Duplicate";
+                    color: Theme.label_text_color;
+                    font-size: Theme.label_font_size_medium_small;
+                }
+            }
+        }
+        
+    }
+
+}
