@@ -81,7 +81,7 @@ pub fn create_collection(
 }
 
 pub fn delete_collection(
-    collection_id: String,
+    collection_id: &str,
     db_connection: Rc<Connection>,
 ) -> Result<(), Box<dyn Error>> {
     let mut stmt = db_connection.prepare("DELETE FROM collection WHERE id=?1")?;
@@ -132,7 +132,7 @@ mod tests {
         let collection = create_collection("Test collection".to_string(), db.clone())
             .expect("Cant get collections");
 
-        delete_collection(collection.id, db.clone()).expect("Can't delete");
+        delete_collection(&collection.id, db.clone()).expect("Can't delete");
 
         let existing_collection = get_all_collections(db.clone()).expect("cant get collections");
         assert!(existing_collection.len() == 0)
