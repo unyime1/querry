@@ -11,6 +11,10 @@ export component AppWindow inherits Window {
     title: "Querry";
     background: Theme.app_background_color;
 
+    // When the window's size changes, update the global properties
+    changed width => { AppConfig.window_width = self.width; }
+    changed height => { AppConfig.window_height = self.height; }
+
     if AppConfig.page == 1 : LandingPage {}
     if AppConfig.page == 2 : MainPage {}
 

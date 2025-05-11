@@ -59,7 +59,9 @@ export component CollectionsDropDown inherits Rectangle {
 
             touch_2 := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
-                clicked => {}
+                clicked => {
+                    debug(AppConfig.window_width, AppConfig.window_height)
+                }
             }
 
             HorizontalLayout {

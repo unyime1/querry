@@ -37,5 +37,6 @@ fn main() -> Result<(), PlatformError> {
     process_get_images(&app).unwrap();
     process_update_collection(shared_db.clone(), &app).unwrap();
 
-    app.run()
+    app.run()?;
+    Ok(())
 }
