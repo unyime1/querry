@@ -1,4 +1,4 @@
-use std::{error::Error, ptr::null, rc::Rc};
+use std::{error::Error, rc::Rc};
 
 use rusqlite::Connection;
 use slint::{ComponentHandle, Model, VecModel};
@@ -42,6 +42,7 @@ pub fn load_collections(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box<d
             id: collection_item.id.into(),
             name: collection_item.name.into(),
             icon: icon_item,
+            icon_name: collection_item.icon.into(),
         });
     }
     let items_model = Rc::new(VecModel::from(collection_data));
@@ -84,6 +85,7 @@ pub fn process_get_collections(db: Rc<Connection>, app: &AppWindow) -> Result<()
             id: collection_item.id.into(),
             name: collection_item.name.into(),
             icon: icon_item,
+            icon_name: collection_item.icon.into(),
         });
     }
 
@@ -133,6 +135,7 @@ pub fn process_create_collection(
             id: new_collection.id.into(),
             name: new_collection.name.into(),
             icon: icon_item,
+            icon_name: new_collection.icon.into(),
         };
 
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
@@ -174,6 +177,7 @@ pub fn process_update_collection(
             id: new_collection.id.into(),
             name: new_collection.name.into(),
             icon: icon_item,
+            icon_name: new_collection.icon.into(),
         };
 
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();

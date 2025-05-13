@@ -1,7 +1,8 @@
 export struct CollectionItem {
     id: string,
     name: string,
-    icon: image
+    icon: image,
+    icon_name: string,
 }
 
 
@@ -10,7 +11,7 @@ export struct CollectionItemActive {
     name: string,
     index: int,
     x: length,
-    y: length
+    y: length,
 }
 
 export struct IconsModel { 
@@ -27,6 +28,8 @@ export global AppConfig {
     in-out property <int> page: 1;
     in-out property <[CollectionItem]> collection_items: [];
     in-out property <CollectionItemActive> active_collection_item;
+    in-out property <bool> active_collection_rename_mode: false;
+    
     in-out property <bool> show_icons_popup: false;
     in-out property <bool> show_collection_more_dropdown: false;
     in-out property <[IconsModel]> icons: [];

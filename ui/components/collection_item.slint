@@ -9,6 +9,7 @@ export component CollectionComponent inherits Rectangle {
     in property <color> component_background;
     in property <image> icon;
     in property <int> index;
+    in property <string> icon_name;
 
     height: 40px;
     touch-area := TouchArea {}
@@ -51,13 +52,37 @@ export component CollectionComponent inherits Rectangle {
             }
         }
 
-        Text {
-            vertical-alignment: center;
-            text: name;
-            font-size: Theme.label_font_size_medium_small;
-            color: Theme.label_text_color;
-        }
+        if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index :
+            text_input := TextInput {
+                color: Theme.label_text_color;
+                horizontal-stretch: 1;
+                vertical-alignment: center;
+                wrap: no-wrap;
+                single-line: true;
+                text: name;
+                font-size: Theme.label_font_size_medium_small;
+                accepted() => {
+                    AppConfig.update_collection(id, self.text, icon_name, index);
+                    AppConfig.active_collection_rename_mode = false;
+                }
 
+                init => {
+                    self.focus(); // Give focus to the TextInput
+                    // Optionally, select all text when it gains focus
+                    self.select-all();
+                }
+
+            }
+            
+
+        // Conditionally display the Text
+        if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index) :
+            text := Text {
+                vertical-alignment: center;
+                text: name;
+                font-size: Theme.label_font_size_medium_small;
+                color: Theme.label_text_color;
+            }
 
         more_btn := Rectangle {
             width: Theme.icon_box_with;
