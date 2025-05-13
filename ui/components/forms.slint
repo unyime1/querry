@@ -1,4 +1,5 @@
 import { Theme } from "../theme.slint";
+import { AppConfig } from "../global.slint";
 
 export component SearchForm inherits Rectangle {
     border-radius: Theme.border_radius;
@@ -56,9 +57,13 @@ export component SearchForm inherits Rectangle {
                     } else {
                         // If no overflow, update previous_text for the next edit.
                         previous_text = text.text;
+                        AppConfig.search_collection(text.text);
                     }
                 }
-    
+                
+                accepted() => {
+                    self.clear-focus();
+                }
             }
         } 
         

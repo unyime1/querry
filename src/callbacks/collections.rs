@@ -6,7 +6,8 @@ use slint::{ComponentHandle, Model, VecModel};
 use crate::{
     callbacks::images::load_image_item,
     utils::crud::collections::{
-        create_collection, delete_collection, get_all_collections, update_collection_item,
+        create_collection, delete_collection, get_all_collections, search_collections,
+        update_collection_item, CollectionData,
     },
     AppConfig, AppWindow, CollectionItem,
 };
@@ -215,5 +216,54 @@ pub fn process_remove_collection(
         }
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });
+    Ok(())
+}
+
+/// Search collections
+pub fn process_search_collections(
+    db: Rc<Connection>,
+    app: &AppWindow,
+) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    config.on_search_collection(move |search_string| {
+        let collection_items: Vec<CollectionData>;
+        if search_string.len() == 0 as usize {
+            collection_items = match get_all_collections(db.clone()) {
+                Ok(data) => data,
+                Err(_) => [].into(),
+            };
+        } else {
+            collection_items = match search_collections(db.clone(), &search_string) {
+                Ok(data) => data,
+                Err(_) => [].into(),
+            };
+        }
+
+        let mut collection_data: Vec<CollectionItem> = Vec::new();
+
+        for collection_item in collection_items {
+            let icon_item = match load_image_item(&collection_item.icon) {
+                Ok(data) => data,
+                Err(_) => {
+                    continue;
+                }
+            };
+            collection_data.push(CollectionItem {
+                id: collection_item.id.into(),
+                name: collection_item.name.into(),
+                icon: icon_item,
+                icon_name: collection_item.icon.into(),
+            });
+        }
+        let items_model = Rc::new(VecModel::from(collection_data));
+
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        cfg.set_collection_items(items_model.clone().into());
+    });
+
     Ok(())
 }

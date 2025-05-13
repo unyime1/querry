@@ -27,6 +27,24 @@ pub fn get_all_collections(db_connection: Rc<Connection>) -> RuResult<Vec<Collec
     collections
 }
 
+pub fn search_collections(
+    db_connection: Rc<Connection>,
+    search_term: &str,
+) -> RuResult<Vec<CollectionData>> {
+    let mut stmt =
+        db_connection.prepare("SELECT id, name, icon FROM collection WHERE LOWER(name) LIKE LOWER(?1) ORDER BY created_at DESC")?;
+    let rows = stmt.query_map(params![format!("%{}%", search_term)], |row| {
+        Ok(CollectionData {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            icon: row.get(2)?,
+        })
+    })?;
+
+    let collections: RuResult<Vec<CollectionData>> = rows.into_iter().collect();
+    collections
+}
+
 /// Update a collection item.
 pub fn update_collection_item(
     id: &str,
@@ -164,5 +182,58 @@ mod tests {
         assert!(single_collection.id == collection.id);
         assert!(single_collection.name == "hey".to_string());
         assert!(single_collection.icon == "icon.png".to_string());
+    }
+
+    #[test]
+    fn test_search_collections() {
+        let db = setup_test_db().expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), db.clone())
+            .expect("Cant get collections");
+
+        let collections = search_collections(db.clone(), "tion").expect("cant get collections");
+
+        assert!(collections.len() == 1);
+        assert!(collections[0].id == collection.id);
+        assert!(collections[0].name == collection.name);
+        assert!(collections[0].icon == collection.icon);
+    }
+
+    #[test]
+    fn test_search_collections_2() {
+        let db = setup_test_db().expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), db.clone())
+            .expect("Cant get collections");
+
+        let collections = search_collections(db.clone(), "TIO").expect("cant get collections");
+
+        assert!(collections.len() == 1);
+        assert!(collections[0].id == collection.id);
+        assert!(collections[0].name == collection.name);
+        assert!(collections[0].icon == collection.icon);
+    }
+
+    #[test]
+    fn test_search_collections_3() {
+        let db = setup_test_db().expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), db.clone())
+            .expect("Cant get collections");
+
+        let collections = search_collections(db.clone(), "TES").expect("cant get collections");
+
+        assert!(collections.len() == 1);
+        assert!(collections[0].id == collection.id);
+        assert!(collections[0].name == collection.name);
+        assert!(collections[0].icon == collection.icon);
+    }
+
+    #[test]
+    fn test_search_collections_4() {
+        let db = setup_test_db().expect("Cant setup db.");
+        let _collection = create_collection("Test collection".to_string(), db.clone())
+            .expect("Cant get collections");
+
+        let collections = search_collections(db.clone(), "lal").expect("cant get collections");
+
+        assert!(collections.len() == 0);
     }
 }
