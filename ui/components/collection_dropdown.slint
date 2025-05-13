@@ -9,16 +9,17 @@ import { ScrollView } from "std-widgets.slint";
 export component CollectionsDropDown inherits Rectangle {
     width: 200px;
     background: Theme.app_background_color.darker(20%);
-    border-radius: Theme.border_radius;
     visible: AppConfig.show_collection_more_dropdown;
-    height: delete.height + add_http.height + duplicate.height;
+    height: delete.height + add_http.height + duplicate.height + rename.height;
     x: AppConfig.active_collection_item.x;
     y: AppConfig.active_collection_item.y;
     z: 101;
+    border-radius: Theme.border_radius;
 
     property <length> items_padding_left: 5px;
 
     VerticalLayout {
+        
         rename := Rectangle {
             border-radius: Theme.border_radius;
             height: 40px;
@@ -53,7 +54,6 @@ export component CollectionsDropDown inherits Rectangle {
         }
 
         delete := Rectangle {
-            border-radius: Theme.border_radius;
             height: 40px;
             background: touch.has-hover ? Theme.hover_color : root.background;
 
@@ -94,7 +94,6 @@ export component CollectionsDropDown inherits Rectangle {
         }
 
         add_http := Rectangle {
-            border-radius: Theme.border_radius;
             height: 40px;
             background: touch_2.has-hover ? Theme.hover_color : root.background;
 
@@ -127,8 +126,8 @@ export component CollectionsDropDown inherits Rectangle {
 
 
         duplicate := Rectangle {
-            border-radius: Theme.border_radius;
             height: 40px;
+            border-radius: Theme.border_radius;
             background: touch_dub.has-hover ? Theme.hover_color : root.background;
 
             touch_dub := TouchArea{
