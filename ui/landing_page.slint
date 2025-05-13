@@ -57,6 +57,7 @@ export component LandingPage inherits Rectangle {
             x: ((parent.width - self.width) / 2) + sin(animation-tick() * 360deg / 2000ms) * 4px;
             
             TouchArea {
+                mouse-cursor: self.has-hover ? pointer : default;
                 clicked => { AppConfig.change_page(2); }
             }
         }

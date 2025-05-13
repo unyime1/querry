@@ -5,6 +5,16 @@ import {SearchForm} from "./forms.slint";
 import { IconButton } from "./buttons.slint";
 import { AppConfig, CollectionItem} from "../global.slint";
 import { CollectionComponent } from "./collection_item.slint";
+import { BaseButton } from "./buttons.slint";
+
+
+component CreateCollectionsButton inherits BaseButton {
+    Text {
+        text: "Add";
+        font-size: Theme.label_font_size_medium_small;
+        color: Theme.label_text_color;
+    }
+}
 
 
 export component CollectionSection inherits Rectangle {
@@ -46,25 +56,65 @@ export component CollectionSection inherits Rectangle {
             }
         }
 
-        VerticalLayout {
-            vertical-stretch: 1;
-            ListView {
-                
-                for list_item[i] in collection_items: CollectionComponent {
-                    name: list_item.name;
-                    id: list_item.id;
-                    component_background: root.background;
-                    icon: list_item.icon;
-                    index: i;
-                    icon_name: list_item.icon_name;
-                }
+        
+        if collection_items.length > 0:
 
-                changed viewport-y => {
-                    AppConfig.collections_viewport_y = self.viewport-y;
+            VerticalLayout {
+                vertical-stretch: 1;
+                ListView {
+                    
+                    for list_item[i] in collection_items: CollectionComponent {
+                        name: list_item.name;
+                        id: list_item.id;
+                        component_background: root.background;
+                        icon: list_item.icon;
+                        index: i;
+                        icon_name: list_item.icon_name;
+                    }
+
+                    changed viewport-y => {
+                        AppConfig.collections_viewport_y = self.viewport-y;
+                    }
                 }
             }
             
-        }
+        if collection_items.length == 0:
+
+            VerticalLayout {
+                vertical-stretch: 1;
+                alignment: center;
+                spacing: 20px;
+                width: 100%;
+                height: 100%;
+
+                Image {
+                    source: @image-url("../icons/empty.svg");
+                    opacity: 0.7;         
+                    x: (parent.width - self.width) / 2;
+                    width: 300px;
+                }
+                Text {
+                    padding-top: 10px;
+                    text: "No collections found.";
+                    font-size: Theme.label_font_size_medium_small;
+                    color: Theme.label_text_color;
+                    horizontal-alignment: center;
+                    opacity: Theme.text_opacity;
+                }
+
+                CreateCollectionsButton {
+                    x: (parent.width - self.width) / 2;
+
+                    TouchArea {
+                        mouse-cursor: self.has-hover ? pointer : default;
+                        clicked => {
+                            AppConfig.create_collection();
+                        }
+                    }
+                }
+            }
+            
+        
         
         SearchForm {
             height: 30px;
