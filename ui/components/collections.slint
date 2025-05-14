@@ -85,11 +85,10 @@ export component CollectionSection inherits Rectangle {
                 alignment: center;
                 spacing: 20px;
                 width: 100%;
-                height: 100%;
 
                 Image {
                     source: @image-url("../icons/empty.svg");
-                    opacity: 0.7;         
+                    // opacity: 0.7;         
                     x: (parent.width - self.width) / 2;
                     width: 300px;
                 }
@@ -113,9 +112,7 @@ export component CollectionSection inherits Rectangle {
                     }
                 }
             }
-            
-        
-        
+
         SearchForm {
             height: 30px;
         }
