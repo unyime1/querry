@@ -27,7 +27,7 @@ pub fn process_get_images(app: &AppWindow) -> Result<(), Box<dyn Error>> {
             Ok(image) => {
                 // Image loaded successfully, add it to our vector
                 loaded_icons.push(IconsModel {
-                    image: image,
+                    image,
                     name: path
                         .file_name()
                         .unwrap()

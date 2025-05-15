@@ -24,21 +24,20 @@ use lib::{
 
 fn main() -> Result<(), PlatformError> {
     let db = get_database().expect("Could not connect to DB");
-    let shared_db = Rc::new(db);
 
-    migrate_database(shared_db.clone()).expect("Could not apply migrations");
+    migrate_database(db.clone()).expect("Could not apply migrations");
 
     let app = AppWindow::new()?;
 
-    check_startup_page(shared_db.clone(), &app).unwrap();
-    load_collections(shared_db.clone(), &app).unwrap();
+    check_startup_page(db.clone(), &app).unwrap();
+    load_collections(db.clone(), &app).unwrap();
     process_page_change(&app).unwrap();
-    process_get_collections(shared_db.clone(), &app).unwrap();
-    process_create_collection(shared_db.clone(), &app).unwrap();
+    process_get_collections(db.clone(), &app).unwrap();
+    process_create_collection(db.clone(), &app).unwrap();
     process_get_images(&app).unwrap();
-    process_update_collection(shared_db.clone(), &app).unwrap();
-    process_remove_collection(shared_db.clone(), &app).unwrap();
-    process_search_collections(shared_db.clone(), &app).unwrap();
+    process_update_collection(db.clone(), &app).unwrap();
+    process_remove_collection(db.clone(), &app).unwrap();
+    process_search_collections(db.clone(), &app).unwrap();
 
     app.run()?;
     Ok(())

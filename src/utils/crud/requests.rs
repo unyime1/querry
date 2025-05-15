@@ -1,4 +1,4 @@
-use std::{cell::RefCell, error::Error, rc::Rc};
+use std::{cell::RefCell, error::Error, fmt, rc::Rc};
 
 use rusqlite::Connection;
 use uuid::Uuid;
@@ -11,13 +11,14 @@ pub enum ProtocolTypes {
     GraphQL,
 }
 
-impl ToString for ProtocolTypes {
-    fn to_string(&self) -> String {
+// Implement the Display trait
+impl fmt::Display for ProtocolTypes {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ProtocolTypes::Http => String::from("HTTP"),
-            ProtocolTypes::Websocket => String::from("WS"),
-            ProtocolTypes::Grpc => String::from("GRPC"),
-            ProtocolTypes::GraphQL => String::from("GQL"),
+            ProtocolTypes::Http => write!(f, "HTTP"),
+            ProtocolTypes::Websocket => write!(f, "WS"),
+            ProtocolTypes::Grpc => write!(f, "GRPC"),
+            ProtocolTypes::GraphQL => write!(f, "GQL"),
         }
     }
 }
@@ -34,6 +35,7 @@ impl ProtocolTypes {
     }
 }
 
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum HTTPMethods {
     Post,
@@ -42,13 +44,13 @@ pub enum HTTPMethods {
     Delete,
 }
 
-impl ToString for HTTPMethods {
-    fn to_string(&self) -> String {
+impl fmt::Display for HTTPMethods {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            HTTPMethods::Post => String::from("POST"),
-            HTTPMethods::Get => String::from("GET"),
-            HTTPMethods::Put => String::from("PUT"),
-            HTTPMethods::Delete => String::from("DEL"),
+            HTTPMethods::Post => write!(f, "POST"),
+            HTTPMethods::Get => write!(f, "GET"),
+            HTTPMethods::Put => write!(f, "PUT"),
+            HTTPMethods::Delete => write!(f, "DEL"),
         }
     }
 }

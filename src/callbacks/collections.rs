@@ -17,7 +17,7 @@ pub fn check_startup_page(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box
     let collection_items = get_all_collections(db)?;
     let mut page: i32 = 1;
 
-    if collection_items.len() > 0 {
+    if !collection_items.is_empty() {
         page = 2;
     }
 
@@ -215,7 +215,7 @@ pub fn process_remove_collection(
             }
         };
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
-        if let Some(_) = items.get_mut(index as usize) {
+        if items.get_mut(index as usize).is_some() {
             items.remove(index as usize);
         }
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
@@ -232,18 +232,17 @@ pub fn process_search_collections(
     let weak_app = app.as_weak();
 
     config.on_search_collection(move |search_string| {
-        let collection_items: Vec<CollectionData>;
-        if search_string.len() == 0 as usize {
-            collection_items = match get_all_collections(db.clone()) {
+        let collection_items: Vec<CollectionData> = if search_string.is_empty() {
+            match get_all_collections(db.clone()) {
                 Ok(data) => data,
                 Err(_) => [].into(),
-            };
+            }
         } else {
-            collection_items = match search_collections(db.clone(), &search_string) {
+            match search_collections(db.clone(), &search_string) {
                 Ok(data) => data,
                 Err(_) => [].into(),
-            };
-        }
+            }
+        };
 
         let mut collection_data: Vec<CollectionItem> = Vec::new();
 

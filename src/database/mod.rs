@@ -5,11 +5,11 @@ use std::{error::Error, rc::Rc};
 use crate::utils::sys_dir::get_db_path;
 use rusqlite::Connection;
 
-pub fn get_database() -> Result<Connection, Box<dyn Error>> {
+pub fn get_database() -> Result<Rc<Connection>, Box<dyn Error>> {
     let db_path = get_db_path(Some(false))?;
     println!("Path - {}", db_path);
     let db = Connection::open(db_path)?;
-    Ok(db)
+    Ok(Rc::new(db))
 }
 
 pub fn migrate_database(db_connection: Rc<Connection>) -> Result<(), Box<dyn Error>> {
@@ -80,7 +80,7 @@ pub fn setup_test_db() -> Result<Rc<Connection>, Box<dyn Error>> {
     };
 
     let shared_db = Rc::new(db);
-    let _data = migrate_database(shared_db.clone())?;
+    migrate_database(shared_db.clone())?;
 
     Ok(shared_db.clone())
 }
