@@ -1,13 +1,7 @@
 // Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::rc::Rc;
-
-use database::migrate_database;
 use slint::{ComponentHandle, PlatformError};
-
-mod database;
-mod utils;
 
 use lib::{
     callbacks::{
@@ -18,8 +12,8 @@ use lib::{
         },
         images::process_get_images,
     },
-    database::get_database,
-    AppConfig, AppWindow,
+    database::{get_database, migrate_database},
+    AppWindow,
 };
 
 fn main() -> Result<(), PlatformError> {

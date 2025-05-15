@@ -35,7 +35,6 @@ impl ProtocolTypes {
     }
 }
 
-
 #[derive(Debug, PartialEq, Clone)]
 pub enum HTTPMethods {
     Post,

@@ -8,7 +8,6 @@ use directories::ProjectDirs;
 
 /// Get the database path based on whether it's a test or not.
 pub fn get_db_path(is_test: Option<bool>) -> Result<String, Box<dyn Error>> {
-
     let is_test = is_test.unwrap_or(false);
     let file_path: PathBuf = if is_test {
         // If it's a test, use a temporary directory
