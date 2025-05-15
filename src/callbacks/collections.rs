@@ -44,6 +44,7 @@ pub fn load_collections(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box<d
             name: collection_item.name.into(),
             icon: icon_item,
             icon_name: collection_item.icon.into(),
+            request_count: collection_item.request_count,
         });
     }
     let items_model = Rc::new(VecModel::from(collection_data));
@@ -87,6 +88,7 @@ pub fn process_get_collections(db: Rc<Connection>, app: &AppWindow) -> Result<()
             name: collection_item.name.into(),
             icon: icon_item,
             icon_name: collection_item.icon.into(),
+            request_count: collection_item.request_count,
         });
     }
 
@@ -137,6 +139,7 @@ pub fn process_create_collection(
             name: new_collection.name.into(),
             icon: icon_item,
             icon_name: new_collection.icon.into(),
+            request_count: new_collection.request_count,
         };
 
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
@@ -179,6 +182,7 @@ pub fn process_update_collection(
             name: new_collection.name.into(),
             icon: icon_item,
             icon_name: new_collection.icon.into(),
+            request_count: new_collection.request_count,
         };
 
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
@@ -255,6 +259,7 @@ pub fn process_search_collections(
                 name: collection_item.name.into(),
                 icon: icon_item,
                 icon_name: collection_item.icon.into(),
+                request_count: collection_item.request_count,
             });
         }
         let items_model = Rc::new(VecModel::from(collection_data));

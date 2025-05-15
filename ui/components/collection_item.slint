@@ -10,47 +10,51 @@ export component CollectionComponent inherits Rectangle {
     in property <image> icon;
     in property <int> index;
     in property <string> icon_name;
+    in property <int> request_count;
 
-    height: 40px;
+    height: 50px;
     touch-area := TouchArea {}
     background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.index == index ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
 
     HorizontalLayout {
-        alignment: space-between;
         padding-top: 5px;
         padding-bottom: 5px;
         padding-left: 10px;
         padding-right: 10px;
         spacing: 10px;
-
-
-        Rectangle {
-            width: Theme.icon_box_with;
-            height: Theme.icon_box_with;
-            background: touch.has-hover ? Theme.hover_color : root.background;
-            border-radius: Theme.border_radius;
-
-            touch := TouchArea{
-                mouse-cursor: self.has-hover ? pointer : default;
-                clicked => {
-                    AppConfig.active_collection_item = {
-                        id: id,
-                        name: name,
-                        index: index,
-                        x: root.x + root.width,
-                        y: root.y + root.height
-                    };
-                    AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
+        alignment: space-between;
+        
+        VerticalLayout {
+            alignment: center;
+            Rectangle {
+                width: Theme.icon_box_with;
+                height: Theme.icon_box_with;
+                background: touch.has-hover ? Theme.hover_color : root.background;
+                border-radius: Theme.border_radius;
+    
+                touch := TouchArea{
+                    mouse-cursor: self.has-hover ? pointer : default;
+                    clicked => {
+                        AppConfig.active_collection_item = {
+                            id: id,
+                            name: name,
+                            index: index,
+                            x: root.x + root.width,
+                            y: root.y + root.height
+                        };
+                        AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
+                    }
+                }
+    
+                Image {
+                    source: icon;
+                    width: Theme.icon_box_with - 2px;
+                    height: Theme.icon_box_with - 2px;
                 }
             }
-
-            Image {
-                source: icon;
-                width: Theme.icon_box_with - 2px;
-                height: Theme.icon_box_with - 2px;
-            }
         }
+        
 
         if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index :
             text_input := TextInput {
@@ -79,48 +83,67 @@ export component CollectionComponent inherits Rectangle {
 
         // Conditionally display the Text
         if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index) :
-            text := Text {
-                vertical-alignment: center;
-                text: name;
-                font-size: Theme.label_font_size_medium_small;
-                color: Theme.label_text_color;
+            
+            VerticalLayout {
+                text := Text {
+                    vertical-alignment: center;
+                    text: name;
+                    font-size: Theme.label_font_size_medium_small;
+                    color: Theme.label_text_color;
+    
+                    max-width: 200px;
+                    wrap: TextWrap.no-wrap;
+                    overflow: TextOverflow.elide;
+                }
+                Text {
+                    text: "\{request_count} requests";
+                    font-size: Theme.label_font_size_small;
+                    color: Theme.label_text_color;
+                    opacity: 0.4;
 
-                max-width: 200px;
-                wrap: TextWrap.no-wrap;
-                overflow: TextOverflow.elide;
+                    vertical-alignment: center;
+                    wrap: TextWrap.no-wrap;
+                    overflow: TextOverflow.elide;
+                    horizontal-alignment: center;
+                } 
             }
-
-        more_btn := Rectangle {
-            width: Theme.icon_box_with;
-            height: Theme.icon_box_with;
-            background: more_touch.has-hover ? Theme.hover_color : root.background;
-            border-radius: Theme.border_radius;
-
-            more_touch := TouchArea{
-                mouse-cursor: self.has-hover ? pointer : default;
-                property<length> position_x;
-                property<length> position_y;
-
-                clicked => {
-                    position_x = root.x + root.width;
-                    position_y = (index * root.height) + AppConfig.collections_viewport_y;
-
-                    AppConfig.active_collection_item = {
-                        id: id,
-                        name: name,
-                        index: index,
-                        x: position_x,
-                        y: position_y
-                    };
-
-                    AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
-                }   
-            }
-            more := Image {
-                source: @image-url("../icons/more.svg");
-                colorize: Theme.icon_color;
-            }
+        
+        VerticalLayout {
+            alignment: center;
+        
+            more_btn := Rectangle {
+                width: Theme.icon_box_with;
+                height: Theme.icon_box_with;
+                background: more_touch.has-hover ? Theme.hover_color : root.background;
+                border-radius: Theme.border_radius;
+    
+                more_touch := TouchArea{
+                    mouse-cursor: self.has-hover ? pointer : default;
+                    property<length> position_x;
+                    property<length> position_y;
+    
+                    clicked => {
+                        position_x = root.x + root.width;
+                        position_y = (index * root.height) + AppConfig.collections_viewport_y;
+    
+                        AppConfig.active_collection_item = {
+                            id: id,
+                            name: name,
+                            index: index,
+                            x: position_x,
+                            y: position_y
+                        };
+    
+                        AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+                    }   
+                }
+                more := Image {
+                    source: @image-url("../icons/more.svg");
+                    colorize: Theme.icon_color;
+                }
+            }    
         }
+        
         
     }
 }    
