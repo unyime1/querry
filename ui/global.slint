@@ -6,6 +6,14 @@ export struct CollectionItem {
     request_count: int
 }
 
+export struct RequestItem {
+    id: string,
+    name: string,
+    url: string,
+    protocol: string,
+    http_method: string
+}
+
 
 export struct CollectionItemActive {
     id: string,
@@ -30,6 +38,7 @@ export global AppConfig {
     in-out property <[CollectionItem]> collection_items: [];
     in-out property <CollectionItemActive> active_collection_item;
     in-out property <bool> active_collection_rename_mode: false;
+    in-out property <[RequestItem]> active_collection_requests: [];
     
     in-out property <bool> show_icons_popup: false;
     in-out property <bool> show_collection_more_dropdown: false;
