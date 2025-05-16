@@ -100,7 +100,7 @@ export component CollectionsDropDown inherits Rectangle {
             touch_2 := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
                 clicked => {
-                    debug(AppConfig.window_width, AppConfig.window_height)
+                    AppConfig.create_request_item(AppConfig.active_collection_item.id, AppConfig.active_collection_item.index);
                 }
             }
 

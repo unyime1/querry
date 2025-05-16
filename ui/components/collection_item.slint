@@ -1,6 +1,9 @@
+import { ListView } from "std-widgets.slint";
+
 import { Button, CheckBox, HorizontalBox, VerticalBox } from "std-widgets.slint";
 import { AppConfig, CollectionItemActive } from "../global.slint";
 import { Theme } from "../theme.slint";
+import { RequestComponent } from "./request_item.slint";
 
 
 export component CollectionComponent inherits Rectangle {
@@ -11,9 +14,25 @@ export component CollectionComponent inherits Rectangle {
     in property <int> index;
     in property <string> icon_name;
     in property <int> request_count;
+    in-out property <bool> active;
 
     height: 50px;
-    touch-area := TouchArea {}
+    touch-area := TouchArea {
+        clicked => {
+            AppConfig.active_collection_item = {
+                id: id,
+                name: name,
+                index: index,
+                x: root.x + root.width,
+                y: root.y + root.height
+            };
+            if active == true {
+                AppConfig.get_requests(id, index)
+            }
+            active = !active;
+        }
+    }
+
     background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.index == index ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
 
@@ -146,4 +165,26 @@ export component CollectionComponent inherits Rectangle {
         
         
     }
-}    
+
+    if active == true :
+        HorizontalLayout {
+            requests := Rectangle {
+                ListView {
+                    
+                    for list_item[i] in AppConfig.active_collection_requests: RequestComponent {
+                        id: list_item.id;
+                        name: list_item.name;
+                        url: list-item.url;
+                        protocol: list_item.protocol;
+                        http_method: list_item.http_method;
+                        component_background: root.background;
+                        index: i;
+                    }
+
+                    changed viewport-y => {
+                        AppConfig.requests_viewport_y = self.viewport-y;
+                    }
+                }
+            }
+        }
+}   
