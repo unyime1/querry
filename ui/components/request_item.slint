@@ -9,13 +9,10 @@ export component RequestComponent inherits Rectangle {
     in property <string> url;
     in property <string> protocol;
     in property <string> http_method;
-    in property <color> component_background;
     in property <int> index;
 
     height: 40px;
     touch-area := TouchArea {}
-    background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_request_item.index == index ? component_background.darker(20%) : component_background;
-    border-width: Theme.hover_border_width;
 
     HorizontalLayout {
         padding-top: 5px;
@@ -23,24 +20,41 @@ export component RequestComponent inherits Rectangle {
         padding-left: 10px;
         padding-right: 10px;
         spacing: 10px;
-        alignment: space-between;
 
         VerticalLayout {
+            padding-right: 10px;
             alignment: center;
-            Text {
+            request_method := Text {
                 text: http_method.to-uppercase();
                 font-size: Theme.label_font_size_small;
-                color: Theme.label_text_color;
                 vertical-alignment: center;
                 wrap: TextWrap.no-wrap;
                 overflow: TextOverflow.elide;
+
+                init => {
+                    if http_method == "GET" {
+                        self.color = #04359e;
+                    } else if http_method == "POST" {
+                        self.color = #05862c;
+                    } else if http_method == "PUT" {
+                        self.color = #c26107;
+                    } else if http_method == "DELETE" {
+                        self.color = #cc0909;
+                    } else if http_method == "PATCH" {
+                        self.color = #fca130;
+                    } else if http_method == "OPTIONS" {
+                        self.color = #0d5aa7;
+                    }
+                }
             }
+
+            
         }
 
+        // Conditionally display the TextInput for renaming
         if AppConfig.active_request_rename_mode == true && AppConfig.active_request_item.index == index :
             text_input := TextInput {
                 color: Theme.label_text_color;
-                horizontal-stretch: 1;
                 vertical-alignment: center;
                 wrap: no-wrap;
                 single-line: true;
@@ -58,30 +72,29 @@ export component RequestComponent inherits Rectangle {
                     self.focus();
                     self.select-all();
                 }
-
             }
-            
 
-        // Conditionally display the Text
+        // Conditionally display the Text when not renaming
         if !(AppConfig.active_request_rename_mode == true && AppConfig.active_request_item.index == index) :
             text := Text {
                 vertical-alignment: center;
                 text: name;
                 font-size: Theme.label_font_size_medium_small;
                 color: Theme.label_text_color;
-
                 max-width: 180px;
                 wrap: TextWrap.no-wrap;
                 overflow: TextOverflow.elide;
             }
+
+
+        Rectangle {horizontal-stretch: 1;}
         
         VerticalLayout {
             alignment: center;
-        
             more_btn := Rectangle {
                 width: Theme.icon_box_with;
                 height: Theme.icon_box_with;
-                background: more_touch.has-hover ? Theme.hover_color : root.background;
+                background: more_touch.has-hover ? Theme.hover_color : transparent;
                 border-radius: Theme.border_radius;
     
                 more_touch := TouchArea{
@@ -102,15 +115,15 @@ export component RequestComponent inherits Rectangle {
                         };
     
                         AppConfig.show_request_more_dropdown = !AppConfig.show_request_more_dropdown;
-                    }   
+                    }
                 }
                 more := Image {
                     source: @image-url("../icons/more.svg");
                     colorize: Theme.icon_color;
+                    visible: touch-area.has-hover ? true : more_touch.has-hover ? true : false;
                 }
-            }    
+            }
         }
         
-        
     }
-}    
+}

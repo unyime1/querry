@@ -15,10 +15,14 @@ export component CollectionComponent inherits Rectangle {
     in property <string> icon_name;
     in property <int> request_count;
     in-out property <bool> active;
-    height: 50px;
+    height: 50px; // Initial height
 
     touch-area := TouchArea {
         clicked => {
+            // Preserve current scroll position before changing active state
+            // This might require storing and restoring scroll position in AppConfig or similar
+            // if you want to maintain scroll position when expanding/collapsing.
+
             AppConfig.active_collection_item = {
                 id: id,
                 name: name,
@@ -26,12 +30,23 @@ export component CollectionComponent inherits Rectangle {
                 x: root.x + root.width,
                 y: root.y + root.height
             };
+            AppConfig.show_collection_more_dropdown = false;
             root.active = !root.active;
+
             if root.active == true {
                 AppConfig.get_requests(id);
-                root.height = 50px + 300px;
-
-                debug(AppConfig.active_collection_requests.length);
+                // Set the height to accommodate the expanded view with the scrollable area
+                root.height = 350px; // Adjust this height as needed
+            } else {
+                root.height = 50px; // Collapse back to initial height
+                AppConfig.active_collection_item = {
+                    id: "",
+                    name: "",
+                    index: -1,
+                    x:-1px,
+                    y:-1px
+                };
+                AppConfig.active_collection_requests = [];
             }
         }
     }
@@ -46,16 +61,16 @@ export component CollectionComponent inherits Rectangle {
             padding-left: 10px;
             padding-right: 10px;
             spacing: 10px;
-            alignment: space-between;
-            
+
             VerticalLayout {
                 alignment: center;
+                padding-right: 10px;
                 Rectangle {
                     width: Theme.icon_box_with;
                     height: Theme.icon_box_with;
                     background: touch.has-hover ? Theme.hover_color : root.background;
                     border-radius: Theme.border_radius;
-        
+
                     touch := TouchArea{
                         mouse-cursor: self.has-hover ? pointer : default;
                         clicked => {
@@ -69,7 +84,7 @@ export component CollectionComponent inherits Rectangle {
                             AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
                         }
                     }
-        
+
                     Image {
                         source: icon;
                         width: Theme.icon_box_with - 2px;
@@ -77,12 +92,11 @@ export component CollectionComponent inherits Rectangle {
                     }
                 }
             }
-            
-    
+
+
             if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index :
                 text_input := TextInput {
                     color: Theme.label_text_color;
-                    horizontal-stretch: 1;
                     vertical-alignment: center;
                     wrap: no-wrap;
                     single-line: true;
@@ -94,26 +108,26 @@ export component CollectionComponent inherits Rectangle {
                         }
                         AppConfig.active_collection_rename_mode = false;
                     }
-    
+
                     init => {
                         // Give focus to text box
                         self.focus();
                         self.select-all();
                     }
-    
+
                 }
-                
-    
+
+
             // Conditionally display the Text
             if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index) :
-                
+
                 VerticalLayout {
                     text := Text {
                         vertical-alignment: center;
                         text: name;
                         font-size: Theme.label_font_size_medium_small;
                         color: Theme.label_text_color;
-        
+
                         max-width: 200px;
                         wrap: TextWrap.no-wrap;
                         overflow: TextOverflow.elide;
@@ -123,32 +137,35 @@ export component CollectionComponent inherits Rectangle {
                         font-size: Theme.label_font_size_small;
                         color: Theme.label_text_color;
                         opacity: 0.4;
-    
+
                         vertical-alignment: center;
                         wrap: TextWrap.no-wrap;
                         overflow: TextOverflow.elide;
-                        horizontal-alignment: center;
-                    } 
+                    }
                 }
+
             
+            Rectangle {horizontal-stretch: 1;}
             VerticalLayout {
                 alignment: center;
-            
+
                 more_btn := Rectangle {
                     width: Theme.icon_box_with;
                     height: Theme.icon_box_with;
                     background: more_touch.has-hover ? Theme.hover_color : root.background;
                     border-radius: Theme.border_radius;
-        
+
                     more_touch := TouchArea{
                         mouse-cursor: self.has-hover ? pointer : default;
                         property<length> position_x;
                         property<length> position_y;
-        
+
                         clicked => {
                             position_x = root.x + root.width;
-                            position_y = (index * root.height) + AppConfig.collections_viewport_y;
-        
+                            // Calculate the correct y position relative to the window/viewport
+                            // This might need adjustment based on the layout of CollectionComponents
+                            position_y = root.y + root.height; // Example, may need refinement
+
                             AppConfig.active_collection_item = {
                                 id: id,
                                 name: name,
@@ -156,45 +173,41 @@ export component CollectionComponent inherits Rectangle {
                                 x: position_x,
                                 y: position_y
                             };
-        
+
                             AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
-                        }   
+                        }
                     }
                     more := Image {
                         source: @image-url("../icons/more.svg");
                         colorize: Theme.icon_color;
                     }
-                }    
+                }
             }
-            
-            
         }
 
-        if root.active == true :
+        if root.active == true && AppConfig.active_collection_item.index == index:
             HorizontalLayout {
-                padding-top: 10px;
+                padding-right: 40px;
+                padding-left: 30px;
+
+                // Wrap the inner VerticalLayout with ScrollView
+                ListView {
+                    // Give the ScrollView a height so it knows when to scroll.
+                    // This height should be the total desired height for the scrollable request list area.
+                    height: 300px; // Adjust this value based on your layout
+
                 
-                Rectangle {
-                    width: 1px;
-                    height: 100%;
-                    background: Theme.border_color;
-                    padding-right: 10px;
-                    padding-left: 10px;
-                }
-                requests := Rectangle {
-                    horizontal-stretch: 1;
                     for list_item[i] in AppConfig.active_collection_requests: RequestComponent {
                         id: list_item.id;
                         name: list_item.name;
-                        url: list-item.url;
+                        url: list_item.url; // Corrected typo here
                         protocol: list_item.protocol;
                         http_method: list_item.http_method;
-                        component_background: root.background;
+                        background: root.background;
                         index: i;
                     }
+                
                 }
-
             }
     }
-        
-}   
+}
