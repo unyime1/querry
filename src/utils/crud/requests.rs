@@ -1,4 +1,4 @@
-use std::{cell::RefCell, error::Error, fmt, rc::Rc};
+use std::{error::Error, fmt, rc::Rc};
 
 use rusqlite::Connection;
 use uuid::Uuid;
@@ -102,17 +102,17 @@ pub fn get_collection_requests(
 
 pub fn create_request(
     protocol: ProtocolTypes,
-    collection_id: String,
+    collection_id: &str,
     db_connection: Rc<Connection>,
 ) -> Result<RequestData, Box<dyn Error>> {
     let mut stmt = db_connection
         .prepare("INSERT INTO requestitem (id, name, protocol, http_method, collection_id) VALUES (?1, ?2, ?3, ?4, ?5) RETURNING id, name, url, protocol, http_method, collection_id")?;
 
     let mut result_rows = stmt.query([
-        Uuid::new_v4().to_string(),
-        "New Request".to_string(),
-        protocol.to_string(),
-        HTTPMethods::Get.to_string(),
+        &Uuid::new_v4().to_string(),
+        "New Request",
+        &protocol.to_string(),
+        &HTTPMethods::Get.to_string(),
         collection_id,
     ])?;
 
@@ -133,7 +133,7 @@ pub fn create_request(
 }
 
 pub fn delete_request(
-    request_id: String,
+    request_id: &str,
     db_connection: Rc<Connection>,
 ) -> Result<(), Box<dyn Error>> {
     let mut stmt = db_connection.prepare("DELETE FROM requestitem WHERE id=?1")?;
@@ -144,7 +144,7 @@ pub fn delete_request(
 }
 
 pub fn get_single_request(
-    id: String,
+    id: &str,
     db_connection: Rc<Connection>,
 ) -> Result<RequestData, Box<dyn Error>> {
     let mut stmt = db_connection.prepare(
@@ -172,36 +172,34 @@ pub fn get_single_request(
 /// Update a request item.
 pub fn update_request_item(
     id: &str,
-    name: Option<String>,
+    name: Option<&str>,
     protocol: Option<ProtocolTypes>,
     http_method: Option<HTTPMethods>,
-    url: Option<String>,
+    url: Option<&str>,
     db_connection: Rc<Connection>,
 ) -> Result<RequestData, Box<dyn Error>> {
-    let id_cell = RefCell::new(id);
-
     if let Some(name) = name {
         let mut stmt = db_connection.prepare("UPDATE requestitem SET name=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([name, id_cell.borrow().to_string()])?;
+        let _ = stmt.execute([name, id])?;
     }
 
     if let Some(protocol) = protocol {
         let mut stmt = db_connection.prepare("UPDATE requestitem SET protocol=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([protocol.to_string(), id_cell.borrow().to_string()])?;
+        let _ = stmt.execute([&protocol.to_string(), id])?;
     }
     if let Some(http_method) = http_method {
         let mut stmt =
             db_connection.prepare("UPDATE requestitem SET http_method=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([http_method.to_string(), id_cell.borrow().to_string()])?;
+        let _ = stmt.execute([&http_method.to_string(), id])?;
     }
 
     if let Some(url) = url {
         let mut stmt = db_connection.prepare("UPDATE requestitem SET url=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([url, id_cell.borrow().to_string()])?;
+        let _ = stmt.execute([url, id])?;
     }
 
     // Retrieve the updated values
-    let updated_request = get_single_request(id_cell.borrow().to_string(), db_connection)?;
+    let updated_request = get_single_request(id, db_connection)?;
 
     Ok(updated_request)
 }
@@ -216,7 +214,7 @@ mod tests {
     fn test_create_request() {
         let db = setup_test_db().expect("Cant setup db.");
         let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let _request = create_request(ProtocolTypes::Http, collection.id.clone(), db.clone())
+        let _request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
             .expect("Cant get collections");
 
         let requests = get_collection_requests(db.clone(), &collection.id).unwrap();
@@ -231,7 +229,7 @@ mod tests {
     fn test_get_collection_requests() {
         let db = setup_test_db().expect("Cant setup db.");
         let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let _request = create_request(ProtocolTypes::Http, collection.id.clone(), db.clone())
+        let _request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
             .expect("Cant get collections");
 
         let requests = get_collection_requests(db.clone(), &collection.id).unwrap();
@@ -246,10 +244,10 @@ mod tests {
     fn test_get_single_request() {
         let db = setup_test_db().expect("Cant setup db.");
         let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let request = create_request(ProtocolTypes::Http, collection.id.clone(), db.clone())
+        let request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
             .expect("Cant get collections");
 
-        let fetched_request = get_single_request(request.id, db.clone()).unwrap();
+        let fetched_request = get_single_request(&request.id, db.clone()).unwrap();
 
         assert!(fetched_request.name == "New Request");
         assert!(fetched_request.protocol == "HTTP");
@@ -261,18 +259,18 @@ mod tests {
     fn test_delete_request() {
         let db = setup_test_db().expect("Cant setup db.");
         let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let request = create_request(ProtocolTypes::Http, collection.id.clone(), db.clone())
+        let request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
             .expect("Cant get collections");
 
-        let fetched_request = get_single_request(request.id, db.clone()).unwrap();
+        let fetched_request = get_single_request(&request.id, db.clone()).unwrap();
 
         assert!(fetched_request.name == "New Request");
         assert!(fetched_request.protocol == "HTTP");
         assert!(fetched_request.http_method == Some("GET".to_string()));
         assert!(fetched_request.url.is_none());
 
-        delete_request(fetched_request.id.clone(), db.clone()).unwrap();
-        let fetched_request_new = get_single_request(fetched_request.id, db.clone());
+        delete_request(&fetched_request.id, db.clone()).unwrap();
+        let fetched_request_new = get_single_request(&fetched_request.id, db.clone());
         assert!(fetched_request_new.is_err())
     }
 
@@ -280,10 +278,10 @@ mod tests {
     fn test_update_single_request() {
         let db = setup_test_db().expect("Cant setup db.");
         let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let request = create_request(ProtocolTypes::Http, collection.id.clone(), db.clone())
+        let request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
             .expect("Cant get collections");
 
-        let fetched_request = get_single_request(request.id, db.clone()).unwrap();
+        let fetched_request = get_single_request(&request.id, db.clone()).unwrap();
 
         assert!(fetched_request.name == "New Request");
         assert!(fetched_request.protocol == "HTTP");
@@ -292,10 +290,10 @@ mod tests {
 
         let updated_request = update_request_item(
             &fetched_request.id,
-            Some("Hello Request".to_string()),
+            Some("Hello Request"),
             None,
             None,
-            Some("https://bbc.co.uk".to_string()),
+            Some("https://bbc.co.uk"),
             db.clone(),
         )
         .unwrap();

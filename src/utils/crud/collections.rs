@@ -206,7 +206,7 @@ mod tests {
         let existing_collection = get_all_collections(db.clone()).expect("cant get collections");
         assert!(existing_collection.len() == 1);
 
-        create_request(ProtocolTypes::Http, collection.id.clone(), db.clone()).unwrap();
+        create_request(ProtocolTypes::Http, &collection.id, db.clone()).unwrap();
         let single_collection =
             get_single_collection(collection.id.clone(), db.clone()).expect("cant get collections");
         assert!(single_collection.request_count == 1);
