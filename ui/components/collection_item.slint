@@ -28,6 +28,7 @@ export component CollectionComponent inherits Rectangle {
             };
             if active == true {
                 AppConfig.get_requests(id);
+                self.height = 50px + 160px;
             }
             active = !active;
         }
@@ -168,6 +169,7 @@ export component CollectionComponent inherits Rectangle {
 
     if active == true :
         HorizontalLayout {
+
             requests := Rectangle {
                 ListView {
                     
@@ -186,5 +188,6 @@ export component CollectionComponent inherits Rectangle {
                     }
                 }
             }
+
         }
 }   
