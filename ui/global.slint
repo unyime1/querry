@@ -15,6 +15,25 @@ export struct CollectionItemActive {
     y: length,
 }
 
+
+export struct RequestItem {
+    id: string,
+    name: string,
+    url: string,
+    protocol: string,
+    http_method: string
+}
+
+
+export struct RequestItemActive {
+    id: string,
+    name: string,
+    index: int,
+    x: length,
+    y: length,
+}
+
+
 export struct IconsModel { 
     image: image,
     name: string
@@ -22,23 +41,34 @@ export struct IconsModel {
 
 
 export global AppConfig {
+    // System.
+    in-out property <int> page: 1;
     in-out property <length> window_height;
     in-out property <length> window_width;
-    in-out property <length> collections_viewport_y;
+    callback change_page(int);
 
-    in-out property <int> page: 1;
+    // Collections.
+    in-out property <length> collections_viewport_y;
     in-out property <[CollectionItem]> collection_items: [];
     in-out property <CollectionItemActive> active_collection_item;
     in-out property <bool> active_collection_rename_mode: false;
-    
-    in-out property <bool> show_icons_popup: false;
     in-out property <bool> show_collection_more_dropdown: false;
-    in-out property <[IconsModel]> icons: [];
-    
-    callback change_page(int);
     callback create_collection;
     callback get_collections;
     callback update_collection(string, string, string, int);  // id, name, icon, index
     callback remove_collection(string, int);  // id, index
     callback search_collection(string); // search term
+    
+    // Icons.
+    in-out property <bool> show_icons_popup: false;
+    in-out property <[IconsModel]> icons: [];
+
+    // Requests.
+    in-out property <[RequestItem]> active_collection_requests: [];
+    in-out property <RequestItemActive> active_request_item;
+    in-out property <bool> active_request_rename_mode: false;
+    in-out property <bool> show_request_more_dropdown: false;
+    in-out property <length> requests_viewport_y;
+    callback get_requests(string); // collection id
+    callback create_request_item(string); // collection id
 }

@@ -25,6 +25,16 @@ export component CollectionSection inherits Rectangle {
     in-out property <[CollectionItem]> collection_items: AppConfig.collection_items;
     background: Theme.dark_theme ? Theme.app_background_color.darker(-30%) : Theme.app_background_color.darker(30%);
 
+    init => {
+        AppConfig.active_collection_item = {
+            name: "",
+            id: "",
+            index: -1,
+            x:-1px,
+            y:-1px
+        };
+    }
+
     VerticalLayout { 
         padding-bottom: 8px;
         padding-top: 8px;

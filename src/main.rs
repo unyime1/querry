@@ -11,6 +11,7 @@ use lib::{
             process_search_collections, process_update_collection,
         },
         images::process_get_images,
+        requests::{process_create_requests, process_get_requests},
     },
     database::{get_database, migrate_database},
     AppWindow,
@@ -32,6 +33,8 @@ fn main() -> Result<(), PlatformError> {
     process_update_collection(db.clone(), &app).unwrap();
     process_remove_collection(db.clone(), &app).unwrap();
     process_search_collections(db.clone(), &app).unwrap();
+    process_create_requests(db.clone(), &app).unwrap();
+    process_get_requests(db.clone(), &app).unwrap();
 
     app.run()?;
     Ok(())
