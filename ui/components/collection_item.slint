@@ -15,8 +15,8 @@ export component CollectionComponent inherits Rectangle {
     in property <string> icon_name;
     in property <int> request_count;
     in-out property <bool> active;
-
     height: 50px;
+
     touch-area := TouchArea {
         clicked => {
             AppConfig.active_collection_item = {
@@ -26,153 +26,163 @@ export component CollectionComponent inherits Rectangle {
                 x: root.x + root.width,
                 y: root.y + root.height
             };
-            if active == true {
+            root.active = !root.active;
+            if root.active == true {
                 AppConfig.get_requests(id);
-                self.height = 50px + 160px;
+                root.height = 50px + 300px;
+
+                debug(AppConfig.active_collection_requests.length);
             }
-            active = !active;
         }
     }
 
     background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.index == index ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
 
-    HorizontalLayout {
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-left: 10px;
-        padding-right: 10px;
-        spacing: 10px;
-        alignment: space-between;
-        
-        VerticalLayout {
-            alignment: center;
-            Rectangle {
-                width: Theme.icon_box_with;
-                height: Theme.icon_box_with;
-                background: touch.has-hover ? Theme.hover_color : root.background;
-                border-radius: Theme.border_radius;
-    
-                touch := TouchArea{
-                    mouse-cursor: self.has-hover ? pointer : default;
-                    clicked => {
-                        AppConfig.active_collection_item = {
-                            id: id,
-                            name: name,
-                            index: index,
-                            x: root.x + root.width,
-                            y: root.y + root.height
-                        };
-                        AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
-                    }
-                }
-    
-                Image {
-                    source: icon;
-                    width: Theme.icon_box_with - 2px;
-                    height: Theme.icon_box_with - 2px;
-                }
-            }
-        }
-        
-
-        if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index :
-            text_input := TextInput {
-                color: Theme.label_text_color;
-                horizontal-stretch: 1;
-                vertical-alignment: center;
-                wrap: no-wrap;
-                single-line: true;
-                text: name;
-                font-size: Theme.label_font_size_medium_small;
-                accepted() => {
-                    if self.text != "" {
-                        AppConfig.update_collection(id, self.text, icon_name, index);
-                    }
-                    AppConfig.active_collection_rename_mode = false;
-                }
-
-                init => {
-                    // Give focus to text box
-                    self.focus();
-                    self.select-all();
-                }
-
-            }
-            
-
-        // Conditionally display the Text
-        if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index) :
+    VerticalLayout {
+        HorizontalLayout {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            padding-right: 10px;
+            spacing: 10px;
+            alignment: space-between;
             
             VerticalLayout {
-                text := Text {
+                alignment: center;
+                Rectangle {
+                    width: Theme.icon_box_with;
+                    height: Theme.icon_box_with;
+                    background: touch.has-hover ? Theme.hover_color : root.background;
+                    border-radius: Theme.border_radius;
+        
+                    touch := TouchArea{
+                        mouse-cursor: self.has-hover ? pointer : default;
+                        clicked => {
+                            AppConfig.active_collection_item = {
+                                id: id,
+                                name: name,
+                                index: index,
+                                x: root.x + root.width,
+                                y: root.y + root.height
+                            };
+                            AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
+                        }
+                    }
+        
+                    Image {
+                        source: icon;
+                        width: Theme.icon_box_with - 2px;
+                        height: Theme.icon_box_with - 2px;
+                    }
+                }
+            }
+            
+    
+            if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index :
+                text_input := TextInput {
+                    color: Theme.label_text_color;
+                    horizontal-stretch: 1;
                     vertical-alignment: center;
+                    wrap: no-wrap;
+                    single-line: true;
                     text: name;
                     font-size: Theme.label_font_size_medium_small;
-                    color: Theme.label_text_color;
+                    accepted() => {
+                        if self.text != "" {
+                            AppConfig.update_collection(id, self.text, icon_name, index);
+                        }
+                        AppConfig.active_collection_rename_mode = false;
+                    }
     
-                    max-width: 200px;
-                    wrap: TextWrap.no-wrap;
-                    overflow: TextOverflow.elide;
+                    init => {
+                        // Give focus to text box
+                        self.focus();
+                        self.select-all();
+                    }
+    
                 }
-                Text {
-                    text: "\{request_count} requests";
-                    font-size: Theme.label_font_size_small;
-                    color: Theme.label_text_color;
-                    opacity: 0.4;
-
-                    vertical-alignment: center;
-                    wrap: TextWrap.no-wrap;
-                    overflow: TextOverflow.elide;
-                    horizontal-alignment: center;
-                } 
+                
+    
+            // Conditionally display the Text
+            if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index) :
+                
+                VerticalLayout {
+                    text := Text {
+                        vertical-alignment: center;
+                        text: name;
+                        font-size: Theme.label_font_size_medium_small;
+                        color: Theme.label_text_color;
+        
+                        max-width: 200px;
+                        wrap: TextWrap.no-wrap;
+                        overflow: TextOverflow.elide;
+                    }
+                    Text {
+                        text: "\{request_count} requests";
+                        font-size: Theme.label_font_size_small;
+                        color: Theme.label_text_color;
+                        opacity: 0.4;
+    
+                        vertical-alignment: center;
+                        wrap: TextWrap.no-wrap;
+                        overflow: TextOverflow.elide;
+                        horizontal-alignment: center;
+                    } 
+                }
+            
+            VerticalLayout {
+                alignment: center;
+            
+                more_btn := Rectangle {
+                    width: Theme.icon_box_with;
+                    height: Theme.icon_box_with;
+                    background: more_touch.has-hover ? Theme.hover_color : root.background;
+                    border-radius: Theme.border_radius;
+        
+                    more_touch := TouchArea{
+                        mouse-cursor: self.has-hover ? pointer : default;
+                        property<length> position_x;
+                        property<length> position_y;
+        
+                        clicked => {
+                            position_x = root.x + root.width;
+                            position_y = (index * root.height) + AppConfig.collections_viewport_y;
+        
+                            AppConfig.active_collection_item = {
+                                id: id,
+                                name: name,
+                                index: index,
+                                x: position_x,
+                                y: position_y
+                            };
+        
+                            AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+                        }   
+                    }
+                    more := Image {
+                        source: @image-url("../icons/more.svg");
+                        colorize: Theme.icon_color;
+                    }
+                }    
             }
-        
-        VerticalLayout {
-            alignment: center;
-        
-            more_btn := Rectangle {
-                width: Theme.icon_box_with;
-                height: Theme.icon_box_with;
-                background: more_touch.has-hover ? Theme.hover_color : root.background;
-                border-radius: Theme.border_radius;
-    
-                more_touch := TouchArea{
-                    mouse-cursor: self.has-hover ? pointer : default;
-                    property<length> position_x;
-                    property<length> position_y;
-    
-                    clicked => {
-                        position_x = root.x + root.width;
-                        position_y = (index * root.height) + AppConfig.collections_viewport_y;
-    
-                        AppConfig.active_collection_item = {
-                            id: id,
-                            name: name,
-                            index: index,
-                            x: position_x,
-                            y: position_y
-                        };
-    
-                        AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
-                    }   
-                }
-                more := Image {
-                    source: @image-url("../icons/more.svg");
-                    colorize: Theme.icon_color;
-                }
-            }    
+            
+            
         }
-        
-        
-    }
 
-    if active == true :
-        HorizontalLayout {
-
-            requests := Rectangle {
-                ListView {
-                    
+        if root.active == true :
+            HorizontalLayout {
+                padding-top: 10px;
+                
+                Rectangle {
+                    width: 1px;
+                    height: 100%;
+                    background: Theme.border_color;
+                    padding-right: 10px;
+                    padding-left: 10px;
+                }
+                requests := Rectangle {
+                    horizontal-stretch: 1;
                     for list_item[i] in AppConfig.active_collection_requests: RequestComponent {
                         id: list_item.id;
                         name: list_item.name;
@@ -182,12 +192,9 @@ export component CollectionComponent inherits Rectangle {
                         component_background: root.background;
                         index: i;
                     }
-
-                    changed viewport-y => {
-                        AppConfig.requests_viewport_y = self.viewport-y;
-                    }
                 }
-            }
 
-        }
+            }
+    }
+        
 }   
