@@ -143,7 +143,7 @@ pub fn process_create_collection(
         };
 
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
-        items.insert(0, collection_item.clone());
+        items.insert(0, collection_item);
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });
     Ok(())

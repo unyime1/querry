@@ -27,7 +27,7 @@ export component CollectionComponent inherits Rectangle {
                 y: root.y + root.height
             };
             if active == true {
-                AppConfig.get_requests(id, index)
+                AppConfig.get_requests(id);
             }
             active = !active;
         }
