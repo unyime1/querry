@@ -1,7 +1,7 @@
 // Prevent console window in addition to Slint window in Windows release builds when, e.g., starting the app via file manager. Ignored on other platforms.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use slint::{ComponentHandle, PlatformError};
+use slint::{ComponentHandle, PhysicalSize, PlatformError};
 
 use lib::{
     callbacks::{
@@ -35,6 +35,10 @@ fn main() -> Result<(), PlatformError> {
     process_search_collections(db.clone(), &app).unwrap();
     process_create_requests(db.clone(), &app).unwrap();
     process_get_requests(db.clone(), &app).unwrap();
+
+    let size: PhysicalSize = PhysicalSize::new(1920, 1080);
+    app.set_window_height(size.height as f32);
+    app.set_window_width(size.width as f32);
 
     app.run()?;
     Ok(())
