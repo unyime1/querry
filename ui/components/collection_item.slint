@@ -164,7 +164,7 @@ export component CollectionComponent inherits Rectangle {
                             }
                             else {
                                 position_x = root.x + root.width;
-                                position_y = root.y + root.height;
+                                position_y = (index * root.height) + AppConfig.collections_viewport_y;
 
                                 AppConfig.active_collection_item = {
                                     id: id,
