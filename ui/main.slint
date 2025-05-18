@@ -4,6 +4,7 @@ import { RequestsSection } from "./components/requests.slint";
 import { HeadersSection } from "./components/headers.slint";
 import { IconsPopup } from "./components/icons_popup.slint";
 import { CollectionsDropDown } from "./components/collection_dropdown.slint";
+import { RequestsDropDown } from "./components/request_dropdown.slint";
 
 export component MainPage inherits Rectangle {
     in-out property <float> handle_position: 0.15;
@@ -48,4 +49,5 @@ export component MainPage inherits Rectangle {
 
     IconsPopup {}
     CollectionsDropDown {}
+    RequestsDropDown {}
 }

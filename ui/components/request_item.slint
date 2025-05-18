@@ -10,6 +10,7 @@ export component RequestComponent inherits Rectangle {
     in property <string> protocol;
     in property <string> http_method;
     in property <int> index;
+    in property <int> collection_index;
 
     height: 40px;
     touch-area := TouchArea {}
@@ -63,6 +64,15 @@ export component RequestComponent inherits Rectangle {
                 accepted() => {
                     if self.text != "" {
                         // Call update request callback
+                        AppConfig.update_request_item(
+                            root.id,
+                            root.name,
+                            root.protocol,
+                            root.http_method,
+                            root.url,
+                            root.index
+                        );
+                        
                     }
                     AppConfig.active_request_rename_mode = false;
                 }
@@ -104,14 +114,15 @@ export component RequestComponent inherits Rectangle {
     
                     clicked => {
                         position_x = root.x + root.width;
-                        position_y = (index * root.height) + AppConfig.requests_viewport_y;
+                        position_y = root.y + root.height;
     
                         AppConfig.active_request_item = {
                             id: id,
                             name: name,
                             index: index,
                             x: position_x,
-                            y: position_y
+                            y: position_y,
+                            collection_index: collection_index
                         };
     
                         AppConfig.show_request_more_dropdown = !AppConfig.show_request_more_dropdown;

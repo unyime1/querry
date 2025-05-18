@@ -53,7 +53,7 @@ pub fn process_create_requests(db: Rc<Connection>, app: &AppWindow) -> Result<()
     let config = app.global::<AppConfig>();
     let weak_app = app.as_weak();
 
-    config.on_create_request_item(move |collection_id| {
+    config.on_create_request_item(move |collection_id, collection_index| {
         let app = weak_app.upgrade().unwrap();
         let cfg = app.global::<AppConfig>();
 
@@ -79,12 +79,8 @@ pub fn process_create_requests(db: Rc<Connection>, app: &AppWindow) -> Result<()
         // Get collection and increase request count.
         let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
 
-        let collection_index = find_collection_index(&items, &collection_id);
-        if let Some(index) = collection_index {
-            items[index].request_count += 1;
-        } else {
-            eprintln!("Collection not found");
-            return;
+        if let Some(item_ref) = items.get_mut(collection_index as usize) {
+            item_ref.request_count += 1;
         }
         cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });

@@ -197,11 +197,16 @@ export component CollectionComponent inherits Rectangle {
                     for list_item[i] in AppConfig.active_collection_requests: RequestComponent {
                         id: list_item.id;
                         name: list_item.name;
-                        url: list_item.url; // Corrected typo here
+                        url: list_item.url;
                         protocol: list_item.protocol;
                         http_method: list_item.http_method;
                         background: root.background;
                         index: i;
+                        collection_index: root.index;
+                    }
+
+                    changed viewport-y => {
+                        AppConfig.requests_viewport_y = self.viewport-y;
                     }
                 
                 }
