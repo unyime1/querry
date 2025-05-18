@@ -5,8 +5,17 @@ use slint::{ComponentHandle, Model, VecModel};
 
 use crate::{
     utils::crud::requests::{create_request, get_collection_requests, ProtocolTypes},
-    AppConfig, AppWindow, RequestItem,
+    AppConfig, AppWindow, CollectionItem, RequestItem,
 };
+
+fn find_collection_index(collections: &[CollectionItem], search_id: &str) -> Option<usize> {
+    for item in collections.iter().enumerate() {
+        if item.1.id == search_id {
+            return Some(item.0);
+        }
+    }
+    None
+}
 
 /// Get requests
 pub fn process_get_requests(db: Rc<Connection>, app: &AppWindow) -> Result<(), Box<dyn Error>> {
@@ -66,6 +75,18 @@ pub fn process_create_requests(db: Rc<Connection>, app: &AppWindow) -> Result<()
         let mut items: Vec<RequestItem> = cfg.get_active_collection_requests().iter().collect();
         items.insert(0, request_data);
         cfg.set_active_collection_requests(Rc::new(VecModel::from(items)).into());
+
+        // Get collection and increase request count.
+        let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+
+        let collection_index = find_collection_index(&items, &collection_id);
+        if let Some(index) = collection_index {
+            items[index].request_count += 1;
+        } else {
+            eprintln!("Collection not found");
+            return;
+        }
+        cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
     });
 
     Ok(())

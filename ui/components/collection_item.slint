@@ -13,16 +13,11 @@ export component CollectionComponent inherits Rectangle {
     in property <image> icon;
     in property <int> index;
     in property <string> icon_name;
-    in property <int> request_count;
-    in-out property <bool> active;
-    height: 50px; // Initial height
+    in-out property <int> request_count;
+    height: (AppConfig.show_active_collection_requests == true && AppConfig.active_collection_item.id == id && AppConfig.active_collection_requests.length > 0) ? 350px : 50px;
 
     touch-area := TouchArea {
         clicked => {
-            // Preserve current scroll position before changing active state
-            // This might require storing and restoring scroll position in AppConfig or similar
-            // if you want to maintain scroll position when expanding/collapsing.
-
             AppConfig.active_collection_item = {
                 id: id,
                 name: name,
@@ -31,27 +26,18 @@ export component CollectionComponent inherits Rectangle {
                 y: root.y + root.height
             };
             AppConfig.show_collection_more_dropdown = false;
-            root.active = !root.active;
+            AppConfig.show_active_collection_requests = !AppConfig.show_active_collection_requests;
 
-            if root.active == true {
+            if AppConfig.show_active_collection_requests == true {
                 AppConfig.get_requests(id);
-                // Set the height to accommodate the expanded view with the scrollable area
-                root.height = 350px; // Adjust this height as needed
+
             } else {
-                root.height = 50px; // Collapse back to initial height
-                AppConfig.active_collection_item = {
-                    id: "",
-                    name: "",
-                    index: -1,
-                    x:-1px,
-                    y:-1px
-                };
                 AppConfig.active_collection_requests = [];
             }
         }
     }
 
-    background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.index == index ? component_background.darker(20%) : component_background;
+    background: touch-area.has-hover ? component_background.darker(20%) : AppConfig.active_collection_item.id == id ? component_background.darker(20%) : component_background;
     border-width: Theme.hover_border_width;
 
     VerticalLayout {
@@ -81,6 +67,7 @@ export component CollectionComponent inherits Rectangle {
                                 x: root.x + root.width,
                                 y: root.y + root.height
                             };
+                            AppConfig.get_requests(id);
                             AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
                         }
                     }
@@ -94,7 +81,7 @@ export component CollectionComponent inherits Rectangle {
             }
 
 
-            if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index :
+            if AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.id == id :
                 text_input := TextInput {
                     color: Theme.label_text_color;
                     vertical-alignment: center;
@@ -119,7 +106,7 @@ export component CollectionComponent inherits Rectangle {
 
 
             // Conditionally display the Text
-            if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.index == index) :
+            if !(AppConfig.active_collection_rename_mode == true && AppConfig.active_collection_item.id == id) :
 
                 VerticalLayout {
                     text := Text {
@@ -132,6 +119,7 @@ export component CollectionComponent inherits Rectangle {
                         wrap: TextWrap.no-wrap;
                         overflow: TextOverflow.elide;
                     }
+
                     Text {
                         text: "\{request_count} requests";
                         font-size: Theme.label_font_size_small;
@@ -142,6 +130,7 @@ export component CollectionComponent inherits Rectangle {
                         wrap: TextWrap.no-wrap;
                         overflow: TextOverflow.elide;
                     }
+                        
                 }
 
             
@@ -161,20 +150,32 @@ export component CollectionComponent inherits Rectangle {
                         property<length> position_y;
 
                         clicked => {
-                            position_x = root.x + root.width;
-                            // Calculate the correct y position relative to the window/viewport
-                            // This might need adjustment based on the layout of CollectionComponents
-                            position_y = root.y + root.height; // Example, may need refinement
+                            AppConfig.get_requests(id);
+            
+                            if AppConfig.show_active_collection_requests == true {
+                                AppConfig.active_collection_item = {
+                                    id: id,
+                                    name: name,
+                                    index: index,
+                                    x: position_x,
+                                    y: position_y
+                                };
+                                AppConfig.show_active_collection_requests = false;
+                            }
+                            else {
+                                position_x = root.x + root.width;
+                                position_y = root.y + root.height;
 
-                            AppConfig.active_collection_item = {
-                                id: id,
-                                name: name,
-                                index: index,
-                                x: position_x,
-                                y: position_y
-                            };
-
-                            AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+                                AppConfig.active_collection_item = {
+                                    id: id,
+                                    name: name,
+                                    index: index,
+                                    x: position_x,
+                                    y: position_y
+                                };
+                                AppConfig.show_collection_more_dropdown = !AppConfig.show_collection_more_dropdown;
+                            }
+                            
                         }
                     }
                     more := Image {
@@ -185,18 +186,14 @@ export component CollectionComponent inherits Rectangle {
             }
         }
 
-        if root.active == true && AppConfig.active_collection_item.index == index:
+        if AppConfig.show_active_collection_requests == true && AppConfig.active_collection_item.id == id && AppConfig.active_collection_requests.length > 0:
             HorizontalLayout {
                 padding-right: 40px;
                 padding-left: 30px;
 
-                // Wrap the inner VerticalLayout with ScrollView
                 ListView {
-                    // Give the ScrollView a height so it knows when to scroll.
-                    // This height should be the total desired height for the scrollable request list area.
-                    height: 300px; // Adjust this value based on your layout
-
-                
+                    height: 300px;
+            
                     for list_item[i] in AppConfig.active_collection_requests: RequestComponent {
                         id: list_item.id;
                         name: list_item.name;
@@ -209,5 +206,8 @@ export component CollectionComponent inherits Rectangle {
                 
                 }
             }
+        
+        
+
     }
 }
