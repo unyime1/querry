@@ -66,7 +66,7 @@ export component RequestComponent inherits Rectangle {
                         // Call update request callback
                         AppConfig.update_request_item(
                             root.id,
-                            root.name,
+                            self.text,
                             root.protocol,
                             root.http_method,
                             root.url,
@@ -113,9 +113,8 @@ export component RequestComponent inherits Rectangle {
                     property<length> position_y;
     
                     clicked => {
-                        position_x = root.x + root.width;
-                        position_y = root.y + root.height;
-    
+                        position_x = root.x + root.width + 50px;
+                        position_y = AppConfig.active_collection_item.y + ((index * root.height) + AppConfig.requests_viewport_y) + 30px;
                         AppConfig.active_request_item = {
                             id: id,
                             name: name,

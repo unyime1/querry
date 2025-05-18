@@ -17,13 +17,17 @@ export component CollectionComponent inherits Rectangle {
     height: (AppConfig.show_active_collection_requests == true && AppConfig.active_collection_item.id == id && AppConfig.active_collection_requests.length > 0) ? 350px : 50px;
 
     touch-area := TouchArea {
+        property<length> position_x;
+        property<length> position_y;
         clicked => {
+            position_x = root.x + root.width;
+            position_y = (index * root.height) + AppConfig.collections_viewport_y;
             AppConfig.active_collection_item = {
                 id: id,
                 name: name,
                 index: index,
-                x: root.x + root.width,
-                y: root.y + root.height
+                x: position_x,
+                y: position_y
             };
             AppConfig.show_collection_more_dropdown = false;
             AppConfig.show_active_collection_requests = !AppConfig.show_active_collection_requests;
