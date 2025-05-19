@@ -57,6 +57,7 @@ export component RequestsDropDown inherits Rectangle {
             touch := TouchArea{
                 mouse-cursor: self.has-hover ? pointer : default;
                 clicked => {
+                    AppConfig.remove_request_item(AppConfig.active_request_item.id, AppConfig.active_request_item.index, AppConfig.active_request_item.collection_index);
                     AppConfig.show_request_more_dropdown = !AppConfig.show_request_more_dropdown;
                     AppConfig.active_request_item = {
                         name: "",
@@ -67,7 +68,6 @@ export component RequestsDropDown inherits Rectangle {
                         collection_index: -1
                     };
                     AppConfig.show_active_collection_requests = false;
-                    AppConfig.remove_request_item(AppConfig.active_request_item.id, AppConfig.active_request_item.index, AppConfig.active_request_item.collection_index);
                 }
             }
 
