@@ -11,7 +11,10 @@ use lib::{
             process_search_collections, process_update_collection,
         },
         images::process_get_images,
-        requests::{process_create_requests, process_get_requests},
+        requests::{
+            process_create_requests, process_delete_request, process_get_requests,
+            process_update_request,
+        },
     },
     database::{get_database, migrate_database},
     AppWindow,
@@ -35,6 +38,8 @@ fn main() -> Result<(), PlatformError> {
     process_search_collections(db.clone(), &app).unwrap();
     process_create_requests(db.clone(), &app).unwrap();
     process_get_requests(db.clone(), &app).unwrap();
+    process_update_request(db.clone(), &app).unwrap();
+    process_delete_request(db.clone(), &app).unwrap();
 
     let size: PhysicalSize = PhysicalSize::new(1920, 1080);
     app.set_window_height(size.height as f32);

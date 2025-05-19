@@ -31,6 +31,7 @@ export struct RequestItemActive {
     index: int,
     x: length,
     y: length,
+    collection_index: int
 }
 
 
@@ -71,5 +72,7 @@ export global AppConfig {
     in-out property <bool> show_request_more_dropdown: false;
     in-out property <length> requests_viewport_y;
     callback get_requests(string); // collection id
-    callback create_request_item(string); // collection id
+    callback create_request_item(string, int); // collection id, collection_index
+    callback remove_request_item(string, int, int); // request id, request_index,  collection_index
+    callback update_request_item(string, string, string, string, string, int); // id, name, protocol, http_method, url, index
 }
