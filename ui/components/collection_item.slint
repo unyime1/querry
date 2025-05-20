@@ -27,7 +27,8 @@ export component CollectionComponent inherits Rectangle {
                 name: name,
                 index: index,
                 x: position_x,
-                y: position_y
+                y: position_y,
+                request_count: root.request_count
             };
             AppConfig.show_collection_more_dropdown = false;
             AppConfig.show_active_collection_requests = !AppConfig.show_active_collection_requests;
@@ -69,7 +70,8 @@ export component CollectionComponent inherits Rectangle {
                                 name: name,
                                 index: index,
                                 x: root.x + root.width,
-                                y: root.y + root.height
+                                y: root.y + root.height,
+                                request_count: root.request_count
                             };
                             AppConfig.get_requests(id);
                             AppConfig.show_icons_popup = !AppConfig.show_icons_popup;
@@ -95,7 +97,7 @@ export component CollectionComponent inherits Rectangle {
                     font-size: Theme.label_font_size_medium_small;
                     accepted() => {
                         if self.text != "" {
-                            AppConfig.update_collection(id, self.text, icon_name, index);
+                            AppConfig.update_collection(id, self.text, icon_name, index, request_count);
                         }
                         AppConfig.active_collection_rename_mode = false;
                     }
@@ -162,7 +164,8 @@ export component CollectionComponent inherits Rectangle {
                                     name: name,
                                     index: index,
                                     x: position_x,
-                                    y: position_y
+                                    y: position_y,
+                                    request_count: root.request_count
                                 };
                                 AppConfig.show_active_collection_requests = false;
                             }

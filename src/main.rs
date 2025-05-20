@@ -16,30 +16,29 @@ use lib::{
             process_update_request,
         },
     },
-    database::{get_database, migrate_database},
+    database::get_database,
     AppWindow,
 };
 
-fn main() -> Result<(), PlatformError> {
-    let db = get_database().expect("Could not connect to DB");
-
-    migrate_database(db.clone()).expect("Could not apply migrations");
+#[tokio::main]
+async fn main() -> Result<(), PlatformError> {
+    let db = get_database().await.expect("Could not connect to DB");
 
     let app = AppWindow::new()?;
 
-    check_startup_page(db.clone(), &app).unwrap();
-    load_collections(db.clone(), &app).unwrap();
-    process_page_change(&app).unwrap();
-    process_get_collections(db.clone(), &app).unwrap();
-    process_create_collection(db.clone(), &app).unwrap();
+    check_startup_page(&db, &app).await.unwrap();
+    load_collections(&db, &app).await.unwrap();
+    process_page_change(&app).await.unwrap();
+    process_get_collections(&db, &app).await.unwrap();
+    process_create_collection(&db, &app).await.unwrap();
     process_get_images(&app).unwrap();
-    process_update_collection(db.clone(), &app).unwrap();
-    process_remove_collection(db.clone(), &app).unwrap();
-    process_search_collections(db.clone(), &app).unwrap();
-    process_create_requests(db.clone(), &app).unwrap();
-    process_get_requests(db.clone(), &app).unwrap();
-    process_update_request(db.clone(), &app).unwrap();
-    process_delete_request(db.clone(), &app).unwrap();
+    process_update_collection(&db, &app).await.unwrap();
+    process_remove_collection(&db, &app).await.unwrap();
+    process_search_collections(&db, &app).await.unwrap();
+    process_create_requests(&db, &app).await.unwrap();
+    process_get_requests(&db, &app).await.unwrap();
+    process_update_request(&db, &app).await.unwrap();
+    process_delete_request(&db, &app).await.unwrap();
 
     let size: PhysicalSize = PhysicalSize::new(1920, 1080);
     app.set_window_height(size.height as f32);

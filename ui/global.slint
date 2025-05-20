@@ -13,6 +13,7 @@ export struct CollectionItemActive {
     index: int,
     x: length,
     y: length,
+    request_count: int
 }
 
 
@@ -57,7 +58,7 @@ export global AppConfig {
     in-out property <bool> show_collection_more_dropdown: false;
     callback create_collection;
     callback get_collections;
-    callback update_collection(string, string, string, int);  // id, name, icon, index
+    callback update_collection(string, string, string, int, int);  // id, name, icon, index, requests_count
     callback remove_collection(string, int);  // id, index
     callback search_collection(string); // search term
     

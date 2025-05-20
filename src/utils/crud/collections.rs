@@ -1,127 +1,83 @@
-use std::{error::Error, rc::Rc};
+use std::error::Error;
 
 use crate::utils::get_icon_pack_names;
 use rand::{rng, seq::IndexedRandom};
-use rusqlite::{params, Connection, Result as RuResult};
+use sqlx::{query, query_as, FromRow, SqlitePool};
 use uuid::Uuid;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, FromRow)]
 pub struct CollectionData {
     pub id: String,
     pub name: String,
     pub icon: String,
-    pub request_count: i32,
+    pub requests_count: i32,
 }
 
-fn get_request_count(db_connection: Rc<Connection>, collection_id: &str) -> RuResult<i32> {
-    db_connection.query_row(
-        "SELECT COUNT(*) FROM requestitem WHERE collection_id = ?1",
-        params![collection_id],
-        |row| row.get(0),
+pub async fn get_all_collections(pool: &SqlitePool) -> Result<Vec<CollectionData>, Box<dyn Error>> {
+    let collections = query_as(
+        "SELECT 
+            id, 
+            name, 
+            icon, 
+            requests_count
+        FROM 
+            collectionitem
+        ORDER BY 
+            created_at DESC",
     )
+    .fetch_all(pool)
+    .await?;
+
+    Ok(collections)
 }
 
-pub fn get_all_collections(db_connection: Rc<Connection>) -> RuResult<Vec<CollectionData>> {
-    let mut stmt = db_connection.prepare(
-        "SELECT 
-            c.id, 
-            c.name, 
-            c.icon, 
-            COUNT(r.id) AS request_count
-        FROM 
-            collection c
-        LEFT JOIN 
-            requestitem r ON r.collection_id = c.id
-        GROUP BY 
-            c.id, c.name, c.icon
-        ORDER BY 
-            c.created_at DESC",
-    )?;
-
-    let rows = stmt.query_map(params![], |row| {
-        Ok(CollectionData {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            icon: row.get(2)?,
-            request_count: row.get(3)?,
-        })
-    })?;
-
-    let collections: RuResult<Vec<CollectionData>> = rows.into_iter().collect();
-    collections
-}
-
-pub fn search_collections(
-    db_connection: Rc<Connection>,
+pub async fn search_collections(
+    pool: &SqlitePool,
     search_term: &str,
-) -> RuResult<Vec<CollectionData>> {
-    let mut stmt = db_connection.prepare(
+) -> Result<Vec<CollectionData>, Box<dyn Error>> {
+    let collections = query_as(
         "SELECT 
-            c.id, 
-            c.name, 
-            c.icon, 
-            COUNT(r.id) AS request_count
+            id, 
+            name, 
+            icon, 
+            requests_count
         FROM 
-            collection c
-        LEFT JOIN 
-            requestitem r ON r.collection_id = c.id
+            collectionitem
         WHERE 
-            LOWER(c.name) LIKE LOWER(?1)
-        GROUP BY 
-            c.id, c.name, c.icon
+            LOWER(name) LIKE LOWER($1)
         ORDER BY 
-            c.created_at DESC",
-    )?;
+            created_at DESC",
+    )
+    .bind(search_term)
+    .fetch_all(pool)
+    .await?;
 
-    let rows = stmt.query_map(params![format!("%{}%", search_term)], |row| {
-        Ok(CollectionData {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            icon: row.get(2)?,
-            request_count: row.get(3)?,
-        })
-    })?;
-
-    let collections: RuResult<Vec<CollectionData>> = rows.into_iter().collect();
-    collections
+    Ok(collections)
 }
 
 /// Update a collection item.
-pub fn update_collection_item(
+pub async fn update_collection_item(
     id: &str,
     name: &str,
     icon: &str,
-    db_connection: Rc<Connection>,
+    requests_count: i32,
+    pool: &SqlitePool,
 ) -> Result<CollectionData, Box<dyn Error>> {
     // Update collection
-    let mut stmt = db_connection
-        .prepare("UPDATE collection SET name=?1, icon=?2 WHERE id = ?3 RETURNING id, name, icon")?;
-    let mut rows = stmt.query([name, icon, id])?;
-
-    let mut collections: Vec<CollectionData> = Vec::new();
-    while let Some(row) = rows.next()? {
-        let collection_id: String = row.get(0)?;
-        let collection_name: String = row.get(1)?;
-        let collection_icon: String = row.get(2)?;
-
-        // Fetch request count for the updated collection
-        let request_count = get_request_count(db_connection.clone(), &collection_id)?;
-
-        collections.push(CollectionData {
-            id: collection_id,
-            name: collection_name,
-            icon: collection_icon,
-            request_count,
-        });
-    }
-
-    let collection_item = collections.first().ok_or("Could not save collection.")?;
-    Ok(collection_item.clone())
+    let command = "UPDATE collectionitem SET name=$1, icon=$2, requests_count=$3 WHERE id = $4 RETURNING id, name, icon, requests_count";
+    let collection: CollectionData = query_as(command)
+        .bind(name)
+        .bind(icon)
+        .bind(requests_count)
+        .bind(id)
+        .fetch_one(pool)
+        .await?;
+    Ok(collection)
 }
 
-pub fn create_collection(
+pub async fn create_collection(
     name: String,
-    db_connection: Rc<Connection>,
+    pool: &SqlitePool,
 ) -> Result<CollectionData, Box<dyn Error>> {
     let icon_items = get_icon_pack_names()?;
     let mut rng = rng();
@@ -129,64 +85,39 @@ pub fn create_collection(
         .choose(&mut rng)
         .map(|s| s.to_string())
         .unwrap_or("1F4A6.svg".to_string());
-    let mut stmt = db_connection.prepare(
-        "INSERT INTO collection (id, name, icon) VALUES (?1, ?2, ?3) RETURNING id, name, icon",
-    )?;
+    let collection: CollectionData = query_as(
+        "INSERT INTO collectionitem (id, name, icon) VALUES ($1, $2, $3) RETURNING id, name, icon, requests_count",
+    )
+        .bind(Uuid::new_v4().to_string())
+        .bind(name)
+        .bind(random_icon)
+        .fetch_one(pool).await?;
 
-    let mut result_rows = stmt.query([Uuid::new_v4().to_string(), name, random_icon])?;
-
-    let mut collections: Vec<CollectionData> = Vec::new();
-    while let Some(row) = result_rows.next()? {
-        collections.push(CollectionData {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            icon: row.get(2)?,
-            request_count: 0,
-        });
-    }
-
-    let collection_item = collections.first().ok_or("Could not save collection.")?;
-    Ok(collection_item.clone())
+    Ok(collection)
 }
 
-pub fn delete_collection(
+pub async fn delete_collection(
     collection_id: &str,
-    db_connection: Rc<Connection>,
+    pool: &SqlitePool,
 ) -> Result<(), Box<dyn Error>> {
-    let mut stmt = db_connection.prepare("DELETE FROM collection WHERE id=?1")?;
-
-    stmt.execute([collection_id])?;
+    query("DELETE FROM collectionitem WHERE id=$1")
+        .bind(collection_id)
+        .execute(pool)
+        .await?;
 
     Ok(())
 }
 
-pub fn get_single_collection(
-    id: String,
-    db_connection: Rc<Connection>,
+pub async fn get_single_collection(
+    id: &str,
+    pool: &SqlitePool,
 ) -> Result<CollectionData, Box<dyn Error>> {
-    let mut stmt = db_connection.prepare("SELECT id, name, icon FROM collection WHERE id = ?1")?;
-
-    let mut result_rows = stmt.query([&id])?;
-
-    let mut collections: Vec<CollectionData> = Vec::new();
-    while let Some(row) = result_rows.next()? {
-        let collection_id: String = row.get(0)?;
-        let collection_name: String = row.get(1)?;
-        let collection_icon: String = row.get(2)?;
-
-        // Fetch request count for this collection
-        let request_count = get_request_count(db_connection.clone(), &collection_id)?;
-
-        collections.push(CollectionData {
-            id: collection_id,
-            name: collection_name,
-            icon: collection_icon,
-            request_count,
-        });
-    }
-
-    let collection_item = collections.first().ok_or("Collection does not exist.")?;
-    Ok(collection_item.clone())
+    let collection: CollectionData =
+        query_as("SELECT id, name, icon, requests_count FROM collectionitem WHERE id = $1")
+            .bind(id)
+            .fetch_one(pool)
+            .await?;
+    Ok(collection)
 }
 
 #[cfg(test)]
@@ -197,68 +128,91 @@ mod tests {
         utils::crud::requests::{create_request, ProtocolTypes},
     };
 
-    #[test]
-    fn test_create_collection() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_create_collection() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db)
+            .await
             .expect("Cant get collections");
-        assert!(collection.request_count == 0);
-        let existing_collection = get_all_collections(db.clone()).expect("cant get collections");
+        assert!(collection.requests_count == 0);
+        let existing_collection = get_all_collections(&db)
+            .await
+            .expect("cant get collections");
         assert!(existing_collection.len() == 1);
 
-        create_request(ProtocolTypes::Http, &collection.id, db.clone()).unwrap();
-        let single_collection =
-            get_single_collection(collection.id.clone(), db.clone()).expect("cant get collections");
-        assert!(single_collection.request_count == 1);
+        create_request(ProtocolTypes::Http, &collection.id, &db)
+            .await
+            .unwrap();
+        let single_collection = get_single_collection(&collection.id, &db)
+            .await
+            .expect("cant get collections");
+        assert!(single_collection.requests_count == 1);
     }
 
-    #[test]
-    fn test_delete_collection() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_delete_collection() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db)
+            .await
             .expect("Cant get collections");
 
-        delete_collection(&collection.id, db.clone()).expect("Can't delete");
+        delete_collection(&collection.id, &db)
+            .await
+            .expect("Can't delete");
 
-        let existing_collection = get_all_collections(db.clone()).expect("cant get collections");
+        let existing_collection = get_all_collections(&db)
+            .await
+            .expect("cant get collections");
         assert!(existing_collection.len() == 0)
     }
 
-    #[test]
-    fn test_single_collection() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_single_collection() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db)
+            .await
             .expect("Cant get collections");
 
-        let single_collection =
-            get_single_collection(collection.id.clone(), db.clone()).expect("cant get collections");
+        let single_collection = get_single_collection(&collection.id, &db)
+            .await
+            .expect("cant get collections");
         assert!(single_collection.id == collection.id);
         assert!(single_collection.name == collection.name);
         assert!(!single_collection.icon.is_empty());
     }
 
-    #[test]
-    fn test_update_collection() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_update_collection() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db)
+            .await
             .expect("Cant get collections");
 
-        let single_collection =
-            update_collection_item(&collection.id, "hey", "icon.png", db.clone())
-                .expect("cant get collections");
+        let single_collection = update_collection_item(
+            &collection.id,
+            "hey",
+            "icon.png",
+            collection.requests_count,
+            &db.clone(),
+        )
+        .await
+        .expect("cant get collections");
 
         assert!(single_collection.id == collection.id);
         assert!(single_collection.name == "hey".to_string());
         assert!(single_collection.icon == "icon.png".to_string());
     }
 
-    #[test]
-    fn test_search_collections() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_search_collections() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let collections = search_collections(db.clone(), "tion").expect("cant get collections");
+        let collections = search_collections(&db.clone(), "tion")
+            .await
+            .expect("cant get collections");
 
         assert!(collections.len() == 1);
         assert!(collections[0].id == collection.id);
@@ -266,13 +220,16 @@ mod tests {
         assert!(collections[0].icon == collection.icon);
     }
 
-    #[test]
-    fn test_search_collections_2() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_search_collections_2() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let collections = search_collections(db.clone(), "TIO").expect("cant get collections");
+        let collections = search_collections(&db.clone(), "TIO")
+            .await
+            .expect("cant get collections");
 
         assert!(collections.len() == 1);
         assert!(collections[0].id == collection.id);
@@ -280,13 +237,16 @@ mod tests {
         assert!(collections[0].icon == collection.icon);
     }
 
-    #[test]
-    fn test_search_collections_3() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_search_collections_3() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let collections = search_collections(db.clone(), "TES").expect("cant get collections");
+        let collections = search_collections(&db.clone(), "TES")
+            .await
+            .expect("cant get collections");
 
         assert!(collections.len() == 1);
         assert!(collections[0].id == collection.id);
@@ -294,13 +254,16 @@ mod tests {
         assert!(collections[0].icon == collection.icon);
     }
 
-    #[test]
-    fn test_search_collections_4() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let _collection = create_collection("Test collection".to_string(), db.clone())
+    #[tokio::test]
+    async fn test_search_collections_4() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let _collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let collections = search_collections(db.clone(), "lal").expect("cant get collections");
+        let collections = search_collections(&db.clone(), "lal")
+            .await
+            .expect("cant get collections");
 
         assert!(collections.len() == 0);
     }

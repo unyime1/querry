@@ -1,5 +1,5 @@
 test:
-	cargo test --verbose -- --test-threads=1
+	cargo test --verbose -- --nocapture --test-threads=1
 
 format:
 	cargo fmt --all -- --check

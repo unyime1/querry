@@ -11,8 +11,8 @@ description = "Rust request client application that uses the Slint GUI framework
 
 [dependencies]
 slint = "1.11.0"
-rusqlite = { version = "0.34.0", features = ["bundled"] }
-tokio = { version = "1.44.2", features = ["full"] }
+tokio = { version = "1.45.0", features = ["full"] }
+sqlx = { version = "0.8", features = [ "runtime-tokio", "tls-rustls-ring-webpki", "sqlite" ] }
 uuid = { version = "1.16.0", features = ["v4"] }
 lazy_static = "1.5.0"
 directories = "5.0"
