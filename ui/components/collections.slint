@@ -72,7 +72,7 @@ export component CollectionSection inherits Rectangle {
             VerticalLayout {
                 vertical-stretch: 1;
                 ListView {
-                    
+                    vertical-scrollbar-policy: (AppConfig.show_active_collection_requests == true && AppConfig.active_collection_requests.length > 0) ? always-off : as-needed;
                     for list_item[i] in collection_items: CollectionComponent {
                         name: list_item.name;
                         id: list_item.id;
@@ -85,18 +85,6 @@ export component CollectionSection inherits Rectangle {
 
                     changed viewport-y => {
                         AppConfig.collections_viewport_y = self.viewport-y;
-
-                        // Close requests pane if the user scrolls  - TODO
-                        // AppConfig.show_request_more_dropdown = false;
-                        // AppConfig.active_request_item = {
-                        //     name: "",
-                        //     id: "",
-                        //     index: -1,
-                        //     x:-1px,
-                        //     y:-1px,
-                        //     collection_index: -1
-                        // };  
-                        // AppConfig.show_active_collection_requests = false;
                     }
 
                 }
