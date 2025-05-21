@@ -61,43 +61,42 @@ pub async fn process_create_requests(
     config.on_create_request_item(move |collection_id, collection_index| {
         let weak_app_for_task = weak_app.clone();
         let db_copy_for_task = db_copy.clone();
-        let _ = slint::spawn_local(async move {
-            let app = weak_app_for_task.upgrade().unwrap();
-            let cfg = app.global::<AppConfig>();
+        let _ =
+            slint::spawn_local(async move {
+                let app = weak_app_for_task.upgrade().unwrap();
+                let cfg = app.global::<AppConfig>();
 
-            let request_item = match create_request(
-                ProtocolTypes::Http,
-                &collection_id,
-                &db_copy_for_task,
-            )
-            .await
-            {
-                Ok(data) => data,
-                Err(_) => {
-                    return;
+                let request_item =
+                    match create_request(ProtocolTypes::Http, &collection_id, &db_copy_for_task)
+                        .await
+                    {
+                        Ok(data) => data,
+                        Err(_) => {
+                            return;
+                        }
+                    };
+
+                let request_data: RequestItem = RequestItem {
+                    id: request_item.id.into(),
+                    name: request_item.name.into(),
+                    url: request_item.url.unwrap_or("".to_string()).into(),
+                    protocol: request_item.protocol.into(),
+                    http_method: request_item.http_method.unwrap_or("get".to_string()).into(),
+                };
+
+                let mut items: Vec<RequestItem> =
+                    cfg.get_active_collection_requests().iter().collect();
+                items.insert(0, request_data);
+                cfg.set_active_collection_requests(Rc::new(VecModel::from(items)).into());
+
+                // Get collection and increase request count.
+                let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+
+                if let Some(item_ref) = items.get_mut(collection_index as usize) {
+                    item_ref.request_count += 1;
                 }
-            };
-
-            let request_data: RequestItem = RequestItem {
-                id: request_item.id.into(),
-                name: request_item.name.into(),
-                url: request_item.url.unwrap_or("".to_string()).into(),
-                protocol: request_item.protocol.into(),
-                http_method: request_item.http_method.unwrap_or("get".to_string()).into(),
-            };
-
-            let mut items: Vec<RequestItem> = cfg.get_active_collection_requests().iter().collect();
-            items.insert(0, request_data);
-            cfg.set_active_collection_requests(Rc::new(VecModel::from(items)).into());
-
-            // Get collection and increase request count.
-            let mut items: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
-
-            if let Some(item_ref) = items.get_mut(collection_index as usize) {
-                item_ref.request_count += 1;
-            }
-            cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
-        });
+                cfg.set_collection_items(Rc::new(VecModel::from(items)).into());
+            });
     });
 
     Ok(())

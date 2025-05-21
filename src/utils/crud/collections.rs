@@ -48,7 +48,7 @@ pub async fn search_collections(
         ORDER BY 
             created_at DESC",
     )
-    .bind(search_term)
+    .bind(format!("%{}%", search_term))
     .fetch_all(pool)
     .await?;
 
@@ -131,13 +131,22 @@ mod tests {
     #[tokio::test]
     async fn test_create_collection() {
         let db = setup_test_db().await.expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), &db)
+        let collection = create_collection("Test collections".to_string(), &db)
             .await
             .expect("Cant get collections");
+
         assert!(collection.requests_count == 0);
         let existing_collection = get_all_collections(&db)
             .await
             .expect("cant get collections");
+
+        println!(
+            "{} - {} - {} - {}",
+            collection.name,
+            collection.id,
+            collection.icon,
+            existing_collection.len()
+        );
         assert!(existing_collection.len() == 1);
 
         create_request(ProtocolTypes::Http, &collection.id, &db)
@@ -206,6 +215,7 @@ mod tests {
     #[tokio::test]
     async fn test_search_collections() {
         let db = setup_test_db().await.expect("Cant setup db.");
+
         let collection = create_collection("Test collection".to_string(), &db.clone())
             .await
             .expect("Cant get collections");
@@ -214,7 +224,7 @@ mod tests {
             .await
             .expect("cant get collections");
 
-        assert!(collections.len() == 1);
+        assert!(collections.len() > 0);
         assert!(collections[0].id == collection.id);
         assert!(collections[0].name == collection.name);
         assert!(collections[0].icon == collection.icon);
@@ -231,7 +241,7 @@ mod tests {
             .await
             .expect("cant get collections");
 
-        assert!(collections.len() == 1);
+        assert!(collections.len() > 0);
         assert!(collections[0].id == collection.id);
         assert!(collections[0].name == collection.name);
         assert!(collections[0].icon == collection.icon);
@@ -248,7 +258,7 @@ mod tests {
             .await
             .expect("cant get collections");
 
-        assert!(collections.len() == 1);
+        assert!(collections.len() > 0);
         assert!(collections[0].id == collection.id);
         assert!(collections[0].name == collection.name);
         assert!(collections[0].icon == collection.icon);

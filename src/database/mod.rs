@@ -17,17 +17,16 @@ pub async fn get_database() -> Result<SqlitePool, Box<dyn Error>> {
 /// Setup a clean database for tests.
 pub async fn setup_test_db() -> Result<SqlitePool, Box<dyn Error>> {
     let db_path = get_db_path(Some(true))?;
-    println!("DB - {}", db_path);
 
     let pool = SqlitePoolOptions::new()
-        .max_connections(2)
+        .max_connections(1)
         .connect(&db_path)
         .await?;
 
     // Drop all tables to start fresh
     sqlx::query(
         r#"
-        DROP TABLE IF EXISTS collection;
+        DROP TABLE IF EXISTS collectionitem;
         DROP TABLE IF EXISTS collectionheader;
         DROP TABLE IF EXISTS requestitem;
         DROP TABLE IF EXISTS _sqlx_migrations;  
