@@ -13,7 +13,7 @@ use lib::{
         images::process_get_images,
         requests::{
             process_create_requests, process_delete_request, process_get_requests,
-            process_update_request,
+            process_request_selection, process_update_request,
         },
     },
     database::get_database,
@@ -39,6 +39,7 @@ async fn main() -> Result<(), PlatformError> {
     process_get_requests(&db, &app).await.unwrap();
     process_update_request(&db, &app).await.unwrap();
     process_delete_request(&db, &app).await.unwrap();
+    process_request_selection(&app).await.unwrap();
 
     let size: PhysicalSize = PhysicalSize::new(1920, 1080);
     app.set_window_height(size.height as f32);
