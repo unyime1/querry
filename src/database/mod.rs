@@ -1,86 +1,41 @@
-extern crate rusqlite;
-
-use std::{error::Error, rc::Rc};
+use std::error::Error;
 
 use crate::utils::sys_dir::get_db_path;
-use rusqlite::Connection;
+use sqlx::sqlite::{SqlitePool, SqlitePoolOptions};
 
-pub fn get_database() -> Result<Rc<Connection>, Box<dyn Error>> {
+pub async fn get_database() -> Result<SqlitePool, Box<dyn Error>> {
     let db_path = get_db_path(Some(false))?;
-    println!("Path - {}", db_path);
-    let db = Connection::open(db_path)?;
-    Ok(Rc::new(db))
-}
+    let pool = SqlitePoolOptions::new()
+        .max_connections(5)
+        .connect(&db_path)
+        .await?;
+    sqlx::migrate!("./migrations").run(&pool).await?;
 
-pub fn migrate_database(db_connection: Rc<Connection>) -> Result<(), Box<dyn Error>> {
-    db_connection.execute(
-        "CREATE TABLE IF NOT EXISTS collection(
-                id UUID NOT NULL PRIMARY KEY,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                name TEXT NOT NULL,
-                icon TEXT
-            )",
-        (), // empty list of parameters.
-    )?;
-
-    db_connection.execute(
-        "CREATE TABLE IF NOT EXISTS collectionheader(
-                id UUID NOT NULL PRIMARY KEY,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                name TEXT,
-                value TEXT,
-                collection_id UUID NOT NULL REFERENCES collection(id) ON DELETE CASCADE
-            )",
-        (), // empty list of parameters.
-    )?;
-
-    db_connection.execute(
-        "CREATE TABLE IF NOT EXISTS requestitem(
-                id UUID NOT NULL PRIMARY KEY,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                name TEXT,
-                url TEXT,
-                protocol TEXT,
-                http_method TEXT,
-                collection_id UUID NOT NULL REFERENCES collection(id) ON DELETE CASCADE
-            )",
-        (), // empty list of parameters.
-    )?;
-
-    Ok(())
+    Ok(pool)
 }
 
 /// Setup a clean database for tests.
-pub fn setup_test_db() -> Result<Rc<Connection>, Box<dyn Error>> {
+pub async fn setup_test_db() -> Result<SqlitePool, Box<dyn Error>> {
     let db_path = get_db_path(Some(true))?;
-    let db = Connection::open(db_path)?;
 
-    match db.execute("DROP TABLE collection", ()) {
-        Ok(_) => {}
-        Err(error) => {
-            let error_str = error.to_string();
-            println!("{}", error_str)
-        }
-    };
+    let pool = SqlitePoolOptions::new()
+        .max_connections(1)
+        .connect(&db_path)
+        .await?;
 
-    match db.execute("DROP TABLE collectionheader", ()) {
-        Ok(_) => {}
-        Err(error) => {
-            let error_str = error.to_string();
-            println!("{}", error_str)
-        }
-    };
+    // Drop all tables to start fresh
+    sqlx::query(
+        r#"
+        DROP TABLE IF EXISTS collectionitem;
+        DROP TABLE IF EXISTS collectionheader;
+        DROP TABLE IF EXISTS requestitem;
+        DROP TABLE IF EXISTS _sqlx_migrations;  
+        "#,
+    )
+    .execute(&pool)
+    .await?;
 
-    match db.execute("DROP TABLE requestitem", ()) {
-        Ok(_) => {}
-        Err(error) => {
-            let error_str = error.to_string();
-            println!("{}", error_str)
-        }
-    };
+    sqlx::migrate!("./migrations").run(&pool).await?;
 
-    let shared_db = Rc::new(db);
-    migrate_database(shared_db.clone())?;
-
-    Ok(shared_db.clone())
+    Ok(pool)
 }

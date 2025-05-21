@@ -1,7 +1,9 @@
-use std::{error::Error, fmt, rc::Rc};
+use std::{error::Error, fmt};
 
-use rusqlite::Connection;
+use sqlx::{query, query_as, FromRow, SqlitePool};
 use uuid::Uuid;
+
+use crate::utils::crud::collections::{get_single_collection, update_collection_item};
 
 #[derive(Debug, PartialEq)]
 pub enum ProtocolTypes {
@@ -66,7 +68,7 @@ impl HTTPMethods {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, FromRow)]
 pub struct RequestData {
     pub id: String,
     pub name: String,
@@ -76,132 +78,93 @@ pub struct RequestData {
     pub http_method: Option<String>,
 }
 
-pub fn get_collection_requests(
-    db_connection: Rc<Connection>,
+pub async fn get_collection_requests(
+    pool: &SqlitePool,
     collection_id: &str,
 ) -> Result<Vec<RequestData>, Box<dyn Error>> {
-    let mut stmt = db_connection
-        .prepare("SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE collection_id=?1 ORDER BY created_at DESC")?;
-
-    let mut result_rows = stmt.query([collection_id])?;
-
-    let mut requests: Vec<RequestData> = Vec::new();
-    while let Some(row) = result_rows.next()? {
-        requests.push(RequestData {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            url: row.get(2)?,
-            protocol: row.get(3)?,
-            http_method: row.get(4)?,
-            collection_id: row.get(5)?,
-        });
-    }
+    let requests = query_as("SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE collection_id=$1 ORDER BY created_at DESC").bind(collection_id).fetch_all(pool).await?;
 
     Ok(requests)
 }
 
-pub fn create_request(
+pub async fn create_request(
     protocol: ProtocolTypes,
     collection_id: &str,
-    db_connection: Rc<Connection>,
+    pool: &SqlitePool,
 ) -> Result<RequestData, Box<dyn Error>> {
-    let mut stmt = db_connection
-        .prepare("INSERT INTO requestitem (id, name, protocol, http_method, collection_id) VALUES (?1, ?2, ?3, ?4, ?5) RETURNING id, name, url, protocol, http_method, collection_id")?;
+    let request = query_as(
+        "INSERT INTO requestitem (id, name, protocol, http_method, collection_id, url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, name, url, protocol, http_method, collection_id"
+    ).bind(Uuid::new_v4().to_string()).bind("New Request").bind(protocol.to_string()).bind(HTTPMethods::Get.to_string()).bind(collection_id).bind("").fetch_one(pool).await?;
 
-    let mut result_rows = stmt.query([
-        &Uuid::new_v4().to_string(),
-        "New Request",
-        &protocol.to_string(),
-        &HTTPMethods::Get.to_string(),
+    let collection = get_single_collection(collection_id, pool).await?;
+    let requests_count = collection.requests_count + 1;
+    update_collection_item(
         collection_id,
-    ])?;
-
-    let mut requests: Vec<RequestData> = Vec::new();
-    while let Some(row) = result_rows.next()? {
-        requests.push(RequestData {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            url: row.get(2)?,
-            protocol: row.get(3)?,
-            http_method: row.get(4)?,
-            collection_id: row.get(5)?,
-        });
-    }
-
-    let request_item = requests.first().ok_or("Could not save request.")?;
-    Ok(request_item.clone())
+        &collection.name,
+        &collection.icon,
+        requests_count,
+        pool,
+    )
+    .await?;
+    Ok(request)
 }
 
-pub fn delete_request(
-    request_id: &str,
-    db_connection: Rc<Connection>,
-) -> Result<(), Box<dyn Error>> {
-    let mut stmt = db_connection.prepare("DELETE FROM requestitem WHERE id=?1")?;
+pub async fn delete_request(request_id: &str, pool: &SqlitePool) -> Result<(), Box<dyn Error>> {
+    let request = get_single_request(request_id, pool).await?;
 
-    stmt.execute([request_id])?;
+    query("DELETE FROM requestitem WHERE id=$1")
+        .bind(request_id)
+        .execute(pool)
+        .await?;
+
+    let collection = get_single_collection(&request.collection_id, pool).await?;
+    let requests_count = collection.requests_count - 1;
+    update_collection_item(
+        &request.collection_id,
+        &collection.name,
+        &collection.icon,
+        requests_count,
+        pool,
+    )
+    .await?;
 
     Ok(())
 }
 
-pub fn get_single_request(
+pub async fn get_single_request(
     id: &str,
-    db_connection: Rc<Connection>,
+    pool: &SqlitePool,
 ) -> Result<RequestData, Box<dyn Error>> {
-    let mut stmt = db_connection.prepare(
-        "SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE id=?1",
-    )?;
+    let request = query_as(
+        "SELECT id, name, url, protocol, http_method, collection_id FROM requestitem WHERE id=$1",
+    )
+    .bind(id)
+    .fetch_one(pool)
+    .await?;
 
-    let mut result_rows = stmt.query([id])?;
-
-    let mut requests: Vec<RequestData> = Vec::new();
-    while let Some(row) = result_rows.next()? {
-        requests.push(RequestData {
-            id: row.get(0)?,
-            name: row.get(1)?,
-            url: row.get(2)?,
-            protocol: row.get(3)?,
-            http_method: row.get(4)?,
-            collection_id: row.get(5)?,
-        });
-    }
-
-    let request_item = requests.first().ok_or("Cannot find request item.")?;
-    Ok(request_item.clone())
+    Ok(request)
 }
 
 /// Update a request item.
-pub fn update_request_item(
+pub async fn update_request_item(
     id: &str,
-    name: Option<&str>,
-    protocol: Option<ProtocolTypes>,
-    http_method: Option<HTTPMethods>,
-    url: Option<&str>,
-    db_connection: Rc<Connection>,
+    name: &str,
+    protocol: ProtocolTypes,
+    http_method: HTTPMethods,
+    url: &str,
+    pool: &SqlitePool,
 ) -> Result<RequestData, Box<dyn Error>> {
-    if let Some(name) = name {
-        let mut stmt = db_connection.prepare("UPDATE requestitem SET name=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([name, id])?;
-    }
+    let command = "UPDATE requestitem SET name=$1, protocol=$2, http_method=$3, url=$4 WHERE id = $5 RETURNING id, name, url, protocol, http_method, collection_id";
+    let request: RequestData = query_as(command)
+        .bind(name)
+        .bind(protocol.to_string())
+        .bind(http_method.to_string())
+        .bind(url)
+        .bind(id)
+        .fetch_one(pool)
+        .await?;
 
-    if let Some(protocol) = protocol {
-        let mut stmt = db_connection.prepare("UPDATE requestitem SET protocol=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([&protocol.to_string(), id])?;
-    }
-    if let Some(http_method) = http_method {
-        let mut stmt =
-            db_connection.prepare("UPDATE requestitem SET http_method=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([&http_method.to_string(), id])?;
-    }
-
-    if let Some(url) = url {
-        let mut stmt = db_connection.prepare("UPDATE requestitem SET url=?1 WHERE id = ?2")?;
-        let _ = stmt.execute([url, id])?;
-    }
-
-    // Retrieve the updated values
-    let updated_request = get_single_request(id, db_connection)?;
-
-    Ok(updated_request)
+    Ok(request)
 }
 
 #[cfg(test)]
@@ -210,92 +173,109 @@ mod tests {
     use crate::database::setup_test_db;
     use crate::utils::crud::collections::create_collection;
 
-    #[test]
-    fn test_create_request() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let _request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
+    #[tokio::test]
+    async fn test_create_request() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
+            .unwrap();
+        let _request = create_request(ProtocolTypes::Http, &collection.id, &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let requests = get_collection_requests(db.clone(), &collection.id).unwrap();
+        let requests = get_collection_requests(&db.clone(), &collection.id)
+            .await
+            .unwrap();
         assert!(requests.len() == 1);
         assert!(requests[0].name == "New Request");
         assert!(requests[0].protocol == "HTTP");
         assert!(requests[0].http_method == Some("GET".to_string()));
-        assert!(requests[0].url.is_none());
     }
 
-    #[test]
-    fn test_get_collection_requests() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let _request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
+    #[tokio::test]
+    async fn test_get_collection_requests() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
+            .unwrap();
+        let _request = create_request(ProtocolTypes::Http, &collection.id, &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let requests = get_collection_requests(db.clone(), &collection.id).unwrap();
+        let requests = get_collection_requests(&db.clone(), &collection.id)
+            .await
+            .unwrap();
         assert!(requests.len() == 1);
         assert!(requests[0].name == "New Request");
         assert!(requests[0].protocol == "HTTP");
         assert!(requests[0].http_method == Some("GET".to_string()));
-        assert!(requests[0].url.is_none());
     }
 
-    #[test]
-    fn test_get_single_request() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
+    #[tokio::test]
+    async fn test_get_single_request() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
+            .unwrap();
+        let request = create_request(ProtocolTypes::Http, &collection.id, &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let fetched_request = get_single_request(&request.id, db.clone()).unwrap();
+        let fetched_request = get_single_request(&request.id, &db.clone()).await.unwrap();
 
         assert!(fetched_request.name == "New Request");
         assert!(fetched_request.protocol == "HTTP");
         assert!(fetched_request.http_method == Some("GET".to_string()));
-        assert!(fetched_request.url.is_none());
     }
 
-    #[test]
-    fn test_delete_request() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
+    #[tokio::test]
+    async fn test_delete_request() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
+            .unwrap();
+        let request = create_request(ProtocolTypes::Http, &collection.id, &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let fetched_request = get_single_request(&request.id, db.clone()).unwrap();
+        let fetched_request = get_single_request(&request.id, &db.clone()).await.unwrap();
 
         assert!(fetched_request.name == "New Request");
         assert!(fetched_request.protocol == "HTTP");
         assert!(fetched_request.http_method == Some("GET".to_string()));
-        assert!(fetched_request.url.is_none());
 
-        delete_request(&fetched_request.id, db.clone()).unwrap();
-        let fetched_request_new = get_single_request(&fetched_request.id, db.clone());
+        delete_request(&fetched_request.id, &db.clone())
+            .await
+            .unwrap();
+        let fetched_request_new = get_single_request(&fetched_request.id, &db.clone()).await;
         assert!(fetched_request_new.is_err())
     }
 
-    #[test]
-    fn test_update_single_request() {
-        let db = setup_test_db().expect("Cant setup db.");
-        let collection = create_collection("Test collection".to_string(), db.clone()).unwrap();
-        let request = create_request(ProtocolTypes::Http, &collection.id, db.clone())
+    #[tokio::test]
+    async fn test_update_single_request() {
+        let db = setup_test_db().await.expect("Cant setup db.");
+        let collection = create_collection("Test collection".to_string(), &db.clone())
+            .await
+            .unwrap();
+        let request = create_request(ProtocolTypes::Http, &collection.id, &db.clone())
+            .await
             .expect("Cant get collections");
 
-        let fetched_request = get_single_request(&request.id, db.clone()).unwrap();
+        let fetched_request = get_single_request(&request.id, &db.clone()).await.unwrap();
 
         assert!(fetched_request.name == "New Request");
         assert!(fetched_request.protocol == "HTTP");
         assert!(fetched_request.http_method == Some("GET".to_string()));
-        assert!(fetched_request.url.is_none());
 
         let updated_request = update_request_item(
             &fetched_request.id,
-            Some("Hello Request"),
-            None,
-            None,
-            Some("https://bbc.co.uk"),
-            db.clone(),
+            "Hello Request",
+            ProtocolTypes::Http,
+            HTTPMethods::Get,
+            "https://bbc.co.uk",
+            &db.clone(),
         )
+        .await
         .unwrap();
 
         println!("{:?}", updated_request);
