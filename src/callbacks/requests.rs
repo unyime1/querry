@@ -8,7 +8,7 @@ use crate::{
         create_request, delete_request, get_collection_requests, update_request_item, HTTPMethods,
         ProtocolTypes,
     },
-    AppConfig, AppWindow, CollectionItem, RequestItem,
+    AppConfig, AppWindow, CollectionItem, RequestItem, SelectedRequestItem,
 };
 
 /// Get requests
@@ -193,6 +193,81 @@ pub async fn process_delete_request(
             }
             cfg.set_collection_items(Rc::new(VecModel::from(collections)).into());
         });
+    });
+
+    Ok(())
+}
+
+/// Handle when a user clicks on a request
+pub async fn process_request_selection(app: &AppWindow) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    config.on_add_selected_request(move |request_index, collection_index| {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        // Get collection.
+        let collections: Vec<CollectionItem> = cfg.get_collection_items().iter().collect();
+        let active_collection = if let Some(collection) = collections.get(collection_index as usize)
+        {
+            collection
+        } else {
+            return;
+        };
+
+        // Get request
+        let active_requests: Vec<RequestItem> =
+            cfg.get_active_collection_requests().iter().collect();
+        let selected_request = if let Some(request) = active_requests.get(request_index as usize) {
+            request
+        } else {
+            return;
+        };
+
+        // Add request to selected requests.
+        let mut selected_requests: Vec<SelectedRequestItem> =
+            cfg.get_selected_requests().iter().collect();
+
+        let mut request_already_selected = false;
+        for request_item in &selected_requests {
+            if request_item.item.id == selected_request.id {
+                request_already_selected = true;
+            }
+        }
+
+        if !request_already_selected {
+            selected_requests.push(SelectedRequestItem {
+                item: selected_request.clone(),
+                collection_icon: active_collection.icon.clone(),
+            });
+            cfg.set_selected_requests(Rc::new(VecModel::from(selected_requests)).into());
+        }
+    });
+
+    Ok(())
+}
+
+/// Handle remove selected request
+pub async fn process_request_remove(app: &AppWindow) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    config.on_remove_selected_request(move |request_index| {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        // Remove selected request from list.
+        let mut selected_requests: Vec<SelectedRequestItem> =
+            cfg.get_selected_requests().iter().collect();
+
+        if selected_requests.get(request_index as usize).is_some() {
+            selected_requests.remove(request_index as usize)
+        } else {
+            return;
+        };
+
+        cfg.set_selected_requests(Rc::new(VecModel::from(selected_requests)).into());
     });
 
     Ok(())

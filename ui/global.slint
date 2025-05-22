@@ -26,6 +26,12 @@ export struct RequestItem {
 }
 
 
+export struct SelectedRequestItem {
+    item: RequestItem,
+    collection_icon: image
+}
+
+
 export struct RequestItemActive {
     id: string,
     name: string,
@@ -76,4 +82,10 @@ export global AppConfig {
     callback create_request_item(string, int); // collection id, collection_index
     callback remove_request_item(string, int, int); // request id, request_index,  collection_index
     callback update_request_item(string, string, string, string, string, int); // id, name, protocol, http_method, url, index
+
+    // Headers
+    in-out property <[SelectedRequestItem]> selected_requests: [];
+    in-out property <string> active_request_id;
+    callback add_selected_request(int, int); // request_index, collection_index
+    callback remove_selected_request(int); // index
 }

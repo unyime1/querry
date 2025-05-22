@@ -13,7 +13,11 @@ export component RequestComponent inherits Rectangle {
     in property <int> collection_index;
 
     height: 40px;
-    touch-area := TouchArea {}
+    touch-area := TouchArea {
+        clicked => {
+            AppConfig.add_selected_request(index, collection_index);
+        }
+    }
 
     HorizontalLayout {
         padding-top: 5px;

@@ -1,18 +1,140 @@
+import { ScrollView, HorizontalBox} from "std-widgets.slint";
+
 import { Theme } from "../theme.slint";
+import { AppConfig } from "../global.slint";
 
 
+component HeaderItem inherits Rectangle {
+    width: 200px;
+    height: 100%;
+    in-out property <image> collection_icon;
+    in-out property <string> name;
+    in-out property <int> index;
+    in-out property <string> id;
+    in property <color> component_background;
+    background: touch-area.has-hover ? grey.darker(20%) : AppConfig.active_request_id == id ? grey.darker(20%) : component_background;
+    border-radius: Theme.border_radius;
+    callback request-focus-parent();
+
+    touch-area := TouchArea {
+        mouse-cursor: self.has-hover ? pointer : default;
+        clicked => {
+            AppConfig.active_request_id = id;
+            root.request-focus-parent();
+        }
+    }
+
+    HorizontalLayout {
+        padding-left: 5px;
+        padding-right: 5px;
+        alignment: space-between;
+
+        VerticalLayout {
+            alignment: center;
+            Image {
+                source: collection_icon;
+                width: Theme.icon_box_with - 2px;
+                height: Theme.icon_box_with - 2px;
+            }
+        }
+
+
+        Text {
+            text: name;
+            color: Theme.label_text_color;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+            max-width: 130px;
+            wrap: TextWrap.no-wrap;
+            overflow: TextOverflow.elide;
+        }
+
+
+        VerticalLayout {
+            alignment: center;
+
+            Rectangle {
+                width: Theme.icon_box_with - 10px;
+                height: Theme.icon_box_with  - 10px;
+                border-radius: Theme.border_radius;
+
+                Image {
+                    source: @image-url("../icons/close.svg");
+                    colorize: touch.has-hover ? red : gray;
+                }
+
+                touch := TouchArea {
+                    clicked => {
+                        AppConfig.remove_selected_request(index);
+                    }
+                }
+            }
+        }
+    }
+
+    
+}
 
 export component HeadersSection inherits Rectangle {
     padding: 20px;
     border-color: Theme.border_color;
     horizontal-stretch: 1;
     border-width: Theme.border_width;
-    height: 40px;
+    height: 50px;
+    width: 100%;
 
-    Text {
-        text: "App Header ";
-        font-size: Theme.label_font_size_medium;
-        color: Theme.label_text_color;
-        horizontal-alignment: center;
+    TouchArea {
+        clicked => {
+            root.focus()
+        }
+    }
+
+    forward-focus: my-key-handler;
+    my-key-handler := FocusScope {
+        key-pressed(event) => {
+
+            if (event.text == Key.LeftArrow) {
+                scroll.viewport-x -= 30px;
+                checkScrollEdges()
+            }
+            if (event.text == Key.RightArrow) {
+                scroll.viewport-x += 30px;
+                checkScrollEdges()
+            } 
+            accept
+        }
+    }
+
+    property <length> min_scroll_x;
+    function checkScrollEdges() {
+        min_scroll_x = scroll.visible-width - scroll.viewport-width;
+    
+        if (scroll.viewport-x >= 0) {
+            scroll.viewport-x = 0px;
+        }
+
+        if (scroll.viewport-x <= min_scroll_x) {
+            scroll.viewport-x = min_scroll_x;
+        }
+    }
+
+    scroll := ScrollView {
+        horizontal-scrollbar-policy: always-off;
+        content_box := HorizontalBox {
+            spacing: 10px;
+            height: 100%;
+
+            for list_item[i] in AppConfig.selected_requests: HeaderItem {
+                collection_icon: list-item.collection_icon;
+                name: list-item.item.name;
+                index: i;
+                id: list-item.item.id;
+                component_background: root.background;
+
+                request-focus-parent => {
+                    root.focus();
+                }
+            }
+        }
     }
 }
