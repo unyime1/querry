@@ -228,10 +228,45 @@ pub async fn process_request_selection(app: &AppWindow) -> Result<(), Box<dyn Er
         // Add request to selected requests.
         let mut selected_requests: Vec<SelectedRequestItem> =
             cfg.get_selected_requests().iter().collect();
-        selected_requests.push(SelectedRequestItem {
-            item: selected_request.clone(),
-            collection_icon: active_collection.icon.clone(),
-        });
+
+        let mut request_already_selected = false;
+        for request_item in &selected_requests {
+            if request_item.item.id == selected_request.id {
+                request_already_selected = true;
+            }
+        }
+
+        if request_already_selected == false {
+            selected_requests.push(SelectedRequestItem {
+                item: selected_request.clone(),
+                collection_icon: active_collection.icon.clone(),
+            });
+            cfg.set_selected_requests(Rc::new(VecModel::from(selected_requests)).into());
+        }
+    });
+
+    Ok(())
+}
+
+/// Handle remove selected request
+pub async fn process_request_remove(app: &AppWindow) -> Result<(), Box<dyn Error>> {
+    let config = app.global::<AppConfig>();
+    let weak_app = app.as_weak();
+
+    config.on_remove_selected_request(move |request_index| {
+        let app = weak_app.upgrade().unwrap();
+        let cfg = app.global::<AppConfig>();
+
+        // Remove selected request from list.
+        let mut selected_requests: Vec<SelectedRequestItem> =
+            cfg.get_selected_requests().iter().collect();
+
+        if let Some(_) = selected_requests.get(request_index as usize) {
+            selected_requests.remove(request_index as usize)
+        } else {
+            return;
+        };
+
         cfg.set_selected_requests(Rc::new(VecModel::from(selected_requests)).into());
     });
 
