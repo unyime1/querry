@@ -236,7 +236,7 @@ pub async fn process_request_selection(app: &AppWindow) -> Result<(), Box<dyn Er
             }
         }
 
-        if request_already_selected == false {
+        if !request_already_selected {
             selected_requests.push(SelectedRequestItem {
                 item: selected_request.clone(),
                 collection_icon: active_collection.icon.clone(),
@@ -261,7 +261,7 @@ pub async fn process_request_remove(app: &AppWindow) -> Result<(), Box<dyn Error
         let mut selected_requests: Vec<SelectedRequestItem> =
             cfg.get_selected_requests().iter().collect();
 
-        if let Some(_) = selected_requests.get(request_index as usize) {
+        if selected_requests.get(request_index as usize).is_some() {
             selected_requests.remove(request_index as usize)
         } else {
             return;

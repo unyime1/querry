@@ -14,33 +14,27 @@ component HeaderItem inherits Rectangle {
     in property <color> component_background;
     background: touch-area.has-hover ? grey.darker(20%) : AppConfig.active_request_id == id ? grey.darker(20%) : component_background;
     border-radius: Theme.border_radius;
+    callback request-focus-parent();
 
     touch-area := TouchArea {
         mouse-cursor: self.has-hover ? pointer : default;
         clicked => {
             AppConfig.active_request_id = id;
+            root.request-focus-parent();
         }
     }
 
     HorizontalLayout {
-        padding: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
         alignment: space-between;
 
         VerticalLayout {
             alignment: center;
-
-            Rectangle {
-                border-radius: Theme.border_radius;
-                width: Theme.icon_box_with - 10px;
-                height: Theme.icon_box_with  - 10px;
-
-                Image {
-                    source: collection_icon;
-                    width: Theme.icon_box_with - 12px;
-                    height: Theme.icon_box_with  - 12px;
-                    vertical-alignment: center;
-                    horizontal-alignment: center;
-                }
+            Image {
+                source: collection_icon;
+                width: Theme.icon_box_with - 2px;
+                height: Theme.icon_box_with - 2px;
             }
         }
 
@@ -136,6 +130,10 @@ export component HeadersSection inherits Rectangle {
                 index: i;
                 id: list-item.item.id;
                 component_background: root.background;
+
+                request-focus-parent => {
+                    root.focus();
+                }
             }
         }
     }
